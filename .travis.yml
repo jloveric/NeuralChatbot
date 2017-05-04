@@ -11,5 +11,7 @@ addons:
       - g++-4.8
 services: 
   - mongodb
-  - elasticsearch
 install: ./scripts/installall.sh
+before_script : 
+  - ./scripts/elasticsearch.sh&
+  - sleep 15
