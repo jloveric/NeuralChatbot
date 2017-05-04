@@ -17,3 +17,4 @@ install: ./scripts/installall.sh
 before_script : 
   - ./scripts/elasticsearch.sh&
   - sleep 15
+  - ./scripts/installStoreAiTests.sh
