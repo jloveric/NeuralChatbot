@@ -1,9 +1,9 @@
 {
-  "name": "clockmaker",
+  "name": "the-clockmaker",
   "version": "2.0.0",
   "description": "",
-  "author": "Mekanite Corporation",
-  "license": "Proprietary",
+  "author": "John Loverich",
+  "license": "MIT",
   "main": "index.js",
   "dependencies": {
     "WNdb": "3.1.2",
