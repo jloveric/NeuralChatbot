@@ -11,6 +11,8 @@ addons:
       - g++-4.8
 services: 
   - mongodb
+before_install :
+  - sudo apt-get install unzip  
 install: ./scripts/installall.sh
 before_script : 
   - ./scripts/elasticsearch.sh&

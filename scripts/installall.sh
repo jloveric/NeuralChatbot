@@ -5,5 +5,5 @@ cd $DIR
 
 ./getdependencies.sh
 ./install-node-packages.sh
-./useDeployConfig.sh
-./installPrivacyDocs.sh
+#./useDeployConfig.sh
+#./installPrivacyDocs.sh
