@@ -1,0 +1,41 @@
+{	
+	"titan" : {
+		"port" : 8182
+	},
+	"elasticsearch": {
+		"host": "localhost:9200",
+		"numResults" : 40,
+		"numResultsPhrase" : 100,
+                "boostResults" : 1000
+	},
+	"storebot": {
+                "installPort" : 9090,
+		"port": 8080,
+		"useHTTPS" : "false"
+	},
+	"mongodb": {
+		"messageDatabase" : "messagedb",
+		"fileDatabase": "filesystem",
+		"botDatabase": "botDatabase",
+		"url": "mongodb://localhost:27017",
+		"botCollection": "bots",
+                "userAccounts" : "useraccounts"
+	},
+	"bot": {
+		"rootName": "operator",
+		"rootUser": "root",
+		"index": "bottable"
+	},
+	"logging" : {
+		"level" : "warn",
+		"file" : "storebot.log"
+	},
+	"certificates" : {
+		"directory" : "ssl/local",
+		"key" : "private.key",
+		"pem" : "certificate.pem"
+        },
+	"recaptcha" : {
+		"secret" : "6Lek2QsUAAAAAFc3QL8BmPMnEPL-m6h17q1N_vpg"
+	}
+}

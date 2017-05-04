@@ -1,0 +1,16 @@
+{
+  "name": "source",
+  "version": "1.0.0",
+  "browserify": {
+    "transform": [
+      [
+        "babelify",
+        {
+          "presets": [
+            "es2015"
+          ]
+        }
+      ]
+    ]
+  }
+}

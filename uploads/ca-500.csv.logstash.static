@@ -1,0 +1,18 @@
+input {
+	 stdin {}
+}
+filter {
+	 csv { 
+		columns => [first_name,last_name,company_name,address,city,province,postal,phone1,phone2,email,web,appendID]
+		separator=> ","
+	}
+}
+
+output {
+	 elasticsearch {
+		 hosts => ["localhost:9200"] 
+		 index => "ca-500.csv"
+		 document_id => "%{appendID}"
+	}
+}
+

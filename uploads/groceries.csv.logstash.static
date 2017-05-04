@@ -1,0 +1,18 @@
+input {
+	 stdin {}
+}
+filter {
+	 csv { 
+		columns => [aisle,aisleid,item,price,appendID]
+		separator=> ","
+	}
+}
+
+output {
+	 elasticsearch {
+		 hosts => ["localhost:9200"] 
+		 index => "groceries.csv"
+		 document_id => "%{appendID}"
+	}
+}
+

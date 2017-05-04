@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://bitbucket.org/jloveric/phrasedatabases
+	branch = master
+	commit = 69c375df88fa99460b12b1409af515468533c9e9
+	parent = 6a75d369f0c1c81b01f18c7654ae141a4b4dabbb
+	cmdver = 0.3.1

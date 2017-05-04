@@ -1,0 +1,35 @@
+{
+    "description": {
+        "name": "King Soopers Lafayette Colorado",
+        "nickname": "bill",
+        "purpose": "To tell you about groceries",
+        "keywords": "groceries",
+        "business": "king soopers",
+        "city": "Lafayette",
+        "state": "Colorado",
+        "county": "Boulder",
+        "country": "United States"
+    },
+    "info": {
+        "database": "groceries.csv",
+        "type": "rdbms"
+    },
+    "hello": ["Hello, I'm the groceryGuy"],
+    "goodbye": ["Bye from groceryGuy!"],
+    "default": ["Do you have any (word)"],
+    "document" : ["(item) is in aisle (aisleid) and costs $ (price)"],
+    "gps" : {
+        "type" : "Point",
+        "coordinates" : [40.0018377,-105.10188779999999]
+    },
+    "config" : {
+        "primary" : ["item"],
+        "columns" :["aisle","aisleid","item","price"],
+        "mapping" : ["none","place","item","price"],
+        "synonyms" : [["aisle","aisleid"],["row","aisleid"],["cost","price"],["price","price"],["item","item"]],
+        "keywords" : {"aisleid":"aisle","item":"item","price":"price"},	
+        "indexName": "groceries.csv",
+        "filename" : "groceries.csv"
+    }   
+
+}

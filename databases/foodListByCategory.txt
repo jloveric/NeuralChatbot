@@ -1,0 +1,158 @@
+Beverages:	Apple Juice
+Beverages:	Beer, bottle, pilsener, import
+Beverages:	Beer, can
+Beverages:	Coffee
+Beverages:	Milk
+Beverages:	Milk, organic
+Beverages:	Orange Juice, not from concentrate
+Beverages:	Soda, bottle
+Beverages:	Soda, bottle (Coke product)
+Beverages:	Soda, can
+Beverages:	Soda, can (Coke product)
+Beverages:	Tea, green, bags
+Beverages:	Water, regular/drinking
+Beverages:	Water, Sparkling/Mineral
+Beverages:	Wine, table, Cabernet
+Beverages:	Wine, table, Chardonnay
+Beverages:	Wine, table, White Zinfandel	 
+Canned & Packaged Foods:	Apple Sauce
+Canned & Packaged Foods:	Barbeque Sauce
+Canned & Packaged Foods:	Bread Crumbs
+Canned & Packaged Foods:	Cheery Pie Filling
+Canned & Packaged Foods:	Chicken Noodle Soup, condensed
+Canned & Packaged Foods:	Chicken Noodle Soup, regular
+Canned & Packaged Foods:	Chips, potato chips
+Canned & Packaged Foods:	Coconut Milk
+Canned & Packaged Foods:	Flour, all purpose
+Canned & Packaged Foods:	Flour, self rising
+Canned & Packaged Foods:	Green Beans, canned
+Canned & Packaged Foods:	Honey
+Canned & Packaged Foods:	Jalopeño Peppers, canned
+Canned & Packaged Foods:	Ketchup
+Canned & Packaged Foods:	Mandarin Oranges, canned
+Canned & Packaged Foods:	Mayonnaise
+Canned & Packaged Foods:	Milk Chocolate Bar
+Canned & Packaged Foods:	Mushrooms, stems/pieces
+Canned & Packaged Foods:	Mustard, dijon
+Canned & Packaged Foods:	Mustard, yellow
+Canned & Packaged Foods:	Nutella
+Canned & Packaged Foods:	Oil, Canola, 100% pure
+Canned & Packaged Foods:	Oil, Olive, 100% pure
+Canned & Packaged Foods:	Oil, Olive, extra virgin
+Canned & Packaged Foods:	Pasta, Egg Noodles
+Canned & Packaged Foods:	Pasta, Ellbow Maccaroni
+Canned & Packaged Foods:	Pasta, Penne Rigate
+Canned & Packaged Foods:	Pasta, Rotini/Rotelle/Fusilli
+Canned & Packaged Foods:	Pasta, Spaghetti
+Canned & Packaged Foods:	Peanut Butter
+Canned & Packaged Foods:	Peanuts, roasted
+Canned & Packaged Foods:	Pepper, black, ground
+Canned & Packaged Foods:	Preserves
+Canned & Packaged Foods:	Pretzels
+Canned & Packaged Foods:	Rice, instant, white
+Canned & Packaged Foods:	Rice, regular
+Canned & Packaged Foods:	Salad Dressing
+Canned & Packaged Foods:	Salsa, medium hot
+Canned & Packaged Foods:	Salt
+Canned & Packaged Foods:	Soup, organic
+Canned & Packaged Foods:	Spaghetti Sauce
+Canned & Packaged Foods:	Sugar, brown
+Canned & Packaged Foods:	Sugar, powdered
+Canned & Packaged Foods:	Sugar, white
+Canned & Packaged Foods:	Syrup, breakfast
+Canned & Packaged Foods:	Tomato Paste
+Canned & Packaged Foods:	Tomato Sauce
+Canned & Packaged Foods:	Tomato Soup, condensed
+Canned & Packaged Foods:	Tomato Soup, regular
+Canned & Packaged Foods:	Tuna, chunky, in water
+Canned & Packaged Foods:	Tuna, solid, in water
+Canned & Packaged Foods:	Vanilla Extract, pure 
+Bakery, Breakfast, Cereal:	Bagles, plain
+Bakery, Breakfast, Cereal:	Baguette/French Bread
+Bakery, Breakfast, Cereal:	Bread, 12 grain
+Bakery, Breakfast, Cereal:	Cereal, Müsli style
+Bakery, Breakfast, Cereal:	Cocoa Rice Cereal
+Bakery, Breakfast, Cereal:	Corn Flakes, regular
+Bakery, Breakfast, Cereal:	Corn Flakes, sugar frosted
+Bakery, Breakfast, Cereal:	Croissants
+Bakery, Breakfast, Cereal:	Granola Bars, high fiber
+Bakery, Breakfast, Cereal:	Granola Bars, regular
+Bakery, Breakfast, Cereal:	Honey Crunch Oats
+Bakery, Breakfast, Cereal:	Hot Dog Buns
+Bakery, Breakfast, Cereal:	Oat Meal
+Bakery, Breakfast, Cereal:	White Bread/Toast, enriched	 
+Frozen Foods:	Breakfast Sausage, frozen
+Frozen Foods:	Chicken Breasts, frozen
+Frozen Foods:	Chicken Nuggets, frozen
+Frozen Foods:	Chicken Tenderloins, frozen
+Frozen Foods:	Fish, Flounder, frozen
+Frozen Foods:	Fish, Mahi Mahi, frozen
+Frozen Foods:	Fish, Tilapia, frozen
+Frozen Foods:	French Fries, frozen
+Frozen Foods:	Fruit, frozen
+Frozen Foods:	Ground Beef, frozen
+Frozen Foods:	Ground Turkey, frozen
+Frozen Foods:	Ice Cream, premium
+Frozen Foods:	Ice Cream, simple
+Frozen Foods:	Pizza, frozen (premium)
+Frozen Foods:	Pizza, frozen (simple)
+Frozen Foods:	Veggies, frozen
+Frozen Foods:	Waffles, frozen
+Miscellaneous Kitchen Items:	Aluminum Foil
+Miscellaneous Kitchen Items:	Paper Towles
+Miscellaneous Kitchen Items:	Plastic Wrap
+Produce:	Apples, Gala, bag
+Produce:	Apples, Red/Golden Delicious, bag
+Produce:	Carrots, whole
+Produce:	Grapes, red
+Produce:	Lemons
+Produce:	Lettuce, iceberg
+Produce:	Mushrooms, whole
+Produce:	Onions, yellow
+Produce:	Oranges
+Produce:	Pears
+Produce:	Potatoes, gold (Yukon)
+Produce:	Potatoes, red
+Produce:	Potatoes, Russet
+Produce:	Tomatoes 
+Refrigerated Foods:	Bacon
+Refrigerated Foods:	Beef Stew Meat
+Refrigerated Foods:	Brats, 4-6 pack
+Refrigerated Foods:	Butter, real, unsalted/salted
+Refrigerated Foods:	Cheese Singles (imitation)
+Refrigerated Foods:	Cheese, block (regular)
+Refrigerated Foods:	Cheese, Boursin
+Refrigerated Foods:	Cheese, Brie
+Refrigerated Foods:	Cheese, shredded, Mexican style
+Refrigerated Foods:	Cheese, shredded, Mozarella
+Refrigerated Foods:	Cheese, sliced, deli
+Refrigerated Foods:	Cheese, sliced, regular
+Refrigerated Foods:	Cheese, wedge (real, deli)
+Refrigerated Foods:	Chocolate Chip Cookie Dough
+Refrigerated Foods:	Cold Cuts, ham or chicken
+Refrigerated Foods:	Cold Cuts, turkey variety
+Refrigerated Foods:	Cottage Cheese
+Refrigerated Foods:	Cream Cheese
+Refrigerated Foods:	Cream, heavy whipping
+Refrigerated Foods:	Eggs, cage free
+Refrigerated Foods:	Eggs, regular
+Refrigerated Foods:	Ground Beef (chuck), fresh
+Refrigerated Foods:	Ground Beef (sirloin), fresh
+Refrigerated Foods:	Ground Turkey, fresh
+Refrigerated Foods:	Ham, half
+Refrigerated Foods:	Kielbasa
+Refrigerated Foods:	Margarine/Spread
+Refrigerated Foods:	Pancetta, diced
+Refrigerated Foods:	Pizza Dough
+Refrigerated Foods:	Pork Tenderloin, small
+Refrigerated Foods:	Ribs, Baby Back (pork, unseasoned)
+Refrigerated Foods:	Ribs, Spare Back (pork, unseasoned)
+Refrigerated Foods:	Salami, sliced
+Refrigerated Foods:	Salami, whole
+Refrigerated Foods:	Sour Cream
+Refrigerated Foods:	Yoghurt, Dannon (etc.)
+Refrigerated Foods:	Yogurt, Fage, 2%, plain
+Refrigerated Foods:	Yogurt, Fage, w/ flavor
+Refrigerated Foods:	Yogurt, flavored, cup
+Refrigerated Foods:	Yogurt, greek style, plain
+Refrigerated Foods:	Yogurt, plain
