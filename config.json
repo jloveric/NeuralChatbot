@@ -26,5 +26,5 @@
 	"logging" : {
 		"level" : "warn",
 		"file" : "storebot.log"
-	},
+	}
 }
