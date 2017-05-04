@@ -1,7 +1,4 @@
 {	
-	"titan" : {
-		"port" : 8182
-	},
 	"elasticsearch": {
 		"host": "localhost:9200",
 		"numResults" : 40,
@@ -30,12 +27,4 @@
 		"level" : "warn",
 		"file" : "storebot.log"
 	},
-	"certificates" : {
-		"directory" : "ssl/local",
-		"key" : "private.key",
-		"pem" : "certificate.pem"
-        },
-	"recaptcha" : {
-		"secret" : "6Lek2QsUAAAAAFc3QL8BmPMnEPL-m6h17q1N_vpg"
-	}
 }
