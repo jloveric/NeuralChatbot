@@ -1,4 +1,5 @@
-# README #
+[![Build Status](https://travis-ci.org/jloveric/Clockmaker.svg?branch=master)](https://travis-ci.org/jloveric/Clockmaker)
+
 #Installation:
 Install node.js v4+ and mongodb.  Checkout the storebot repo.  Inside the storebot directory, run
 
