@@ -18,7 +18,7 @@ echo "Getting elastic search!"
 rm -rf elasticsearch*
 
 wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.2.2.zip
-unzip elasticsearch*.zip
+unzip elasticsearch*.zip -q
 rm -rf elasticsearch
 rm -rf elasticsearch*.zip
 mv elasticsearch* elasticsearch
@@ -29,7 +29,7 @@ cp es.yml elasticsearch/config/elasticsearch.yml
 echo "Getting logstash!"
 rm -rf logstash*
 wget https://artifacts.elastic.co/downloads/logstash/logstash-5.2.2.zip
-unzip logstash*.zip
+unzip logstash*.zip -q
 rm -rf logstash
 rm -rf logstash*.zip
 mv logstash* logstash
