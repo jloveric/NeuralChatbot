@@ -325,3 +325,5 @@ the tests in those directories can be used to understand the software.
 
 The directory Extdb contains various method for dealing with databases, installing bots, creating configuration
 files etc... but is generally not important to the structure of the bot code.
+
+...
