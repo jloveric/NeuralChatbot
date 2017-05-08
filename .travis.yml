@@ -18,3 +18,5 @@ before_script :
   - ./scripts/elasticsearch.sh&
   - sleep 15
   - ./scripts/installStoreAiTest.sh
+after_script :
+  - pkill -9 java
