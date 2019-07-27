@@ -7,29 +7,28 @@
  */
 
 let BrowserLogger = {
-	
-	//Normally apply(console,...) would be apply(this,..)
-	//but it doesn't work that way in chrome, though it does
-	//in node.  So this is the work around.
-	info(arg) {
-		console.log.apply(console, arguments);
-	},
-	
-	debug(arg) {
-		console.log.apply(console, arguments);
-	},
-	
-	warn(arg) {
-		console.log.apply(console, arguments);
-	},
-	
-	verbose(arg) {
-		console.log.apply(console, arguments);
-	},
-	
-	error(arg) {
-		console.log.apply(console, arguments);
-	},
-}
+  //Normally apply(console,...) would be apply(this,..)
+  //but it doesn't work that way in chrome, though it does
+  //in node.  So this is the work around.
+  info(arg) {
+    console.log.apply(console, arguments);
+  },
+
+  debug(arg) {
+    console.log.apply(console, arguments);
+  },
+
+  warn(arg) {
+    console.log.apply(console, arguments);
+  },
+
+  verbose(arg) {
+    console.log.apply(console, arguments);
+  },
+
+  error(arg) {
+    console.log.apply(console, arguments);
+  }
+};
 
 module.exports = BrowserLogger;

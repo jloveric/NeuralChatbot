@@ -1,10 +1,10 @@
 "use strict";
 
-let Logger = require('sb/etc/Logger.js')('SbEvent')
+let Logger = require("sb/etc/Logger.js")("SbEvent");
 
-const EventEmitter = require('events');
+const EventEmitter = require("events");
 
-class MyEvent extends EventEmitter { }
+class MyEvent extends EventEmitter {}
 
 const SbEvent = new MyEvent();
 
@@ -16,8 +16,8 @@ const SbEvent = new MyEvent();
 	});
 })*/
 
-SbEvent.on('close', function(){
-	process.emit('exit')
-})
+SbEvent.on("close", function() {
+  process.emit("exit");
+});
 
 module.exports = SbEvent;

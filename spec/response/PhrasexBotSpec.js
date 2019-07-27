@@ -1,42 +1,43 @@
 "use strict";
 
 //let path = __dirname+"/../uploads/groceries.csv.config"
-let path = "groceries.csv"
-let PhrasexBot = require('sb/response/PhrasexBotLib.js').StandardPhrasexBot;
-let GetConfigValues = require('sb/etc/GetConfigValues.js')
-let UserData = require('sb/user/UserData.js')
+let path = "groceries.csv";
+let PhrasexBot = require("sb/response/PhrasexBotLib.js").StandardPhrasexBot;
+let GetConfigValues = require("sb/etc/GetConfigValues.js");
+let UserData = require("sb/user/UserData.js");
 let gc = new GetConfigValues();
 
-let rootName = gc.bot.rootName
+let rootName = gc.bot.rootName;
 
 let conf = {
-	fileDatabase: 'filesystem', user: 'john.loverich@gmail.com', filename: path,
-	doc: {
-		description: {
-			name: rootName,
-			nickname: "allBot",
-			purpose: "This bot controls all other bots",
-			keywords: "chief,main,super,root,god",
-			business: "N Infinity Computational Sciences",
-			city: "Lafayette",
-			state: "Colorado",
-			county: "Boulder",
-			country: "United States",
-		},
-		info: {
-			database: "groceries.csv",
-			type: "rdbms"
-		},
-		default: ["Do you have any (word)"],
-		config: {
-			primary: ["item"]
-		}
-	}
-}
+  fileDatabase: "filesystem",
+  user: "john.loverich@gmail.com",
+  filename: path,
+  doc: {
+    description: {
+      name: rootName,
+      nickname: "allBot",
+      purpose: "This bot controls all other bots",
+      keywords: "chief,main,super,root,god",
+      business: "N Infinity Computational Sciences",
+      city: "Lafayette",
+      state: "Colorado",
+      county: "Boulder",
+      country: "United States"
+    },
+    info: {
+      database: "groceries.csv",
+      type: "rdbms"
+    },
+    default: ["Do you have any (word)"],
+    config: {
+      primary: ["item"]
+    }
+  }
+};
 
-describe("The PhrasexBotSpec wich groceries.csv", function () {
-
-	/*it("Should Return Good values : -1 Set", function (done) {
+describe("The PhrasexBotSpec wich groceries.csv", function() {
+  /*it("Should Return Good values : -1 Set", function (done) {
 
 		let bot = new PhrasexBot();
 		bot.initialize(conf).then(() => {
@@ -213,38 +214,56 @@ describe("The PhrasexBotSpec wich groceries.csv", function () {
 	//	});
 	//}, 10000);*/
 
-	it("Testing the PhrasexBot history starting with complete phrase", function (done) {
+  it("Testing the PhrasexBot history starting with complete phrase", function(done) {
+    let userData = new UserData();
+    userData.initialize(1);
 
-		let userData = new UserData();
-		userData.initialize(1);
+    let bot = new PhrasexBot();
+    bot
+      .initialize(conf)
+      .then(() => {
+        let pList = [];
 
-		let bot = new PhrasexBot();
-		bot.initialize(conf).then(() => {
+        simpleTest(bot, "How much is the fish", "Tilapia", true, userData)
+          .then(() => {
+            return simpleTest(bot, "How much", "Mahi", true, userData);
+          })
+          .then(() => {
+            return simpleTest(bot, "How much", "Flounder", true, userData);
+          })
+          .then(() => {
+            return simpleTest(
+              bot,
+              "Do you have any",
+              "Tilapia",
+              true,
+              userData
+            );
+          })
+          .then(() => {
+            return simpleTest(
+              bot,
+              "What did I say",
+              "Do you have any fish",
+              true,
+              userData
+            );
+          })
+          .then(() => {
+            console.log("userData", userData.history);
+            bot.close();
+            done();
+          })
+          .catch(reason => {
+            console.log("error", reason);
+          });
+      })
+      .catch(reason => {
+        console.log("error", reason);
+      });
+  }, 10000);
 
-			let pList = []
-
-			simpleTest(bot, "How much is the fish", "Tilapia", true, userData).then(() => {
-				return simpleTest(bot, "How much", "Mahi", true, userData)
-			}).then(() => {
-				return simpleTest(bot, "How much", "Flounder", true, userData)
-			}).then(() => {
-				return simpleTest(bot, "Do you have any", "Tilapia", true, userData)
-			}).then(() => {
-				return simpleTest(bot, "What did I say", "Do you have any fish", true, userData)	
-			}).then(() => {
-				console.log('userData',userData.history)
-				bot.close();
-				done();
-			}).catch((reason) => {
-				console.log('error', reason)
-			})
-
-		}).catch((reason) => {
-			console.log('error', reason)
-		});
-	}, 10000);
-
-	/*it("Testing the PhrasexBot history starting with fish", function (done) {
+  /*it("Testing the PhrasexBot history starting with fish", function (done) {
 
 		let userData = new UserData();
 		userData.initialize(1);
@@ -412,138 +431,142 @@ describe("The PhrasexBotSpec wich groceries.csv", function () {
 			console.log('error',e)
 		}
 	}, 10000);*/
-
 });
 
-var noCheck = function (bot, phrase, userData) {
-	if (!userData) {
-		userData = new UserData();
-		userData.initialize()
-	}
+var noCheck = function(bot, phrase, userData) {
+  if (!userData) {
+    userData = new UserData();
+    userData.initialize();
+  }
 
-	let p = new Promise((resolve, reject) => {
-		bot.getResult(phrase, userData).then(function (ans) {
-			expect(true).toBe(true);
-			resolve()
-		}).catch(function (reason) {
-			console.log(reason)
-			expect(false).toBeTruthy();
-			resolve()
-		});
+  let p = new Promise((resolve, reject) => {
+    bot
+      .getResult(phrase, userData)
+      .then(function(ans) {
+        expect(true).toBe(true);
+        resolve();
+      })
+      .catch(function(reason) {
+        console.log(reason);
+        expect(false).toBeTruthy();
+        resolve();
+      });
+  });
 
-	})
+  return p;
+};
 
-	return p;
-}
+var simpleTest = function(bot, phrase, keyword, success, userData) {
+  if (!userData) {
+    userData = new UserData();
+    userData.initialize();
+  }
 
-var simpleTest = function (bot, phrase, keyword, success, userData) {
+  let p = new Promise((resolve, reject) => {
+    bot
+      .getResult(phrase, userData)
+      .then(function(ans) {
+        console.log("ANS", ans);
+        let good = ans.success;
+        let result = ans.response;
+        console.log("phrase:", phrase);
+        console.log("result:", result);
 
-	if (!userData) {
-		userData = new UserData();
-		userData.initialize()
-	}
+        let foundUndefined = result.match(/undefined/i);
 
-	let p = new Promise((resolve, reject) => {
-		bot.getResult(phrase, userData).then(function (ans) {
-			console.log('ANS', ans)
-			let good = ans.success
-			let result = ans.response
-			console.log("phrase:", phrase)
-			console.log('result:', result)
+        console.log("ans.confidence", ans.confidence);
+        expect(typeof ans.confidence === "undefined").toBeFalsy();
+        expect(result != "").toBeTruthy();
+        expect(!foundUndefined).toBeTruthy();
+        console.log("foundUndefined", foundUndefined);
+        console.log("");
 
-			let foundUndefined = result.match(/undefined/i)
+        if (keyword) {
+          let foundKeyword = result.match(new RegExp(keyword, "i"));
+          console.log("foundKeyword", keyword);
+          expect(foundKeyword).toBeTruthy();
+        }
 
-			console.log('ans.confidence', ans.confidence)
-			expect(typeof ans.confidence === 'undefined').toBeFalsy()
-			expect(result != '').toBeTruthy();
-			expect(!foundUndefined).toBeTruthy();
-			console.log('foundUndefined', foundUndefined)
-			console.log('')
+        if (success != null) {
+          expect(success).toBe(good);
+          console.log(success, good);
+        }
 
-			if (keyword) {
-				let foundKeyword = result.match(new RegExp(keyword, "i"))
-				console.log('foundKeyword', keyword)
-				expect(foundKeyword).toBeTruthy();
-			}
+        resolve();
+      })
+      .catch(function(reason) {
+        console.log(reason);
+        expect(false).toBeTruthy();
+        resolve();
+      });
+  });
 
-			if (success != null) {
-				expect(success).toBe(good);
-				console.log(success, good)
-			}
+  return p;
+};
 
-			resolve()
-		}).catch(function (reason) {
-			console.log(reason)
-			expect(false).toBeTruthy();
-			resolve()
-		});
+var simpleTestNot = function(bot, phrase, keyword) {
+  let userData = new UserData();
+  userData.initialize();
 
-	})
+  let p = new Promise((resolve, reject) => {
+    bot
+      .getResult(phrase, userData)
+      .then(function(ans) {
+        let result = ans.response;
+        console.log("phrase:", phrase);
+        console.log("result:", result);
 
-	return p;
-}
+        let foundUndefined = result.match(/undefined/i);
 
-var simpleTestNot = function (bot, phrase, keyword) {
+        expect(result != "").toBeTruthy();
+        expect(!foundUndefined).toBeTruthy();
+        console.log("foundUndefined", foundUndefined);
+        console.log("");
 
-	let userData = new UserData();
-	userData.initialize()
+        if (keyword) {
+          let foundKeyword = result.match(new RegExp(keyword, "i"));
+          expect(foundKeyword).toBeFalsy();
+        }
+        resolve();
+      })
+      .catch(function(reason) {
+        console.log(reason);
+        expect(false).toBeTruthy();
+        resolve();
+      });
+  });
 
-	let p = new Promise((resolve, reject) => {
-		bot.getResult(phrase, userData).then(function (ans) {
-			let result = ans.response
-			console.log("phrase:", phrase)
-			console.log('result:', result)
+  return p;
+};
 
-			let foundUndefined = result.match(/undefined/i)
+var simpleEmpty = function(bot, phrase) {
+  let userData = new UserData();
+  userData.initialize();
 
-			expect(result != '').toBeTruthy();
-			expect(!foundUndefined).toBeTruthy();
-			console.log('foundUndefined', foundUndefined)
-			console.log('')
+  let p = new Promise((resolve, reject) => {
+    bot
+      .getResult(phrase, userData)
+      .then(function(ans) {
+        let result = ans.response;
+        console.log("phrase:", phrase);
+        console.log("result:", result);
 
-			if (keyword) {
-				let foundKeyword = result.match(new RegExp(keyword, "i"))
-				expect(foundKeyword).toBeFalsy();
-			}
-			resolve()
-		}).catch(function (reason) {
-			console.log(reason)
-			expect(false).toBeTruthy();
-			resolve()
-		});
+        let foundUndefined = result.match(/undefined/i);
 
-	})
+        expect(result == "").toBeFalsy();
+        expect(!foundUndefined).toBeTruthy();
+        console.log("foundUndefined", foundUndefined);
+        console.log("");
+        //console.log('smartbot test 1', bot.keyword);
+        //expect(bot.keyword == "tuna").toBeTruthy();
+        resolve();
+      })
+      .catch(function(reason) {
+        console.log(reason);
+        expect(false).toBeTruthy();
+        resolve();
+      });
+  });
 
-	return p;
-}
-
-var simpleEmpty = function (bot, phrase) {
-
-	let userData = new UserData();
-	userData.initialize()
-
-	let p = new Promise((resolve, reject) => {
-		bot.getResult(phrase, userData).then(function (ans) {
-			let result = ans.response;
-			console.log("phrase:", phrase)
-			console.log('result:', result)
-
-			let foundUndefined = result.match(/undefined/i)
-
-			expect(result == '').toBeFalsy();
-			expect(!foundUndefined).toBeTruthy();
-			console.log('foundUndefined', foundUndefined)
-			console.log('')
-			//console.log('smartbot test 1', bot.keyword);
-			//expect(bot.keyword == "tuna").toBeTruthy();
-			resolve()
-		}).catch(function (reason) {
-			console.log(reason)
-			expect(false).toBeTruthy();
-			resolve()
-		});
-
-	})
-
-	return p;
-}
+  return p;
+};

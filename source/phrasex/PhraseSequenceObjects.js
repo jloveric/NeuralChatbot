@@ -1,6 +1,6 @@
-"use strict"
+"use strict";
 
-let PhraseSequence = require('sb/phrasex/PhraseSequence.js')
+let PhraseSequence = require("sb/phrasex/PhraseSequence.js");
 
 class SwitchBotPhraseSequence extends PhraseSequence {
   constructor() {
@@ -8,8 +8,8 @@ class SwitchBotPhraseSequence extends PhraseSequence {
   }
 
   initialize() {
-    this.addToSequence({user : 'human', phraseGroup : "greeting"})
-    this.addToSequence({user : 'bot', phraseGroup : "ask switch bot"})
-    this.addToSequence({user : 'human', phraseGroup : "affirmation"})
+    this.addToSequence({ user: "human", phraseGroup: "greeting" });
+    this.addToSequence({ user: "bot", phraseGroup: "ask switch bot" });
+    this.addToSequence({ user: "human", phraseGroup: "affirmation" });
   }
 }

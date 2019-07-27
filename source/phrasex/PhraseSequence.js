@@ -8,7 +8,6 @@ class PhraseSequence {
   addToSequence(obj) {
     this.sequence.push(obj);
   }
-
 }
 
 module.exports = PhraseSequence;
