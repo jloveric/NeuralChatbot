@@ -60,7 +60,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "prettier"
+      "pre-commit": "prettier source/**/*.js spec/**/*.js"
     }
   },
   "devDependencies": {
