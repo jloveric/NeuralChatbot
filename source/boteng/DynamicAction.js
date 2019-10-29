@@ -1,15 +1,15 @@
-"use strict";
+'use strict'
 
-let Action = require("sb/boteng/Action.js");
-let Formatting = require("sb/boteng/Formatting.js");
-let Logger = require("sb/etc/Logger.js")("HelpAction");
-let Helper = require("sb/etc/Helper.js");
-let formatHelp = require("sb/etc/FormatHelp.js");
+let Action = require('sb/boteng/Action.js')
+let Formatting = require('sb/boteng/Formatting.js')
+let Logger = require('sb/etc/Logger.js')('HelpAction')
+let Helper = require('sb/etc/Helper.js')
+let formatHelp = require('sb/etc/FormatHelp.js')
 
 class DynamicAction extends Action {
   constructor() {
-    super();
-    this.name = "PrivacyAction";
+    super()
+    this.name = 'PrivacyAction'
   }
 
   /**
@@ -17,8 +17,8 @@ class DynamicAction extends Action {
    * or false as to whether the filter passes.
    */
   filterInput(input) {
-    Helper.hasProperties(input, ["source"]);
-    return input.source.phraseType == "dynamic";
+    Helper.hasProperties(input, ['source'])
+    return input.source.phraseType == 'dynamic'
   }
 
   /**
@@ -26,21 +26,21 @@ class DynamicAction extends Action {
    */
   computeResult(input, userData) {
     //Require an exact match to let this pass
-    let success = true;
+    let success = true
     if (input.source.exact) {
       if (input.confidence < 1.0) {
-        input.confidence = 0.0;
-        success = false;
+        input.confidence = 0.0
+        success = false
       }
     }
 
-    let response = success ? input.source.output : "";
+    let response = success ? input.source.output : ''
     return Promise.resolve({
       response: response,
       confidence: input.confidence,
-      success: success
-    });
+      success: success,
+    })
   }
 }
 
-module.exports = DynamicAction;
+module.exports = DynamicAction

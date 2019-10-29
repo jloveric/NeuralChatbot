@@ -1,11 +1,11 @@
-"use strict";
+'use strict'
 
-let CreateDatabaseConfig = require("sb/extdb/CreateDatabaseConfig.js");
-let CreateLogstashConfig = require("sb/extdb/CreateLogstashConfig.js");
-let StartupDBSearch = require("sb/extdb/StartupDBSearch.js");
-let Helper = require("sb/etc/Helper.js");
-let deepcopy = require("clone");
-let debug = require("debug")("InstallAndIndex");
+let CreateDatabaseConfig = require('sb/extdb/CreateDatabaseConfig.js')
+let CreateLogstashConfig = require('sb/extdb/CreateLogstashConfig.js')
+let StartupDBSearch = require('sb/extdb/StartupDBSearch.js')
+let Helper = require('sb/etc/Helper.js')
+let deepcopy = require('clone')
+let debug = require('debug')('InstallAndIndex')
 
 /**
  * This creates a logstash configuration file from the inputs
@@ -14,8 +14,8 @@ let debug = require("debug")("InstallAndIndex");
  */
 class InstallAndIndex {
   constructor() {
-    this.databaseConfig = new CreateDatabaseConfig();
-    this.logstashConfig = new CreateLogstashConfig();
+    this.databaseConfig = new CreateDatabaseConfig()
+    this.logstashConfig = new CreateLogstashConfig()
   }
 
   /**
@@ -30,63 +30,63 @@ class InstallAndIndex {
   create(obj) {
     Helper.hasProperties(
       obj,
-      ["username", "filename", "columns", "mapping", "keywords", "filesystem"],
+      ['username', 'filename', 'columns', 'mapping', 'keywords', 'filesystem'],
       true
-    );
+    )
 
-    let logstashConfig = new CreateLogstashConfig();
+    let logstashConfig = new CreateLogstashConfig()
 
     let lsConfig = {
       csvFilename: obj.filename,
       fields: obj.columns,
-      separator: ",",
+      separator: ',',
       useStdIn: true,
       fileDatabase: obj.filesystem,
-      user: obj.username
-    };
+      user: obj.username,
+    }
 
-    let config;
+    let config
 
     return logstashConfig
       .initialize(lsConfig)
       .then(() => {
-        return logstashConfig.writeToMongo(obj.filename, obj.username);
+        return logstashConfig.writeToMongo(obj.filename, obj.username)
       })
       .then(() => {
-        debug("Finished writing logstash config to mongo");
+        debug('Finished writing logstash config to mongo')
 
         //Now also create the database configuration
-        config = new CreateDatabaseConfig();
+        config = new CreateDatabaseConfig()
 
-        let indexName = logstashConfig.indexName(obj.filename, obj.username);
+        let indexName = logstashConfig.indexName(obj.filename, obj.username)
 
-        let dbObj = deepcopy(obj);
-        dbObj.indexName = indexName;
+        let dbObj = deepcopy(obj)
+        dbObj.indexName = indexName
 
-        debug("Initializing CreateDatabaseConfig object");
-        return config.initialize(dbObj);
+        debug('Initializing CreateDatabaseConfig object')
+        return config.initialize(dbObj)
       })
       .then(() => {
-        debug("Finished initializing config file");
-        config.validate();
-        return config.writeToMongo(obj.filename, obj.username);
+        debug('Finished initializing config file')
+        config.validate()
+        return config.writeToMongo(obj.filename, obj.username)
       })
       .then(() => {
-        let ls = new StartupDBSearch();
+        let ls = new StartupDBSearch()
 
-        debug("Started logstash indexer");
+        debug('Started logstash indexer')
         return ls.initializeLogstashFromMongoStdIn(
           obj.filesystem,
           obj.filename,
           obj.username,
           Helper.indexingNoForceWait
-        );
+        )
       })
       .catch(reason => {
-        debug("error", reason);
-        return Promise.reject();
-      });
+        debug('error', reason)
+        return Promise.reject()
+      })
   }
 }
 
-module.exports = InstallAndIndex;
+module.exports = InstallAndIndex

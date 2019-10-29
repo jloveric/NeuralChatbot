@@ -1,8 +1,8 @@
-"use strict";
+'use strict'
 
-let MongoFilesystem = require("sb/extdb/MongoFilesystem.js");
-let MongoHelper = require("sb/extdb/MongoHelper.js");
-let Logger = require("sb/etc/Logger.js")("FileConsistency");
+let MongoFilesystem = require('sb/extdb/MongoFilesystem.js')
+let MongoHelper = require('sb/extdb/MongoHelper.js')
+let Logger = require('sb/etc/Logger.js')('FileConsistency')
 
 /**
  * Check to make sure all the files that are needed
@@ -15,8 +15,8 @@ let Logger = require("sb/etc/Logger.js")("FileConsistency");
  */
 class FileConsistency {
   constructor() {
-    this.mongoFilesystem = new MongoFilesystem();
-    this.botDatabase = new MongoHelper();
+    this.mongoFilesystem = new MongoFilesystem()
+    this.botDatabase = new MongoHelper()
   }
 
   /**
@@ -29,97 +29,97 @@ class FileConsistency {
    * --user which is the name of the user who registerd the bot.
    */
   checkConsistency(config) {
-    let p1 = this.botDatabase.initialize(config.botDatabase, config.url);
-    let p2 = this.mongoFilesystem.initialize(config.fileDatabase);
+    let p1 = this.botDatabase.initialize(config.botDatabase, config.url)
+    let p2 = this.mongoFilesystem.initialize(config.fileDatabase)
 
     //Make sure the bot exists in the filesystem.
     let pBot = p1.then(db => {
-      this.db = db;
-      console.log("config.user", config.user);
+      this.db = db
+      console.log('config.user', config.user)
       return new Promise((resolve, reject) => {
         this.db
-          .collection("bots")
+          .collection('bots')
           .findOne({ user: config.user }, (err, item) => {
             if (err) {
-              reject(err);
+              reject(err)
             } else if (item) {
-              console.log("found", item);
-              Logger.debug("found bot in botDatabase", item);
-              resolve(item.info);
+              console.log('found', item)
+              Logger.debug('found bot in botDatabase', item)
+              resolve(item.info)
             } else if (!item) {
-              console.log("didn't find", item);
-              Logger.warn("Bot", config.user, "Not found in database.");
-              reject();
+              console.log("didn't find", item)
+              Logger.warn('Bot', config.user, 'Not found in database.')
+              reject()
             }
-          });
-      });
-    });
+          })
+      })
+    })
 
     //Make sure all 3 required files exist.
     let pMongo = Promise.all([p2, pBot])
       .then(ans => {
-        let filename = ans[1].database;
-        let botType = ans[1].botType;
+        let filename = ans[1].database
+        let botType = ans[1].botType
 
-        Logger.debug("FileConsistency filename", filename, "botType", botType);
-        let pList = [];
+        Logger.debug('FileConsistency filename', filename, 'botType', botType)
+        let pList = []
 
         //The Mongo type takes directly from the mongo database so it doesn't store
         //extra data in the filesystem in csv format.
-        if (botType != "mongo") {
+        if (botType != 'mongo') {
           pList.push(
             this.mongoFilesystem.doesFileExist(
               filename,
               config.user,
-              "database"
+              'database'
             )
-          );
+          )
           pList.push(
             this.mongoFilesystem.doesFileExist(
               filename,
               config.user,
-              "logstash"
+              'logstash'
             )
-          );
+          )
           pList.push(
             this.mongoFilesystem.doesFileExist(
               filename,
               config.user,
-              "databaseConfig"
+              'databaseConfig'
             )
-          );
+          )
 
           Promise.all(pList)
             .then(ans => {
               if (
                 ans.every(elem => {
-                  return elem;
+                  return elem
                 })
               ) {
-                return Promise.resolve(filename);
+                return Promise.resolve(filename)
               } else {
-                return Promise.reject();
+                return Promise.reject()
               }
             })
             .catch(reason => {
-              return Promise.reject(reason);
-            });
+              return Promise.reject(reason)
+            })
         } else {
-          return Promise.resolve();
+          return Promise.resolve()
         }
       })
       .catch(reason => {
-        return Promise.reject(reason);
-      });
+        return Promise.reject(reason)
+      })
 
     return pMongo
       .then(filename => {
-        return Promise.resolve(filename);
+        return Promise.resolve(filename)
       })
       .catch(reason => {
-        return Promise.reject(reason);
-      });
+        return Promise.reject(reason)
+      })
   }
 }
 
-module.exports = FileConsistency;
+module.exports = FileConsistency

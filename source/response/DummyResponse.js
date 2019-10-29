@@ -1,5 +1,5 @@
-"use strict";
-var SingleResponseIfc = require("./SingleResponseIfc").SingleResponseIfc;
+'use strict'
+var SingleResponseIfc = require('./SingleResponseIfc').SingleResponseIfc
 
 /**
  * This is a dummy response to be used in the unit
@@ -7,7 +7,7 @@ var SingleResponseIfc = require("./SingleResponseIfc").SingleResponseIfc;
  */
 class DummyResponse extends SingleResponseIfc {
   constructor() {
-    super();
+    super()
   }
 
   initialize() {}
@@ -17,11 +17,11 @@ class DummyResponse extends SingleResponseIfc {
    */
   getResult(phrase) {
     let tp = new Promise((resolve, reject) => {
-      resolve("This is the dummy response");
-    });
+      resolve('This is the dummy response')
+    })
 
-    return tp;
+    return tp
   }
 }
 
-module.exports = DummyResponse;
+module.exports = DummyResponse

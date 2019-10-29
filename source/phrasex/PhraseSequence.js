@@ -1,13 +1,13 @@
-"use strict";
+'use strict'
 
 class PhraseSequence {
   constructor() {
-    this.sequence = [];
+    this.sequence = []
   }
 
   addToSequence(obj) {
-    this.sequence.push(obj);
+    this.sequence.push(obj)
   }
 }
 
-module.exports = PhraseSequence;
+module.exports = PhraseSequence

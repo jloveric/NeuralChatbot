@@ -1,56 +1,56 @@
-"use strict";
-let Helper = require("sb/etc/Helper.js");
-let debug = require("debug")("ReRank");
-let ld = require("damerau-levenshtein");
-let Logger = require("sb/etc/Logger.js")("ReRank");
+'use strict'
+let Helper = require('sb/etc/Helper.js')
+let debug = require('debug')('ReRank')
+let ld = require('damerau-levenshtein')
+let Logger = require('sb/etc/Logger.js')('ReRank')
 
-let similarity = require("sb/phrasex/SentenceSimilarity.js");
-let similarityScore = require("sb/phrasex/SimilarityScore.js");
-let deepcopy = require("clone");
+let similarity = require('sb/phrasex/SentenceSimilarity.js')
+let similarityScore = require('sb/phrasex/SimilarityScore.js')
+let deepcopy = require('clone')
 
 //Compare the complete score
 function compare(a, b) {
-  let scoreA = a.score.score * a.score.order * a.score.size;
-  let scoreB = b.score.score * b.score.order * b.score.size;
+  let scoreA = a.score.score * a.score.order * a.score.size
+  let scoreB = b.score.score * b.score.order * b.score.size
 
   //debug('score', scoreA, scoreB)
 
   if (scoreA < scoreB) {
-    return 1;
+    return 1
   } else if (scoreA > scoreB) {
-    return -1;
+    return -1
   }
-  return 0;
+  return 0
 }
 
 //Compare the matchScore only
 function compareScore(a, b) {
-  let scoreA = a.score.score;
-  let scoreB = b.score.score;
+  let scoreA = a.score.score
+  let scoreB = b.score.score
 
   //debug('score', scoreA, scoreB)
 
   if (scoreA < scoreB) {
-    return 1;
+    return 1
   } else if (scoreA > scoreB) {
-    return -1;
+    return -1
   }
-  return 0;
+  return 0
 }
 
 //Compare the matchScore only
 function compareExactScore(a, b) {
-  let scoreA = a.score.exact;
-  let scoreB = b.score.exact;
+  let scoreA = a.score.exact
+  let scoreB = b.score.exact
 
   //debug('score', scoreA, scoreB)
 
   if (scoreA < scoreB) {
-    return 1;
+    return 1
   } else if (scoreA > scoreB) {
-    return -1;
+    return -1
   }
-  return 0;
+  return 0
 }
 
 /**
@@ -59,69 +59,69 @@ function compareExactScore(a, b) {
  * results to the head of the results list.
  */
 let boostSort = function(esResult) {
-  let boostSet = [];
-  let normalSet = [];
+  let boostSet = []
+  let normalSet = []
   for (let i = 0; i < esResult.length; i++) {
     if (esResult[i]._source.boostRank) {
-      debug("Adding to boostSet");
-      boostSet.push(esResult[i]);
+      debug('Adding to boostSet')
+      boostSet.push(esResult[i])
     } else {
-      debug("Adding to normalSet");
-      normalSet.push(esResult[i]);
+      debug('Adding to normalSet')
+      normalSet.push(esResult[i])
     }
   }
 
-  return boostSet.concat(normalSet);
-};
+  return boostSet.concat(normalSet)
+}
 
 //Take an elasticsearch input and resort based on some measure
 let reSort = function(esResult) {
-  return esResult.sort(compareScore);
-};
+  return esResult.sort(compareScore)
+}
 
 /**
  *
  */
 let alignmentRank = function(rSet, searchText) {
   //Otherwise we need to compare!
-  let searchArray = searchText.match(Helper.tokenize);
+  let searchArray = searchText.match(Helper.tokenize)
 
-  let score = [];
-  let ansList = [];
+  let score = []
+  let ansList = []
 
-  let phraseOld = null;
-  let scoreOld = null;
+  let phraseOld = null
+  let scoreOld = null
   for (let i = 0; i < rSet.length; i++) {
-    let phrase = rSet[i]._source.phrase;
+    let phrase = rSet[i]._source.phrase
 
     if (phrase == phraseOld) {
       //There can be 1000's of identical phrases so don't re-calculate the score in this case
-      let ans = scoreOld;
+      let ans = scoreOld
       ansList.push({
         result: rSet[i],
         confidence: ans.score * ans.order * ans.size,
-        score: deepcopy(ans)
-      });
+        score: deepcopy(ans),
+      })
     } else {
-      let wordArray = rSet[i]._source.phrase.match(Helper.tokenize);
+      let wordArray = rSet[i]._source.phrase.match(Helper.tokenize)
       //let ans = similarity(searchArray, wordArray, { f: similarityScore.metaphoneDl, options: { threshold: 0.3 } })
-      let ans = similarity(searchArray, wordArray, similarityScore.commonScore);
+      let ans = similarity(searchArray, wordArray, similarityScore.commonScore)
       //debug('ans', ans)
 
       ansList.push({
         result: rSet[i],
         confidence: ans.score * ans.order * ans.size,
-        score: ans
-      });
+        score: ans,
+      })
 
-      scoreOld = ans;
-      phraseOld = phrase;
+      scoreOld = ans
+      phraseOld = phrase
     }
     //ansList.push({ result: rSet[i], confidence: ans.score })
   }
 
-  return ansList;
-};
+  return ansList
+}
 
 /**
  * Rank top results by frequency of occurence.  If wildcards are missing
@@ -130,20 +130,20 @@ let alignmentRank = function(rSet, searchText) {
 let frequencyRank = function(rSet, phraseFrequency) {
   //Now if there is more than one, how do we differentiate?
   //Absolute probability
-  let pSum = 0.0;
-  let ansList = [];
+  let pSum = 0.0
+  let ansList = []
   for (let i = 0; i < rSet.length; i++) {
-    let gId = rSet[i]._source.meta.groupIndex;
-    let tp = phraseFrequency.getProbability(gId);
-    ansList.push({ result: rSet[i], confidence: tp });
+    let gId = rSet[i]._source.meta.groupIndex
+    let tp = phraseFrequency.getProbability(gId)
+    ansList.push({ result: rSet[i], confidence: tp })
   }
 
-  return ansList;
-};
+  return ansList
+}
 
 let combineRank = function(hits, searchText, phraseFrequency) {
-  let ans1 = alignmentRank(hits, searchText);
-  let ans2 = frequencyRank(hits, phraseFrequency);
+  let ans1 = alignmentRank(hits, searchText)
+  let ans2 = frequencyRank(hits, phraseFrequency)
 
   //Get the top alignment ranking...
   /*let bestAns = Helper.objectWithBestValue(ans1, (a, b) => {
@@ -157,19 +157,19 @@ let combineRank = function(hits, searchText, phraseFrequency) {
   //debug('Alignment rank', ans1)
   //debug('Frequency Rank', ans2)
 
-  let newAns = [];
+  let newAns = []
   for (let i = 0; i < hits.length; i++) {
     //let newConf = ans1[i].confidence;
     //if (ans1[i].confidence == bestAns.confidence) {
-    let newConf = ans1[i].confidence + ans2[i].confidence;
+    let newConf = ans1[i].confidence + ans2[i].confidence
     //}
 
-    debug("newConf", newConf);
-    newAns.push({ result: hits[i], confidence: newConf, score: ans1[i].score });
+    debug('newConf', newConf)
+    newAns.push({ result: hits[i], confidence: newConf, score: ans1[i].score })
   }
 
-  return newAns;
-};
+  return newAns
+}
 
 /**
  * After you use elasticsearch (or something else) to return
@@ -190,38 +190,38 @@ let combineRank = function(hits, searchText, phraseFrequency) {
  */
 let reRank = function(hits, searchText, phraseFrequency) {
   //let rSet = Helper.topScores(hits);
-  let rSet = hits;
+  let rSet = hits
 
-  let newAns = combineRank(rSet, searchText, phraseFrequency);
+  let newAns = combineRank(rSet, searchText, phraseFrequency)
 
   //Then based on the exact score
-  newAns.sort(compareExactScore);
-  debug(newAns);
-  let bestScore = newAns[0].score.exact;
-  let bestList = [];
+  newAns.sort(compareExactScore)
+  debug(newAns)
+  let bestScore = newAns[0].score.exact
+  let bestList = []
   if (bestScore > 0) {
     for (let i = 0; i < newAns.length; i++) {
       if (newAns[i].score.exact == bestScore) {
-        bestList.push(newAns[i]);
+        bestList.push(newAns[i])
       } else {
-        break;
+        break
       }
     }
   }
 
   //First, just score based on the number of matches partial matches
-  newAns.sort(compareScore);
-  let otherScore = newAns[0].score.score;
-  if (bestScore == 0) bestScore = otherScore;
+  newAns.sort(compareScore)
+  let otherScore = newAns[0].score.score
+  if (bestScore == 0) bestScore = otherScore
   //bestScore = bestScore ? bestScore : otherScore
 
   //Select results with the same number of matches
 
   for (let i = 0; i < newAns.length; i++) {
     if (newAns[i].score.score >= bestScore) {
-      bestList.push(newAns[i]);
+      bestList.push(newAns[i])
     } else {
-      break;
+      break
     }
   }
 
@@ -234,35 +234,35 @@ let reRank = function(hits, searchText, phraseFrequency) {
     return (
       a.score.score * a.score.order * a.score.size <
       b.score.score * b.score.order * b.score.size
-    );
+    )
     //return a.score.score < b.score.score
-  });
+  })
 
-  let bs = bestAns.score.score * bestAns.score.order * bestAns.score.size;
-  debug("bestAns", bestAns, "bs", bs);
+  let bs = bestAns.score.score * bestAns.score.order * bestAns.score.size
+  debug('bestAns', bestAns, 'bs', bs)
 
   //Create an array where the scores are the highest and identical
-  let equalList = [];
+  let equalList = []
   for (let i = 0; i < bestList.length; i++) {
-    let score = bestList[i].score;
-    let a = score.score * score.order * score.size;
-    debug("bestList", bestList[i]);
-    debug("a", a, "bs", bs);
+    let score = bestList[i].score
+    let a = score.score * score.order * score.size
+    debug('bestList', bestList[i])
+    debug('a', a, 'bs', bs)
     if (a >= bs) {
-      equalList.push(bestList[i]);
+      equalList.push(bestList[i])
     }
   }
 
   if (equalList.length) {
-    return equalList;
+    return equalList
   }
 
-  return null;
-};
+  return null
+}
 
-module.exports.combineRank = combineRank;
-module.exports.reRank = reRank;
-module.exports.alignmentRank = alignmentRank;
-module.exports.frequencyRank = frequencyRank;
-module.exports.reSort = reSort;
-module.exports.boostSort = boostSort;
+module.exports.combineRank = combineRank
+module.exports.reRank = reRank
+module.exports.alignmentRank = alignmentRank
+module.exports.frequencyRank = frequencyRank
+module.exports.reSort = reSort
+module.exports.boostSort = boostSort

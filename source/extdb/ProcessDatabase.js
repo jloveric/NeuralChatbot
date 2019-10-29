@@ -1,10 +1,10 @@
-"use strict";
+'use strict'
 
-let csv = require("csv");
-let readline = require("linebyline");
-let Logger = require("sb/etc/Logger.js")("ProcessDatabase");
-let MongoFilesystem = require("sb/extdb/MongoFilesystem.js");
-let debug = require("debug")("ProcessDatabase");
+let csv = require('csv')
+let readline = require('linebyline')
+let Logger = require('sb/etc/Logger.js')('ProcessDatabase')
+let MongoFilesystem = require('sb/extdb/MongoFilesystem.js')
+let debug = require('debug')('ProcessDatabase')
 
 /**
  * Open the csv database and extract the first 5 rows. At the
@@ -14,7 +14,7 @@ let debug = require("debug")("ProcessDatabase");
  */
 class ProcessDatabase {
   constructor() {
-    this.MongoFile = new MongoFilesystem();
+    this.MongoFile = new MongoFilesystem()
   }
 
   close() {
@@ -30,69 +30,69 @@ class ProcessDatabase {
   initialize(file, user, databaseName) {
     return this.MongoFile.initialize(databaseName)
       .then(() => {
-        console.log("Initialized Mongo");
-        return this.MongoFile.getReadFileStream(file, user, "databaseTemp");
+        console.log('Initialized Mongo')
+        return this.MongoFile.getReadFileStream(file, user, 'databaseTemp')
       })
       .then(fileStream => {
-        debug("Got the stream");
-        let count = 0;
-        this.rows = [];
+        debug('Got the stream')
+        let count = 0
+        this.rows = []
 
         let np = new Promise((resolve, reject) => {
-          let rl = readline(fileStream);
+          let rl = readline(fileStream)
 
-          rl.on("close", line => {
-            rl.emit("end");
-            resolve(this.rows);
-            return;
-          });
+          rl.on('close', line => {
+            rl.emit('end')
+            resolve(this.rows)
+            return
+          })
 
-          rl.on("line", line => {
+          rl.on('line', line => {
             //console.log('line',line)
 
             csv.parse(line, (err, data) => {
               //console.log('data',data)
 
               if (err) {
-                Logger.error(err);
-                return reject();
+                Logger.error(err)
+                return reject()
               } else {
                 if (count < 5) {
                   //Don't include the last index since it
                   //contains the id that was added by storebot.
-                  let newData = [];
+                  let newData = []
                   for (let i = 0; i < data[0].length; i++) {
-                    newData.push(data[0][i]);
+                    newData.push(data[0][i])
                   }
 
-                  this.rows.push(newData);
+                  this.rows.push(newData)
                 } else {
                   if (count == 5) {
-                    Logger.info("Processed database:", file);
+                    Logger.info('Processed database:', file)
                     //console.log(this.rows)
                   }
 
-                  rl.emit("close");
+                  rl.emit('close')
                 }
               }
 
-              count++;
-            });
-          });
-        });
+              count++
+            })
+          })
+        })
 
-        return np;
+        return np
       })
       .catch(reason => {
-        Logger.error(reason);
-        return Promise.reject(reason);
-      });
+        Logger.error(reason)
+        return Promise.reject(reason)
+      })
   }
 
   //Assume there are column names and put in the first row
   getColumnNames() {
-    return this.rows[0];
+    return this.rows[0]
   }
 }
 
-module.exports = ProcessDatabase;
+module.exports = ProcessDatabase

@@ -1,30 +1,30 @@
-"use strict";
+'use strict'
 
-let Helper = require("sb/etc/Helper.js");
+let Helper = require('sb/etc/Helper.js')
 
 class Action {
   constructor() {}
 
   getName() {
-    return this.name;
+    return this.name
   }
 
   initialize(input) {
     Helper.hasProperties(input, [
-      "search",
-      "columnMap",
-      "columnType",
-      "columnSynVector",
-      "columnReName",
-      "primary"
-    ]);
+      'search',
+      'columnMap',
+      'columnType',
+      'columnSynVector',
+      'columnReName',
+      'primary',
+    ])
 
-    this.columnMap = input.columnMap;
-    this.columnType = input.columnType;
-    this.columnSynVector = input.columnSynVector;
-    this.columnReName = input.columnReName;
-    this.search = input.search;
-    this.primary = input.primary;
+    this.columnMap = input.columnMap
+    this.columnType = input.columnType
+    this.columnSynVector = input.columnSynVector
+    this.columnReName = input.columnReName
+    this.search = input.search
+    this.primary = input.primary
   }
 
   /**
@@ -41,4 +41,4 @@ class Action {
   computeResult(input, userData) {}
 }
 
-module.exports = Action;
+module.exports = Action

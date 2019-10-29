@@ -1,9 +1,9 @@
-"use strict";
+'use strict'
 
-let Logger = require("sb/etc/Logger.js")("DeleteUserAccount");
-let MongoFilesystem = require("./MongoFilesystem.js");
-let MongoHelper = require("sb/extdb/MongoHelper.js");
-let Helper = require("sb/etc/Helper.js");
+let Logger = require('sb/etc/Logger.js')('DeleteUserAccount')
+let MongoFilesystem = require('./MongoFilesystem.js')
+let MongoHelper = require('sb/extdb/MongoHelper.js')
+let Helper = require('sb/etc/Helper.js')
 
 /**
  * Delete user account information.  If an error occurs the return values is
@@ -14,29 +14,29 @@ class DeleteUserAccount {
   constructor(configObject) {}
 
   deleteAccount(conf) {
-    Logger.info("Attempting to delete account", conf);
+    Logger.info('Attempting to delete account', conf)
     if (
       !Helper.hasProperties(conf, [
-        "fileDatabase",
-        "messageDb",
-        "usernameDb",
-        "user",
-        "mongoUrl",
-        "botDatabase"
+        'fileDatabase',
+        'messageDb',
+        'usernameDb',
+        'user',
+        'mongoUrl',
+        'botDatabase',
       ])
     ) {
-      Helper.logAndThrow("Properties must be defined");
+      Helper.logAndThrow('Properties must be defined')
     }
 
-    let fileDatabase = conf.fileDatabase;
-    let messagedb = conf.messageDb;
-    let usernamedb = conf.usernameDb;
-    let user = conf.user;
-    let url = conf.mongoUrl;
-    let botDb = conf.botDatabase;
+    let fileDatabase = conf.fileDatabase
+    let messagedb = conf.messageDb
+    let usernamedb = conf.usernameDb
+    let user = conf.user
+    let url = conf.mongoUrl
+    let botDb = conf.botDatabase
 
-    let mongod = new MongoFilesystem();
-    let p1 = mongod.initialize(fileDatabase);
+    let mongod = new MongoFilesystem()
+    let p1 = mongod.initialize(fileDatabase)
 
     //delete the user from the filesystem
     let np1 = new Promise((resolve, reject) => {
@@ -44,18 +44,18 @@ class DeleteUserAccount {
         mongod
           .deleteUserAccount(user)
           .then(() => {
-            Logger.info("Deleted filesystem entries for", user);
-            resolve();
+            Logger.info('Deleted filesystem entries for', user)
+            resolve()
           })
           .catch(reject => {
-            Logger.error("Failed to delete user account");
-            resolve();
-          });
-      });
-    });
+            Logger.error('Failed to delete user account')
+            resolve()
+          })
+      })
+    })
 
-    let mongoHelper = new MongoHelper();
-    let p2 = mongoHelper.initialize(messagedb, url);
+    let mongoHelper = new MongoHelper()
+    let p2 = mongoHelper.initialize(messagedb, url)
 
     //delete the users qa database
     let np2 = new Promise((resolve, reject) => {
@@ -64,72 +64,72 @@ class DeleteUserAccount {
           if (err) {
             //Like the db doesn't exist
             Logger.warn(
-              "Error dropping messaging database for user",
+              'Error dropping messaging database for user',
               user,
-              "since database does not exist"
-            );
-            resolve();
+              'since database does not exist'
+            )
+            resolve()
           } else {
-            Logger.info("Removed data from", messagedb, "for user", user);
-            resolve();
+            Logger.info('Removed data from', messagedb, 'for user', user)
+            resolve()
           }
-        });
+        })
       }).catch(reason => {
-        Logger.error("MongoHelper initialize failed", reason);
-      });
-    });
+        Logger.error('MongoHelper initialize failed', reason)
+      })
+    })
 
-    let p3 = mongoHelper.initialize(usernamedb, url);
+    let p3 = mongoHelper.initialize(usernamedb, url)
 
     //delete the information from the usernamedb
     let np3 = new Promise((resolve, reject) => {
       p3.then(db => {
-        db.collection("accounts").deleteMany({ username: user }, (err, res) => {
+        db.collection('accounts').deleteMany({ username: user }, (err, res) => {
           if (err) {
-            Logger.error(err);
-            resolve();
+            Logger.error(err)
+            resolve()
           } else {
-            Logger.info("Removed user login information for", user);
-            resolve();
+            Logger.info('Removed user login information for', user)
+            resolve()
           }
-        });
+        })
       }).catch(reason => {
-        Logger.error(reason);
-      });
-    });
+        Logger.error(reason)
+      })
+    })
 
-    let p4 = mongoHelper.initialize(botDb, url);
+    let p4 = mongoHelper.initialize(botDb, url)
     let np4 = new Promise((resolve, reject) => {
       p4.then(db => {
-        db.collection("bots").deleteMany({ user: user }, (err, res) => {
+        db.collection('bots').deleteMany({ user: user }, (err, res) => {
           if (err) {
-            Logger.error(err);
-            resolve();
+            Logger.error(err)
+            resolve()
           } else {
-            Logger.info("Removed botInformation for", user);
-            resolve();
+            Logger.info('Removed botInformation for', user)
+            resolve()
           }
-        });
-      });
-    });
+        })
+      })
+    })
 
     //Wait until all work has completed to return true
     let final = new Promise((resolve, reject) => {
       Promise.all([np1, np2, np3, np4])
         .then(() => {
-          Logger.info("Successfully removed account");
-          mongod.close();
-          resolve();
+          Logger.info('Successfully removed account')
+          mongod.close()
+          resolve()
         })
         .catch(reason => {
-          mongod.close();
-          Logger.error(reason);
-          reject();
-        });
-    });
+          mongod.close()
+          Logger.error(reason)
+          reject()
+        })
+    })
 
-    return final;
+    return final
   }
 }
 
-module.exports = DeleteUserAccount;
+module.exports = DeleteUserAccount

@@ -1,42 +1,42 @@
-"use strict";
+'use strict'
 
-let path = "groceries.csv";
-let EsModule = require("sb/response/ElasticSearchQuery.js");
-let es = new EsModule();
+let path = 'groceries.csv'
+let EsModule = require('sb/response/ElasticSearchQuery.js')
+let es = new EsModule()
 
-describe("EsSearchSpec", function() {
+describe('EsSearchSpec', function() {
   beforeAll(done => {
     //let uploadDir = process.cwd() + '/uploads'
     //console.log(uploadDir)
 
-    console.log("initialize succeeded");
+    console.log('initialize succeeded')
     let conf = {
-      fileDatabase: "filesystem",
+      fileDatabase: 'filesystem',
       filename: path,
-      user: "john.loverich@gmail.com"
-    };
+      user: 'john.loverich@gmail.com',
+    }
 
     es.initialize(conf).then(() => {
-      done();
-    });
-  });
+      done()
+    })
+  })
 
-  it("Should return Bacon", function(done) {
-    let pval = es.searchFields("Bacun", "item");
-    let loc = -1;
+  it('Should return Bacon', function(done) {
+    let pval = es.searchFields('Bacun', 'item')
+    let loc = -1
 
     pval
       .then(function(body) {
-        let source = body[0]._source;
-        expect(source.item).toEqual("Bacon");
-        expect(source.aisle).toEqual("Refrigerated Foods");
+        let source = body[0]._source
+        expect(source.item).toEqual('Bacon')
+        expect(source.aisle).toEqual('Refrigerated Foods')
 
-        done();
+        done()
       })
       .catch(function(reason) {
-        console.log("Failed to find bacon", reason);
-      });
-  });
+        console.log('Failed to find bacon', reason)
+      })
+  })
 
   /*it("Should return a good search score", function (done) {
         let p0 = es.searchAndScore("Tuna","item");
@@ -66,4 +66,4 @@ describe("EsSearchSpec", function() {
             console.log("Failed to find bacon", reason);
         });
     });*/
-});
+})

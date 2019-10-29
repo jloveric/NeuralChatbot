@@ -1,7 +1,7 @@
-"use strict";
+'use strict'
 
-let deepcopy = require("clone");
-let debug = require("debug")("SearchRecord");
+let deepcopy = require('clone')
+let debug = require('debug')('SearchRecord')
 
 /**
  * Stores an array and returns elements of the array
@@ -11,42 +11,42 @@ let debug = require("debug")("SearchRecord");
  */
 class SearchRecord {
   constructor() {
-    this.cursor = 0;
-    this.record = null;
+    this.cursor = 0
+    this.record = null
   }
 
   setCursor(val) {
-    this.cursor = val;
+    this.cursor = val
   }
 
   setRecord(val) {
-    this.cursor = 0;
-    this.record = deepcopy(val);
-    debug("Record.length", this.record.length);
+    this.cursor = 0
+    this.record = deepcopy(val)
+    debug('Record.length', this.record.length)
   }
 
   getNext(n) {
-    let ans = [];
-    let length = this.record.length;
+    let ans = []
+    let length = this.record.length
 
     for (let i = 0; i < n; i++) {
-      let index = this.cursor + i;
+      let index = this.cursor + i
       if (index < length) {
-        ans.push(this.record[index]);
+        ans.push(this.record[index])
       }
     }
 
-    this.cursor = this.cursor + n;
+    this.cursor = this.cursor + n
 
-    debug("cursor", this.cursor, "length", length);
+    debug('cursor', this.cursor, 'length', length)
 
-    let noMore = false;
+    let noMore = false
     if (this.cursor >= length) {
-      noMore = true;
+      noMore = true
     }
 
-    return { result: ans, noMore: noMore };
+    return { result: ans, noMore: noMore }
   }
 }
 
-module.exports = SearchRecord;
+module.exports = SearchRecord

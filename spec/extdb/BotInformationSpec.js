@@ -1,47 +1,47 @@
-"use strict";
+'use strict'
 
-let BotInformation = require("sb/extdb/BotInformation.js");
+let BotInformation = require('sb/extdb/BotInformation.js')
 
-let GetConfigValues = require("sb/etc/GetConfigValues.js");
+let GetConfigValues = require('sb/etc/GetConfigValues.js')
 
-let gc = new GetConfigValues();
+let gc = new GetConfigValues()
 
 let rootConfig = {
   info: {
-    database: "botDatabase",
-    collection: "bots",
-    type: "mongo2"
+    database: 'botDatabase',
+    collection: 'bots',
+    type: 'mongo2',
   },
   description: {
-    name: "firstName"
-  }
-};
+    name: 'firstName',
+  },
+}
 
 let rootConfigRevert = {
   info: {
-    database: "botDatabase",
-    collection: "bots",
-    type: "mongo"
+    database: 'botDatabase',
+    collection: 'bots',
+    type: 'mongo',
   },
   description: {
-    name: "secondName"
-  }
-};
+    name: 'secondName',
+  },
+}
 
 let alternateConfig = {
   info: {
-    database: "botDatabase",
-    collection: "bots",
-    type: "mongo"
+    database: 'botDatabase',
+    collection: 'bots',
+    type: 'mongo',
   },
   description: {
-    name: "secondName"
-  }
-};
+    name: 'secondName',
+  },
+}
 
-describe("helper", function() {
-  it("Should modify botDatabase and revert", function(done) {
-    let bi = new BotInformation();
+describe('helper', function() {
+  it('Should modify botDatabase and revert', function(done) {
+    let bi = new BotInformation()
 
     bi.initialize(
       gc.mongodb.botDatabase,
@@ -49,27 +49,27 @@ describe("helper", function() {
       gc.mongodb.botCollection
     )
       .then(() => {
-        return bi.update("testBot", rootConfig);
+        return bi.update('testBot', rootConfig)
       })
       .then(() => {
-        return bi.getDocument("testBot");
+        return bi.getDocument('testBot')
       })
       .then(doc => {
-        expect(doc.info.type).toBe("mongo2");
-        return bi.update("testBot", rootConfigRevert);
+        expect(doc.info.type).toBe('mongo2')
+        return bi.update('testBot', rootConfigRevert)
       })
       .then(doc => {
-        return bi.update("anotherBot", alternateConfig);
+        return bi.update('anotherBot', alternateConfig)
       })
       .then(doc => {
-        expect(doc).toBe(false);
-        console.log("We shouldn't be in here");
-        done();
+        expect(doc).toBe(false)
+        console.log("We shouldn't be in here")
+        done()
       })
       .catch(reason => {
-        expect(reason).toBe("BotName In Use");
-        console.log("Good, an exception was thrown");
-        done();
-      });
-  });
-});
+        expect(reason).toBe('BotName In Use')
+        console.log('Good, an exception was thrown')
+        done()
+      })
+  })
+})

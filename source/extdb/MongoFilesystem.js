@@ -1,15 +1,15 @@
-"use strict";
+'use strict'
 
-let Logger = require("sb/etc/Logger.js")("MongoFilesystem");
-let Mongo = require("mongodb");
-let fs = require("fs");
-let MongoHelper = require("sb/extdb/MongoHelper.js");
-let Stream = require("stream");
-let Helper = require("sb/etc/Helper.js");
-let GetConfigValues = require("sb/etc/GetConfigValues.js");
-let debug = require("debug")("MongoFilesystem");
+let Logger = require('sb/etc/Logger.js')('MongoFilesystem')
+let Mongo = require('mongodb')
+let fs = require('fs')
+let MongoHelper = require('sb/extdb/MongoHelper.js')
+let Stream = require('stream')
+let Helper = require('sb/etc/Helper.js')
+let GetConfigValues = require('sb/etc/GetConfigValues.js')
+let debug = require('debug')('MongoFilesystem')
 
-let gf = new GetConfigValues();
+let gf = new GetConfigValues()
 
 /**
  * This is a class for storing and retrieving 'files' from a mongodb
@@ -17,7 +17,7 @@ let gf = new GetConfigValues();
  */
 class MongoFilesystem {
   constructor() {
-    this.mongod = new MongoHelper();
+    this.mongod = new MongoHelper()
   }
 
   close() {
@@ -27,72 +27,72 @@ class MongoFilesystem {
 
   initialize(databaseName) {
     if (!databaseName) {
-      Helper.logAndThrow("MongoFilesystem: No file database name set");
+      Helper.logAndThrow('MongoFilesystem: No file database name set')
     }
-    this.databaseName = databaseName;
-    Logger.debug("Initializing mongodb connection");
-    let url = gf.mongodb.url;
-    let np = this.mongod.initialize(this.databaseName, url);
+    this.databaseName = databaseName
+    Logger.debug('Initializing mongodb connection')
+    let url = gf.mongodb.url
+    let np = this.mongod.initialize(this.databaseName, url)
 
     //let self = this;
     //let tPromise = new Promise((resolve, reject) => {
     let tPromise = np
       .then(tDb => {
-        this.db = tDb;
-        this.bucket = new Mongo.GridFSBucket(this.db);
-        Logger.debug("Initialized mongo bucket");
-        return Promise.resolve(true);
+        this.db = tDb
+        this.bucket = new Mongo.GridFSBucket(this.db)
+        Logger.debug('Initialized mongo bucket')
+        return Promise.resolve(true)
       })
       .catch(reason => {
-        Logger.error("Mongodb connection error", reason);
-        return Promise.reject();
-      });
+        Logger.error('Mongodb connection error', reason)
+        return Promise.reject()
+      })
     //});
 
-    return tPromise;
+    return tPromise
   }
 
   //Needs testing
   getDatabaseNames(user) {
-    let fileType = "database";
+    let fileType = 'database'
 
     let cursor = this.bucket.find({
-      "metadata.user": user,
-      "metadata.fileType": fileType
-    });
+      'metadata.user': user,
+      'metadata.fileType': fileType,
+    })
 
     let np = new Promise((resolve, reject) => {
       cursor.toArray((err, docs) => {
-        let filenames = [];
+        let filenames = []
         if (err) {
-          Logger.error("getDatabaseNames", err);
-          reject(err);
+          Logger.error('getDatabaseNames', err)
+          reject(err)
         } else {
           for (let i = 0; i < docs.length; i++) {
-            filenames.push(docs[i].filename);
+            filenames.push(docs[i].filename)
           }
 
-          resolve(filenames);
+          resolve(filenames)
         }
-      });
-    });
+      })
+    })
 
-    return np;
+    return np
   }
 
   dropDatabase() {
     let np = new Promise((resolve, reject) => {
       this.db.dropDatabase((err, res) => {
         if (err) {
-          Logger.error(err);
-          reject();
+          Logger.error(err)
+          reject()
         } else {
-          Logger.warn("Dropped database");
-          resolve();
+          Logger.warn('Dropped database')
+          resolve()
         }
-      });
-    });
-    return np;
+      })
+    })
+    return np
   }
 
   /**
@@ -104,26 +104,26 @@ class MongoFilesystem {
    */
   doesFileTypeExist(user, fileType) {
     let cursor = this.bucket.find(
-      { "metadata.user": user, "metadata.fileType": fileType },
+      { 'metadata.user': user, 'metadata.fileType': fileType },
       { batchsize: 1 }
-    );
+    )
 
     let np = new Promise((resolve, reject) => {
       cursor
         .count((err, count) => {
-          Logger.debug("Number of files with signature", count);
+          Logger.debug('Number of files with signature', count)
           if (count > 0) {
-            resolve(true);
+            resolve(true)
           } else {
-            resolve(false);
+            resolve(false)
           }
         })
         .catch(reason => {
-          reject();
-        });
-    });
+          reject()
+        })
+    })
 
-    return np;
+    return np
   }
 
   /**
@@ -137,73 +137,73 @@ class MongoFilesystem {
     let cursor = this.bucket.find(
       { filename: filename, metadata: { user: user, fileType: fileType } },
       { batchsize: 1 }
-    );
+    )
 
     let np = new Promise((resolve, reject) => {
       //debug('What about here?')
       cursor
         .count((err, count) => {
-          Logger.debug("Number of files with signature", count);
+          Logger.debug('Number of files with signature', count)
           //debug('count',count)
           if (count > 0) {
-            resolve(true);
+            resolve(true)
           } else {
-            resolve(false);
+            resolve(false)
           }
         })
         .catch(reason => {
-          reject();
-        });
-    });
+          reject()
+        })
+    })
 
-    return np;
+    return np
   }
 
   deleteDocument(object) {
     let np = new Promise((resolve, reject) => {
       if (object) {
         //debug('object',object)
-        let id = object._id;
+        let id = object._id
 
         this.bucket.delete(id, function(err) {
           if (err) {
-            Logger.error("Could not delete mongo file", err);
-            resolve(false);
+            Logger.error('Could not delete mongo file', err)
+            resolve(false)
           } else {
-            Logger.info("Deleted mongo file");
-            resolve(true);
+            Logger.info('Deleted mongo file')
+            resolve(true)
           }
-        });
+        })
       } else {
-        Logger.warn("MongoFilesystem: file not found");
-        resolve(true);
+        Logger.warn('MongoFilesystem: file not found')
+        resolve(true)
       }
-    });
+    })
 
-    return np;
+    return np
   }
 
   deleteFileType(user, fileType) {
     let cursor = this.bucket.find(
-      { "metadata.user": user, "metadata.fileType": fileType },
+      { 'metadata.user': user, 'metadata.fileType': fileType },
       { batchsize: 1 }
-    );
+    )
 
     let np = new Promise((resolve, reject) => {
       cursor
         .nextObject()
         .then(object => {
-          let val = this.deleteDocument(object);
+          let val = this.deleteDocument(object)
           val.then(res => {
-            resolve(res);
-          });
+            resolve(res)
+          })
         })
         .catch(reason => {
-          reject(reason);
-        });
-    });
+          reject(reason)
+        })
+    })
 
-    return np;
+    return np
   }
 
   /**
@@ -214,47 +214,47 @@ class MongoFilesystem {
    */
   getDocumentsOfType(user, fileType) {
     let cursor = this.bucket.find(
-      { "metadata.user": user, "metadata.fileType": fileType },
+      { 'metadata.user': user, 'metadata.fileType': fileType },
       { batchsize: 1 }
-    );
+    )
 
     let np = new Promise((resolve, reject) => {
       cursor.toArray((error, docs) => {
-        debug("getDocumentOfType found", docs);
+        debug('getDocumentOfType found', docs)
         if (error) {
-          reject(error);
+          reject(error)
         } else if (!docs.length) {
-          reject("No matches were found");
+          reject('No matches were found')
         } else {
-          resolve(docs);
+          resolve(docs)
         }
-      });
-    });
+      })
+    })
 
-    return np;
+    return np
   }
 
   deleteFile(filename, user, fileType) {
     let cursor = this.bucket.find(
       { filename: filename, metadata: { user: user, fileType: fileType } },
       { batchsize: 1 }
-    );
+    )
 
     let np = new Promise((resolve, reject) => {
       cursor
         .nextObject()
         .then(object => {
-          let val = this.deleteDocument(object);
+          let val = this.deleteDocument(object)
           val.then(res => {
-            resolve(res);
-          });
+            resolve(res)
+          })
         })
         .catch(reason => {
-          reject();
-        });
-    });
+          reject()
+        })
+    })
 
-    return np;
+    return np
   }
 
   /**
@@ -265,7 +265,7 @@ class MongoFilesystem {
     let cursor = this.bucket.find(
       { filename: filename, metadata: { user: user, fileType: fileType } },
       { batchsize: 1 }
-    );
+    )
 
     //TODO: Not totally sure why this is working in the test
     //I assume each of the deleteDocument is async so
@@ -275,38 +275,38 @@ class MongoFilesystem {
     let np = new Promise((resolve, reject) => {
       cursor.each((err, item) => {
         if (item) {
-          this.deleteDocument(item);
+          this.deleteDocument(item)
         } else {
-          resolve(true);
+          resolve(true)
         }
-      });
-    });
+      })
+    })
 
-    return np;
+    return np
   }
 
   deleteUserAccount(user) {
-    let cursor = this.bucket.find({ "metadata.user": user }, { batchsize: 1 });
+    let cursor = this.bucket.find({ 'metadata.user': user }, { batchsize: 1 })
 
-    let pList = [];
+    let pList = []
     let np = new Promise((resolve, reject) => {
       cursor.each((err, item) => {
         if (err) {
-          Logger.error(err);
-          reject();
+          Logger.error(err)
+          reject()
         }
 
         if (item) {
-          pList.push(this.deleteDocument(item));
+          pList.push(this.deleteDocument(item))
         } else {
           Promise.all(pList).then(() => {
-            resolve(true);
-          });
+            resolve(true)
+          })
         }
-      });
-    });
+      })
+    })
 
-    return np;
+    return np
   }
 
   /**
@@ -317,10 +317,10 @@ class MongoFilesystem {
    */
   getWriteFileStream(filename, user, fileType) {
     let writeStream = this.bucket.openUploadStream(filename, {
-      metadata: { user: user, fileType: fileType }
-    });
+      metadata: { user: user, fileType: fileType },
+    })
 
-    return writeStream;
+    return writeStream
   }
 
   /**
@@ -335,24 +335,24 @@ class MongoFilesystem {
 
       let filter = {
         filename: filename,
-        metadata: { user: user, fileType: fileType }
-      };
-      this.db.collection("fs.files").findOne(filter, (err, item) => {
+        metadata: { user: user, fileType: fileType },
+      }
+      this.db.collection('fs.files').findOne(filter, (err, item) => {
         if (err) {
-          Logger.error("Couldn't find file", err, filename, user, fileType);
-          reject(err);
+          Logger.error("Couldn't find file", err, filename, user, fileType)
+          reject(err)
         } else if (!item) {
-          Logger.warn("Could not find file", filter, filename, user, fileType);
-          reject("File " + filename + " not found");
+          Logger.warn('Could not find file', filter, filename, user, fileType)
+          reject('File ' + filename + ' not found')
         } else {
-          Logger.debug("Getting stream for file");
-          let downloadStream = this.bucket.openDownloadStream(item._id);
-          resolve(downloadStream);
+          Logger.debug('Getting stream for file')
+          let downloadStream = this.bucket.openDownloadStream(item._id)
+          resolve(downloadStream)
         }
-      });
-    });
+      })
+    })
 
-    return np;
+    return np
   }
 
   getFileId(filename, user, fileType) {
@@ -361,23 +361,23 @@ class MongoFilesystem {
 
       let filter = {
         filename: filename,
-        metadata: { user: user, fileType: fileType }
-      };
-      this.db.collection("fs.files").findOne(filter, (err, item) => {
+        metadata: { user: user, fileType: fileType },
+      }
+      this.db.collection('fs.files').findOne(filter, (err, item) => {
         if (err) {
-          Logger.error("Couldn't find file", err);
-          reject();
+          Logger.error("Couldn't find file", err)
+          reject()
         } else if (!item) {
-          Logger.warn("Could not find file", filter);
-          reject();
+          Logger.warn('Could not find file', filter)
+          reject()
         } else {
-          Logger.debug("Getting id for file", item, "and search", filter);
-          resolve(item._id);
+          Logger.debug('Getting id for file', item, 'and search', filter)
+          resolve(item._id)
         }
-      });
-    });
+      })
+    })
 
-    return np;
+    return np
   }
 
   /**
@@ -387,35 +387,35 @@ class MongoFilesystem {
    * @fileType is the type of file
    */
   getFileAsText(filename, user, fileType) {
-    let CHUNKS_COLLECTION = "fs.chunks";
+    let CHUNKS_COLLECTION = 'fs.chunks'
 
-    let p = this.getFileId(filename, user, fileType);
+    let p = this.getFileId(filename, user, fileType)
 
     let np = new Promise((resolve, reject) => {
       p.then(id => {
-        Logger.debug("Finding chunks with id", id);
+        Logger.debug('Finding chunks with id', id)
         let chunksQuery = this.db
           .collection(CHUNKS_COLLECTION)
-          .find({ files_id: id });
+          .find({ files_id: id })
         chunksQuery.toArray((error, docs) => {
           if (error) {
-            Logger.error(error);
-            reject();
+            Logger.error(error)
+            reject()
           } else {
-            let answer = "";
+            let answer = ''
             for (let i = 0; i < docs.length; i++) {
-              answer = answer + docs[i].data.toString();
+              answer = answer + docs[i].data.toString()
             }
             //Logger.debug('Returning text',answer)
-            resolve(answer);
+            resolve(answer)
           }
-        });
+        })
       }).catch(reason => {
-        reject(reason);
-      });
-    });
+        reject(reason)
+      })
+    })
 
-    return np;
+    return np
   }
 
   /**
@@ -430,17 +430,17 @@ class MongoFilesystem {
     let np = new Promise((resolve, reject) => {
       this.deleteAllFiles(originalName, user, fileType)
         .then(() => {
-          return this.storeFileInMongo(diskFile, originalName, user, fileType);
+          return this.storeFileInMongo(diskFile, originalName, user, fileType)
         })
         .then(() => {
-          resolve();
+          resolve()
         })
         .catch(reason => {
-          reject();
-        });
-    });
+          reject()
+        })
+    })
 
-    return np;
+    return np
   }
 
   /**
@@ -452,28 +452,28 @@ class MongoFilesystem {
    */
   storeFileInMongo(diskFile, originalName, user, fileType) {
     let writeStream = this.bucket.openUploadStream(originalName, {
-      metadata: { user: user, fileType: fileType }
-    });
+      metadata: { user: user, fileType: fileType },
+    })
 
     // open a stream to the temporary file created by Express...
     let np = new Promise((resolve, reject) => {
-      let rs = fs.createReadStream(diskFile);
+      let rs = fs.createReadStream(diskFile)
       //debug('writeStream',writeStream)
-      writeStream.on("finish", function() {
-        Logger.info("Write stream finished", diskFile);
-        resolve("Ok");
-      });
+      writeStream.on('finish', function() {
+        Logger.info('Write stream finished', diskFile)
+        resolve('Ok')
+      })
 
-      rs.on("error", function(err) {
-        Logger.error("Error reading file", err);
-        this.emit("end");
-        reject(err);
-      });
+      rs.on('error', function(err) {
+        Logger.error('Error reading file', err)
+        this.emit('end')
+        reject(err)
+      })
 
-      rs.pipe(writeStream);
-    });
+      rs.pipe(writeStream)
+    })
 
-    return np;
+    return np
   }
 
   /**
@@ -485,20 +485,20 @@ class MongoFilesystem {
    * @param fileType is the type of file
    */
   replaceTextInMongo(text, originalName, user, fileType) {
-    debug("TEXT", text, "ORIGINALNAME", originalName);
+    debug('TEXT', text, 'ORIGINALNAME', originalName)
     let np = new Promise((resolve, reject) => {
       this.deleteAllFiles(originalName, user, fileType).then(() => {
         this.storeTextInMongo(text, originalName, user, fileType)
           .then(() => {
-            resolve();
+            resolve()
           })
           .catch(reason => {
-            reject();
-          });
-      });
-    });
+            reject()
+          })
+      })
+    })
 
-    return np;
+    return np
   }
 
   /**
@@ -509,44 +509,44 @@ class MongoFilesystem {
    * @param fileType is the type of file
    */
   storeTextInMongo(text, originalName, user, fileType) {
-    debug("inputs", text, originalName, user, fileType);
-    let writeStream = this.getWriteFileStream(originalName, user, fileType);
+    debug('inputs', text, originalName, user, fileType)
+    let writeStream = this.getWriteFileStream(originalName, user, fileType)
 
     /*let writeStream = this.bucket.openUploadStream(originalName,
             { metadata: { user: user, fileType: fileType } });*/
 
     let np = new Promise((resolve, reject) => {
-      debug("Stepping into promise");
-      Logger.debug("stepping into promise");
+      debug('Stepping into promise')
+      Logger.debug('stepping into promise')
 
-      writeStream.on("finish", function() {
-        Logger.info("Write stream finished");
-        resolve("Ok");
-      });
+      writeStream.on('finish', function() {
+        Logger.info('Write stream finished')
+        resolve('Ok')
+      })
 
-      let stream = new Stream();
-      stream.readable = true;
+      let stream = new Stream()
+      stream.readable = true
 
       stream.pipe = function(dest) {
-        Logger.debug("piping to writer");
-        dest.write(text, "utf8", () => {
-          Logger.info("finished writing");
-          dest.end();
-        });
-        stream.emit("end");
-        return dest;
-      };
+        Logger.debug('piping to writer')
+        dest.write(text, 'utf8', () => {
+          Logger.info('finished writing')
+          dest.end()
+        })
+        stream.emit('end')
+        return dest
+      }
 
-      stream.on("error", function(err) {
-        Logger.info("Error reading file");
-        reject(err);
-      });
+      stream.on('error', function(err) {
+        Logger.info('Error reading file')
+        reject(err)
+      })
 
-      stream.pipe(writeStream);
-    });
+      stream.pipe(writeStream)
+    })
 
-    return np;
+    return np
   }
 }
 
-module.exports = MongoFilesystem;
+module.exports = MongoFilesystem

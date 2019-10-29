@@ -1,10 +1,10 @@
-"use strict";
+'use strict'
 
-let Logger = require("sb/etc/Logger.js")("MongoHelper");
-let Mongo = require("mongodb");
-let Helper = require("sb/etc/Helper.js");
+let Logger = require('sb/etc/Logger.js')('MongoHelper')
+let Mongo = require('mongodb')
+let Helper = require('sb/etc/Helper.js')
 
-let instance = null;
+let instance = null
 
 /**
  * All this function does is initialize a mongo database
@@ -15,10 +15,10 @@ let instance = null;
 class MongoHelper {
   constructor() {
     if (!instance) {
-      this.connMap = new Map();
-      instance = this;
+      this.connMap = new Map()
+      instance = this
     }
-    return instance;
+    return instance
   }
 
   /**
@@ -31,68 +31,65 @@ class MongoHelper {
   initialize(databaseName, url) {
     //this.mongoClient = new MongoClient(new Server("localhost", 27017), {native_parser: true});
 
+    Helper.logAndThrowUndefined('MongoHelper: You forgot the database url', url)
     Helper.logAndThrowUndefined(
-      "MongoHelper: You forgot the database url",
-      url
-    );
-    Helper.logAndThrowUndefined(
-      "MongoHelper: You forgot the datbase name",
+      'MongoHelper: You forgot the datbase name',
       databaseName
-    );
+    )
 
-    let fullUrl = url + "/" + databaseName;
-    let connectionExists = this.connMap.get(fullUrl);
+    let fullUrl = url + '/' + databaseName
+    let connectionExists = this.connMap.get(fullUrl)
     if (connectionExists) {
-      return Promise.resolve(connectionExists);
+      return Promise.resolve(connectionExists)
     }
 
-    Logger.debug("Initializing mongodb connection", fullUrl);
+    Logger.debug('Initializing mongodb connection', fullUrl)
 
     let tPromise = new Promise((resolve, reject) => {
       Mongo.connect(fullUrl, (err, db) => {
         if (err || !db) {
-          Logger.error("Mongodb connection error", err);
-          reject();
+          Logger.error('Mongodb connection error', err)
+          reject()
         } else {
           db.open(nerr => {
             if (nerr) {
               Logger.err(
-                "Error opening database",
+                'Error opening database',
                 databaseName,
-                "with error",
+                'with error',
                 nerr
-              );
-              reject(nerr);
+              )
+              reject(nerr)
             } else {
-              Logger.info("Mongodb finished connecting");
-              this.connMap.set(fullUrl, db);
-              resolve(db);
+              Logger.info('Mongodb finished connecting')
+              this.connMap.set(fullUrl, db)
+              resolve(db)
             }
-          });
+          })
 
           //Setting this to null on close should tell mongo that it needs to re-initialize
           //the database on the next call
-          db.on("close", function() {
-            db = null;
-          });
+          db.on('close', function() {
+            db = null
+          })
         }
-      });
-    });
+      })
+    })
 
-    return tPromise;
+    return tPromise
   }
 
   /**
    * Close all open connections in the map
    */
   close() {
-    Logger.info("Closing mongodb connection in MongoHelper");
+    Logger.info('Closing mongodb connection in MongoHelper')
     for (let i of this.connMap.values()) {
       if (i) {
-        i.close();
+        i.close()
       }
     }
   }
 }
 
-module.exports = MongoHelper;
+module.exports = MongoHelper

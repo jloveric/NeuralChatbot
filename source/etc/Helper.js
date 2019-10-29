@@ -1,11 +1,11 @@
-"use strict";
+'use strict'
 
-let Base = require("sb/etc/Base.js");
-let Logger = require("sb/etc/Logger.js")("Helper");
-let SbEvent = require("sb/etc/SbEvent.js");
-let StopWords = require("sb/etc/Stopwords.js");
-let BinarySearch = require("binary-search");
-let debug = require("debug")("helper");
+let Base = require('sb/etc/Base.js')
+let Logger = require('sb/etc/Logger.js')('Helper')
+let SbEvent = require('sb/etc/SbEvent.js')
+let StopWords = require('sb/etc/Stopwords.js')
+let BinarySearch = require('binary-search')
+let debug = require('debug')('helper')
 
 module.exports = {
   //A bunch of objects to help with indexing through logstash
@@ -20,8 +20,8 @@ module.exports = {
   getDirectory(path) {
     return path.substring(
       0,
-      Math.max(path.lastIndexOf("/"), path.lastIndexOf("\\"))
-    );
+      Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\'))
+    )
   },
 
   /**
@@ -31,9 +31,9 @@ module.exports = {
    * @return the expanded word if it needs to be expanded.
    */
   expandWord(word, abbreviations) {
-    let ans = abbreviations.get(word);
-    if (ans) return ans;
-    return word;
+    let ans = abbreviations.get(word)
+    if (ans) return ans
+    return word
   },
 
   /**
@@ -42,10 +42,10 @@ module.exports = {
    */
   expandSentence(wordArray, abbreviations) {
     for (let i = 0; i < wordArray.length; i++) {
-      wordArray[i] = this.expandWord(wordArray[i], abbreviations);
+      wordArray[i] = this.expandWord(wordArray[i], abbreviations)
     }
 
-    return wordArray;
+    return wordArray
   },
 
   betweenParentheses: /\(([^)]+)\)/,
@@ -62,33 +62,33 @@ module.exports = {
   //convert elements to lowercase and elliminate punctuation
   cleanArray(a) {
     for (let i = 0; i < a.length; i++) {
-      a[i] = a[i].replace(this.punctuation, "").toLowerCase();
+      a[i] = a[i].replace(this.punctuation, '').toLowerCase()
     }
-    return a;
+    return a
   },
 
   //This is the id added to database files so we can
   //re-index in elasticsearch without doubling up documents, i.e.
   //we can overwrite documents easily.
-  extraId: "appendID",
+  extraId: 'appendID',
 
   defaultResponse: [
     "I'm not sure what you're asking.",
-    "Please clarify.",
+    'Please clarify.',
     "I'm not understanding.",
-    "I'm only a bot, clarify."
+    "I'm only a bot, clarify.",
   ],
 
   //Return the fields that were highlighted by elasticsearch.
   highlightedFields(highlight) {
-    debug("highlight", highlight);
-    let hFields = [];
+    debug('highlight', highlight)
+    let hFields = []
     for (let i in highlight) {
-      if (i != "message") {
-        hFields.push(i);
+      if (i != 'message') {
+        hFields.push(i)
       }
     }
-    return hFields;
+    return hFields
   },
 
   /**
@@ -98,78 +98,78 @@ module.exports = {
    **/
   matchedHighlightWords(highlightField) {
     //let matchCount = ((highlightField.match(/<em>/g) || []).length);
-    let total = highlightField.match(this.tokenize);
-    let val = highlightField.match(this.betweenEm);
+    let total = highlightField.match(this.tokenize)
+    let val = highlightField.match(this.betweenEm)
     for (let i = 0; i < val.length; i++) {
-      val[i] = val[i].replace(/<\/?em>/g, "");
+      val[i] = val[i].replace(/<\/?em>/g, '')
     }
     return {
       matchWords: val,
       matchCount: val.length,
       totalCount: total.length,
-      score: val.length / total.length
-    };
+      score: val.length / total.length,
+    }
   },
 
   //TODO: get rid of this and replace with highlightedFields
   //plus an extra call to get the actual field value
   returnHighlightField(highlight) {
     for (let i in highlight) {
-      if (highlight[i] != "message") {
+      if (highlight[i] != 'message') {
         //console.log('highligh[i]',highlight[i])
-        return highlight[i][0].replace(/<\/?em>/g, "");
+        return highlight[i][0].replace(/<\/?em>/g, '')
       }
     }
-    return null;
+    return null
   },
 
   closeIfExists: function(object, name) {
     object
       ? object.close()
-      : Logger.error("Could not close", name, "since it is undefined");
+      : Logger.error('Could not close', name, 'since it is undefined')
   },
 
   logAndThrowUndefined: function(error, val, dontKill) {
     if (!val && val != 0) {
-      Logger.error(error);
-      debug("error", error);
+      Logger.error(error)
+      debug('error', error)
       if (!dontKill) {
-        SbEvent.emit("error", error);
-        SbEvent.emit("close");
+        SbEvent.emit('error', error)
+        SbEvent.emit('close')
       }
-      return true;
+      return true
     }
-    return false;
+    return false
   },
 
   logAndThrow: function(error, dontKill) {
-    Logger.error(error);
-    debug("error", error);
+    Logger.error(error)
+    debug('error', error)
     if (!dontKill) {
-      SbEvent.emit("error", error);
-      SbEvent.emit("close");
+      SbEvent.emit('error', error)
+      SbEvent.emit('close')
     }
-    return true;
+    return true
   },
 
   findProperty(obj, property) {
-    let a = [];
+    let a = []
 
     if (obj[property]) {
-      a.push(property);
+      a.push(property)
     } else {
       for (let i in obj) {
-        if (!Array.isArray(obj[i]) && typeof obj[i] === "object") {
-          let b = this.findProperty(obj[i], property);
+        if (!Array.isArray(obj[i]) && typeof obj[i] === 'object') {
+          let b = this.findProperty(obj[i], property)
           if (b.length > 0) {
-            a.push(i);
-            a = a.concat(b);
-            return a;
+            a.push(i)
+            a = a.concat(b)
+            return a
           }
         }
       }
     }
-    return a;
+    return a
   },
 
   /**
@@ -179,32 +179,32 @@ module.exports = {
    * @param regex is the regex
    */
   containsRegex(a, regex) {
-    if (!a) return false;
+    if (!a) return false
 
     for (let i = 0; i < a.length; i++) {
       if (this.matchesRegex(a[i], regex)) {
-        return true;
+        return true
       }
     }
-    return false;
+    return false
   },
 
   hasValue(a, val) {
     for (let i = 0; i < a.length; i++) {
       if (a[i] == val) {
-        return true;
+        return true
       }
     }
-    return false;
+    return false
   },
 
   matchesRegex(a, regex) {
-    if (!a) return false;
+    if (!a) return false
 
     if (a.search(regex) > -1) {
-      return true;
+      return true
     }
-    return false;
+    return false
   },
 
   /**
@@ -219,59 +219,59 @@ module.exports = {
    * @param username is the account/user name
    */
   uniqueIndexName: function(filename, username) {
-    let expand = filename + "." + username;
+    let expand = filename + '.' + username
 
     //cut out the leading directory and only leave the
     //filename
-    let shortName = expand.replace(/^.*[\\\/]/, "");
-    Logger.info("Using filename", shortName);
-    return shortName.toLowerCase();
+    let shortName = expand.replace(/^.*[\\\/]/, '')
+    Logger.info('Using filename', shortName)
+    return shortName.toLowerCase()
   },
 
   uniquePhraseIndexName: function(filename, username) {
-    return this.uniqueIndexName(filename + ".phrase", username);
+    return this.uniqueIndexName(filename + '.phrase', username)
   },
 
   hasProperties: function(obj, properties, dontKill) {
-    let found = true;
+    let found = true
     for (let i of properties) {
-      if (typeof obj[i] === "undefined") {
-        Logger.error("Property", i, "is undefined");
+      if (typeof obj[i] === 'undefined') {
+        Logger.error('Property', i, 'is undefined')
         if (!dontKill) {
-          SbEvent.emit("error");
+          SbEvent.emit('error')
         }
-        found = false;
+        found = false
       }
     }
-    return found;
+    return found
   },
 
   timeAndDate: function() {
-    let d = new Date();
+    let d = new Date()
     let thisTime =
       d.getHours() +
-      ":" +
+      ':' +
       d.getMinutes() +
-      " " +
+      ' ' +
       d.getMonth() +
-      "/" +
+      '/' +
       d.getDate() +
-      "/" +
-      d.getFullYear();
-    return thisTime;
+      '/' +
+      d.getFullYear()
+    return thisTime
   },
 
   isUsingNode: function() {
-    return Base.isUsingNode();
+    return Base.isUsingNode()
   },
 
   selectRandom(strArray) {
-    let id = Math.floor(Math.random() * strArray.length);
-    return strArray[id];
+    let id = Math.floor(Math.random() * strArray.length)
+    return strArray[id]
   },
 
   fileExtension: function(filename) {
-    return filename.split(".").pop();
+    return filename.split('.').pop()
   },
 
   /**
@@ -279,41 +279,41 @@ module.exports = {
    * base class.  This will do for now.
    */
   recordValues: {
-    tableName: "qa",
+    tableName: 'qa',
     fieldNames: [
-      "Question",
-      "Answer",
-      "Status",
-      "Responder",
-      "Qid",
-      "Time",
-      "Type",
-      "Userid",
-      "Replied"
+      'Question',
+      'Answer',
+      'Status',
+      'Responder',
+      'Qid',
+      'Time',
+      'Type',
+      'Userid',
+      'Replied',
     ],
     fieldTypes: [
-      "text",
-      "text",
-      "text",
-      "text",
-      "text",
-      "text",
-      "text",
-      "text",
-      "text"
-    ]
+      'text',
+      'text',
+      'text',
+      'text',
+      'text',
+      'text',
+      'text',
+      'text',
+      'text',
+    ],
   },
 
   validMappingElements: [
-    "none",
-    "item",
-    "place",
-    "price",
-    "property",
-    "definition",
-    "quality",
-    "person",
-    "person2"
+    'none',
+    'item',
+    'place',
+    'price',
+    'property',
+    'definition',
+    'quality',
+    'person',
+    'person2',
   ],
 
   /**
@@ -321,39 +321,39 @@ module.exports = {
    * as those change in the form.
    */
   botDatabaseFields: [
-    "name",
-    "nickname",
-    "purpose",
-    "keywords",
-    "business",
-    "city",
-    "state",
-    "county",
-    "country"
+    'name',
+    'nickname',
+    'purpose',
+    'keywords',
+    'business',
+    'city',
+    'state',
+    'county',
+    'country',
   ],
 
   botDatabaseMapping: [
-    "person",
-    "property",
-    "property",
-    "property",
-    "place",
-    "place",
-    "place",
-    "place",
-    "place"
+    'person',
+    'property',
+    'property',
+    'property',
+    'place',
+    'place',
+    'place',
+    'place',
+    'place',
   ],
 
   botDatabaseKeyword: {
-    name: "name",
-    nickname: "nickname",
-    purpose: "purpose",
-    keywords: "keywords",
-    business: "business",
-    city: "city",
-    state: "state",
-    county: "county",
-    country: "country"
+    name: 'name',
+    nickname: 'nickname',
+    purpose: 'purpose',
+    keywords: 'keywords',
+    business: 'business',
+    city: 'city',
+    state: 'state',
+    county: 'county',
+    country: 'country',
   },
 
   failScore: { score: 0, order: 0, size: 0 },
@@ -361,32 +361,32 @@ module.exports = {
   noResponse: { noResponse: true, confidence: 1.0, success: true },
 
   failResponse: {
-    response: "",
+    response: '',
     success: false,
     confidence: 0.0,
-    score: { score: 0, order: 0, size: 0 }
+    score: { score: 0, order: 0, size: 0 },
   },
 
   moreResponse: "click here or type 'more' to see more results.",
 
   isFailResponse(res) {
-    return res.response == "" && res.success == false;
+    return res.response == '' && res.success == false
   },
 
   stopWordIndex(word) {
     let id = BinarySearch(StopWords, word, function(a, b) {
-      if (a == b) return 0;
-      if (a > b) return 1;
-      return -1;
-    });
+      if (a == b) return 0
+      if (a > b) return 1
+      return -1
+    })
 
-    return id;
+    return id
   },
 
   isStopWord(word) {
-    let id = this.stopWordIndex(word);
-    if (id < 0) return false;
-    return true;
+    let id = this.stopWordIndex(word)
+    if (id < 0) return false
+    return true
   },
 
   /**
@@ -400,25 +400,25 @@ module.exports = {
    * @param value is the value to set the element to
    */
   setCreateElementArray(obj, array, value) {
-    let ans = obj;
+    let ans = obj
     for (let j = 0; j < array.length; j++) {
-      let i = array[j];
-      console.log("i", i, "value", value);
+      let i = array[j]
+      console.log('i', i, 'value', value)
       if (j == array.length - 1) {
-        ans[i] = value;
-        break;
+        ans[i] = value
+        break
       }
 
       if (ans[i] != null) {
-        ans = ans[i];
+        ans = ans[i]
       } else {
-        ans[i] = {};
-        ans = ans[i];
+        ans[i] = {}
+        ans = ans[i]
       }
     }
 
-    ans = value;
-    return ans;
+    ans = value
+    return ans
   },
 
   /**
@@ -433,15 +433,15 @@ module.exports = {
   getObjElementArray(obj, array) {
     //if(!array) return null;
 
-    let ans = obj;
+    let ans = obj
     for (let i of array) {
       if (ans[i] != null) {
-        ans = ans[i];
+        ans = ans[i]
       } else {
-        return null;
+        return null
       }
     }
-    return ans;
+    return ans
   },
 
   /**
@@ -454,46 +454,46 @@ module.exports = {
    * as 'a.b.c.d'
    */
   getObjElement(obj, text) {
-    let a = text.split(".");
-    let ans = obj;
+    let a = text.split('.')
+    let ans = obj
     for (let i of a) {
-      ans = ans[i];
+      ans = ans[i]
     }
-    return ans;
+    return ans
   },
 
   capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
+    return string.charAt(0).toUpperCase() + string.slice(1)
   },
 
   getLastElement(text) {
-    let a = text.split(".");
-    return a[a.length - 1];
+    let a = text.split('.')
+    return a[a.length - 1]
   },
 
   getLeadingElements(text) {
-    let ans = [];
-    let a = text.split(".");
+    let ans = []
+    let a = text.split('.')
     for (let i = 0; i < a.length - 1; i++) {
-      ans.push(a[i]);
+      ans.push(a[i])
     }
 
     if (ans.length == 0) {
-      return "";
+      return ''
     }
 
-    return ans.join(".");
+    return ans.join('.')
   },
 
   computeElement(leading, lastElement) {
     if (!lastElement) {
-      return "";
+      return ''
     }
 
     if (!leading) {
-      return lastElement;
+      return lastElement
     }
-    return leading + "." + lastElement;
+    return leading + '.' + lastElement
   },
 
   /**
@@ -506,13 +506,13 @@ module.exports = {
    * than currentBest, and false if it is not better.
    */
   objectWithBestValue(tArray, comparison) {
-    let best = tArray[0];
+    let best = tArray[0]
     for (let i = 1; i < tArray.length; i++) {
       if (comparison(best, tArray[i])) {
-        best = tArray[i];
+        best = tArray[i]
       }
     }
-    return best;
+    return best
   },
 
   /**
@@ -521,37 +521,37 @@ module.exports = {
    * @param hits is an array of elasticsearch hits.
    */
   topScores(hits) {
-    if (hits.length == 0) return [];
+    if (hits.length == 0) return []
 
-    let rSet = [];
-    let maxScore = hits[0]._score;
+    let rSet = []
+    let maxScore = hits[0]._score
 
     for (let i = 0; i < hits.length; i++) {
       if (hits[i]._score >= maxScore) {
-        rSet.push(hits[i]);
+        rSet.push(hits[i])
       }
     }
 
-    return rSet;
+    return rSet
   },
 
   isObject(val) {
-    if (val !== null && typeof val === "object") {
-      return true;
+    if (val !== null && typeof val === 'object') {
+      return true
     }
-    return false;
+    return false
   },
 
   combineSimilarity(a, b) {
-    let c = {};
-    c.exact = a.exact + b.exact;
-    c.score = a.score + b.score;
+    let c = {}
+    c.exact = a.exact + b.exact
+    c.score = a.score + b.score
 
     //Not sure if this is the right way to add orders
-    c.order = 0.5 * (a.order + b.order);
+    c.order = 0.5 * (a.order + b.order)
 
-    c.size = 1.0 / (1.0 / a.size + 1.0 / b.size);
-    return c;
+    c.size = 1.0 / (1.0 / a.size + 1.0 / b.size)
+    return c
   },
 
   /**
@@ -572,22 +572,22 @@ module.exports = {
 	}*/
 
   getTypeIdentifier(source) {
-    if (!source) return "";
+    if (!source) return ''
 
-    let tClass = "";
+    let tClass = ''
     if (source.implies) {
-      tClass = source.implies.join(",");
+      tClass = source.implies.join(',')
     }
 
     if (source.meta) {
       if (source.meta.style) {
-        tClass = tClass + "," + source.meta.style.join(",");
+        tClass = tClass + ',' + source.meta.style.join(',')
       }
 
       if (source.meta.group) {
-        tClass = tClass + "," + source.meta.group;
+        tClass = tClass + ',' + source.meta.group
       }
     }
-    return tClass;
-  }
-};
+    return tClass
+  },
+}

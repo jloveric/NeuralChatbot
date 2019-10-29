@@ -1,21 +1,21 @@
-"use strict";
+'use strict'
 
-let Logger = require("sb/etc/Logger.js")("InstallBot");
-let GetConfigValues = require("sb/etc/GetConfigValues.js");
-let DeleteAccount = require("sb/extdb/DeleteUserAccount.js");
-let MongoHelper = require("sb/extdb/MongoHelper.js");
-let MongoFilesystem = require("sb/extdb/MongoFilesystem.js");
-let CreateUser = require("sb/user/CreateUser.js");
-let debug = require("debug")("InstallBot");
-let jsonfile = require("jsonfile");
-let BotInformation = require("sb/extdb/BotInformation.js");
-let InstallAndIndex = require("sb/extdb/InstallAndIndex.js");
-let Helper = require("sb/etc/Helper.js");
-let filepath = require("filepath");
-let ModifyStoredDatabase = require("sb/extdb/ModifyStoredDatabase.js");
+let Logger = require('sb/etc/Logger.js')('InstallBot')
+let GetConfigValues = require('sb/etc/GetConfigValues.js')
+let DeleteAccount = require('sb/extdb/DeleteUserAccount.js')
+let MongoHelper = require('sb/extdb/MongoHelper.js')
+let MongoFilesystem = require('sb/extdb/MongoFilesystem.js')
+let CreateUser = require('sb/user/CreateUser.js')
+let debug = require('debug')('InstallBot')
+let jsonfile = require('jsonfile')
+let BotInformation = require('sb/extdb/BotInformation.js')
+let InstallAndIndex = require('sb/extdb/InstallAndIndex.js')
+let Helper = require('sb/etc/Helper.js')
+let filepath = require('filepath')
+let ModifyStoredDatabase = require('sb/extdb/ModifyStoredDatabase.js')
 
-let IndexMongoDatabase = require("sb/extdb/IndexMongoDatabase.js");
-let BasicPhrasexDatabase = require("sb/phrasex/BasicPhrasexDatabase.js");
+let IndexMongoDatabase = require('sb/extdb/IndexMongoDatabase.js')
+let BasicPhrasexDatabase = require('sb/phrasex/BasicPhrasexDatabase.js')
 
 /**
  * This class is able to install an entire bot by calling the 'install'
@@ -39,26 +39,26 @@ let BasicPhrasexDatabase = require("sb/phrasex/BasicPhrasexDatabase.js");
  */
 class InstallBot {
   constructor() {
-    this.gc = new GetConfigValues();
-    this.createLogstash;
+    this.gc = new GetConfigValues()
+    this.createLogstash
   }
 
   close() {
-    this.bDb.close();
+    this.bDb.close()
   }
 
   initialize() {
-    this.bDb = null;
-    let botDb = new MongoHelper();
+    this.bDb = null
+    let botDb = new MongoHelper()
 
     let p1 = botDb
-      .initialize("botDatabase", this.gc.mongodb.url)
+      .initialize('botDatabase', this.gc.mongodb.url)
       .then(thatDb => {
-        this.bDb = thatDb;
-        return Promise.resolve();
-      });
+        this.bDb = thatDb
+        return Promise.resolve()
+      })
 
-    return Promise.all([p1]);
+    return Promise.all([p1])
   }
 
   /**
@@ -66,38 +66,38 @@ class InstallBot {
    * to update the bots.
    */
   createBotInfo(username, info) {
-    let bi = new BotInformation();
+    let bi = new BotInformation()
     return bi
-      .initialize(this.gc.mongodb.botDatabase, this.gc.mongodb.url, "bots")
+      .initialize(this.gc.mongodb.botDatabase, this.gc.mongodb.url, 'bots')
       .then(() => {
-        return bi.update(username, info);
+        return bi.update(username, info)
       })
       .then(() => {
-        debug("Finished bot information");
+        debug('Finished bot information')
 
         let np = new Promise((resolve, reject) => {
           this.bDb
-            .collection("bots")
+            .collection('bots')
             .findOne({ user: username }, (err, item) => {
               if (err) {
-                debug("Couldn't find file", err);
-                reject(err);
+                debug("Couldn't find file", err)
+                reject(err)
               } else if (!item) {
-                debug("Could not find file");
-                reject("file does not exist");
+                debug('Could not find file')
+                reject('file does not exist')
               } else {
-                debug("Getting stream for file", item);
-                resolve();
+                debug('Getting stream for file', item)
+                resolve()
               }
-            });
-        });
+            })
+        })
 
-        return np;
+        return np
       })
       .catch(reason => {
-        Logger.error(reason);
-        return Promise.reject(reason);
-      });
+        Logger.error(reason)
+        return Promise.reject(reason)
+      })
   }
 
   /**
@@ -106,83 +106,83 @@ class InstallBot {
   installPhraseDatabaseFromMongo(mongoName) {
     //let dbName = this.gc.mongodb.fileDatabase;
 
-    let mfs = new MongoFilesystem(); //Adding this here so I can look at the files written
+    let mfs = new MongoFilesystem() //Adding this here so I can look at the files written
 
-    let indexName = null;
+    let indexName = null
 
-    let ib = new IndexMongoDatabase("phrasedb", mongoName, null, mongoName);
+    let ib = new IndexMongoDatabase('phrasedb', mongoName, null, mongoName)
 
     return ib
       .initialize()
       .then(() => {
-        return ib.createElasticsearchDatabase();
+        return ib.createElasticsearchDatabase()
       })
       .then(() => {
-        return Promise.resolve();
+        return Promise.resolve()
       })
       .catch(reason => {
-        Logger.error(reason);
-        return Promise.resolve();
-      });
+        Logger.error(reason)
+        return Promise.resolve()
+      })
   }
 
   //Assume the file is stored in mongo and install from there
   installDatabaseFromMongo(csvFile, user) {
-    let dbName = this.gc.mongodb.fileDatabase;
-    let dbModify = new ModifyStoredDatabase();
-    debug("csvFile", csvFile, "user", user, "databaseTemp", dbName);
-    return dbModify.initialize(csvFile, user, "databaseTemp", dbName);
+    let dbName = this.gc.mongodb.fileDatabase
+    let dbModify = new ModifyStoredDatabase()
+    debug('csvFile', csvFile, 'user', user, 'databaseTemp', dbName)
+    return dbModify.initialize(csvFile, user, 'databaseTemp', dbName)
   }
 
   //Assume the file is stored on the disk and install from
   installDatabase(path, csvFile, user) {
-    debug("Trying to install database for", path, csvFile, user);
-    let dbName = this.gc.mongodb.fileDatabase;
-    let mfs = new MongoFilesystem(); //Adding this here so I can look at the files written
+    debug('Trying to install database for', path, csvFile, user)
+    let dbName = this.gc.mongodb.fileDatabase
+    let mfs = new MongoFilesystem() //Adding this here so I can look at the files written
 
     return mfs
       .initialize(dbName)
       .then(() => {
-        return mfs.replaceFileInMongo(path, csvFile, user, "databaseTemp");
+        return mfs.replaceFileInMongo(path, csvFile, user, 'databaseTemp')
       })
       .then(() => {
-        return this.installDatabaseFromMongo(csvFile, user);
-      });
+        return this.installDatabaseFromMongo(csvFile, user)
+      })
   }
 
   registerEmptyUser(username, password) {
-    let user = new CreateUser();
-    user.initialize();
-    return user.registerUser(username, password);
+    let user = new CreateUser()
+    user.initialize()
+    return user.registerUser(username, password)
   }
 
   delAndRegisterUser(username, password, info) {
-    debug("initializing", username, password, info);
-    let delAccount = new DeleteAccount();
+    debug('initializing', username, password, info)
+    let delAccount = new DeleteAccount()
 
     return delAccount
       .deleteAccount({
-        fileDatabase: "filesystem",
-        messageDb: "messagedb",
-        usernameDb: "useraccounts",
+        fileDatabase: 'filesystem',
+        messageDb: 'messagedb',
+        usernameDb: 'useraccounts',
         user: username,
         mongoUrl: this.gc.mongodb.url,
-        botDatabase: this.gc.mongodb.botDatabase
+        botDatabase: this.gc.mongodb.botDatabase,
       })
       .then(() => {
-        Logger.warn("Deleted account for", username);
-        return this.registerEmptyUser(username, password);
+        Logger.warn('Deleted account for', username)
+        return this.registerEmptyUser(username, password)
       })
       .then(() => {
-        debug("finished creating", username, "user");
-        Logger.info("finished creating", username, "user");
-        return this.createBotInfo(username, info);
+        debug('finished creating', username, 'user')
+        Logger.info('finished creating', username, 'user')
+        return this.createBotInfo(username, info)
       })
       .catch(reason => {
-        debug("error", reason);
-        Logger.error(reason);
-        return Promise.reject(reason);
-      });
+        debug('error', reason)
+        Logger.error(reason)
+        return Promise.reject(reason)
+      })
   }
 
   /**
@@ -198,96 +198,96 @@ class InstallBot {
    * {name}.json is optional and indicates the alternate phrase database
    */
   installFromMongo(username, filename) {
-    Helper.logAndThrowUndefined("Username must be defined", username);
-    Helper.logAndThrowUndefined("filename must be defined", filename);
+    Helper.logAndThrowUndefined('Username must be defined', username)
+    Helper.logAndThrowUndefined('filename must be defined', filename)
 
-    let dbName = this.gc.mongodb.fileDatabase;
-    let mfs = new MongoFilesystem();
+    let dbName = this.gc.mongodb.fileDatabase
+    let mfs = new MongoFilesystem()
 
     let np = new Promise((resolve, reject) => {
       this.initialize().then(() => {
-        debug("done initializing", filename);
+        debug('done initializing', filename)
 
-        let config;
+        let config
         mfs
           .initialize(dbName)
           .then(() => {
-            return mfs.getFileAsText(filename, username, "install");
+            return mfs.getFileAsText(filename, username, 'install')
           })
           .then(installFile => {
-            let obj = JSON.parse(installFile);
+            let obj = JSON.parse(installFile)
 
-            debug("obj is ", obj);
+            debug('obj is ', obj)
 
-            config = obj.config;
-            config.filesystem = this.gc.mongodb.fileDatabase;
-            config.username = username;
-            debug("config", config);
-            this.csvFile = config.filename;
+            config = obj.config
+            config.filesystem = this.gc.mongodb.fileDatabase
+            config.username = username
+            debug('config', config)
+            this.csvFile = config.filename
 
-            debug("Before del and register");
+            debug('Before del and register')
 
-            return this.createBotInfo(username, obj);
+            return this.createBotInfo(username, obj)
           })
           .then(() => {
-            return this.installDatabaseFromMongo(this.csvFile, username);
+            return this.installDatabaseFromMongo(this.csvFile, username)
           })
           .then(() => {
-            let install = new InstallAndIndex();
-            debug("Before creating", config);
-            return install.create(config);
+            let install = new InstallAndIndex()
+            debug('Before creating', config)
+            return install.create(config)
           })
           .then(() => {
-            debug("Stepping into last set");
+            debug('Stepping into last set')
             //Try and install the json file, which may or may not
             //exist.  Resolve anyway though since by default it will
             //use the default phrase database.
-            let phraseFile = null;
-            let fileAsText = null;
-            let tableName = null;
+            let phraseFile = null
+            let fileAsText = null
+            let tableName = null
             mfs
-              .getDocumentsOfType(username, "phrase")
+              .getDocumentsOfType(username, 'phrase')
               .then(files => {
-                debug("got the documents", files);
-                phraseFile = files[0].filename;
-                return mfs.getFileAsText(phraseFile, username, "phrase");
+                debug('got the documents', files)
+                phraseFile = files[0].filename
+                return mfs.getFileAsText(phraseFile, username, 'phrase')
               })
               .then(fileAsText => {
-                debug("got the fileAsText");
-                tableName = Helper.uniquePhraseIndexName(phraseFile, username);
-                fileAsText = JSON.parse(fileAsText);
+                debug('got the fileAsText')
+                tableName = Helper.uniquePhraseIndexName(phraseFile, username)
+                fileAsText = JSON.parse(fileAsText)
                 return BasicPhrasexDatabase.generatePhraseDatabase(
                   null,
                   tableName,
                   fileAsText
-                );
+                )
               })
               .then(() => {
-                debug("InstallingPhraseDatabaseFromMongo");
-                return this.installPhraseDatabaseFromMongo(tableName);
+                debug('InstallingPhraseDatabaseFromMongo')
+                return this.installPhraseDatabaseFromMongo(tableName)
               })
               .then(() => {
-                Logger.info("Installed phrase database");
-                resolve();
+                Logger.info('Installed phrase database')
+                resolve()
               })
               .catch(reason => {
                 Logger.error(
-                  "Failed to install local phrase database for reason",
+                  'Failed to install local phrase database for reason',
                   reason
-                );
-                resolve();
-              });
+                )
+                resolve()
+              })
 
-            debug("Created");
+            debug('Created')
           })
           .catch(reason => {
-            Logger.error(reason);
-            reject(reason);
-          });
-      });
-    });
+            Logger.error(reason)
+            reject(reason)
+          })
+      })
+    })
 
-    return np;
+    return np
   }
 
   /**
@@ -297,60 +297,60 @@ class InstallBot {
    * @param filename is {name}.install file
    */
   install(username, password, filename) {
-    Helper.logAndThrowUndefined("Username must be defined", username);
-    Helper.logAndThrowUndefined("password must be defined", password);
-    Helper.logAndThrowUndefined("filename must be defined", filename);
+    Helper.logAndThrowUndefined('Username must be defined', username)
+    Helper.logAndThrowUndefined('password must be defined', password)
+    Helper.logAndThrowUndefined('filename must be defined', filename)
 
     let np = new Promise((resolve, reject) => {
       this.initialize().then(() => {
-        debug("done initializing", filename);
+        debug('done initializing', filename)
 
         jsonfile.readFile(filename, (err, obj) => {
           if (err) {
-            debug("Error", err);
-            reject();
-            return;
+            debug('Error', err)
+            reject()
+            return
           }
 
-          debug("obj is ", obj);
+          debug('obj is ', obj)
           //ib.install(args.username, args.password, obj)
 
-          let config = obj.config;
-          config.filesystem = this.gc.mongodb.fileDatabase;
-          config.username = username;
-          debug("config", config);
-          this.csvFile = config.filename;
+          let config = obj.config
+          config.filesystem = this.gc.mongodb.fileDatabase
+          config.username = username
+          debug('config', config)
+          this.csvFile = config.filename
 
-          let csvFilePath = Helper.getDirectory(filename);
-          let diskFile = csvFilePath + "/" + this.csvFile;
+          let csvFilePath = Helper.getDirectory(filename)
+          let diskFile = csvFilePath + '/' + this.csvFile
 
-          debug("diskFile", diskFile);
+          debug('diskFile', diskFile)
           //this.path = filename;
 
-          debug("Before del and register");
+          debug('Before del and register')
           this.delAndRegisterUser(username, password, obj)
             .then(() => {
-              debug("Before installDatabase");
-              return this.installDatabase(diskFile, this.csvFile, username);
+              debug('Before installDatabase')
+              return this.installDatabase(diskFile, this.csvFile, username)
             })
             .then(() => {
-              let install = new InstallAndIndex();
-              debug("Before creating", config);
-              return install.create(config);
+              let install = new InstallAndIndex()
+              debug('Before creating', config)
+              return install.create(config)
             })
             .then(() => {
-              debug("Created");
-              resolve();
+              debug('Created')
+              resolve()
             })
             .catch(reason => {
-              reject(reason);
-            });
-        });
-      });
-    });
+              reject(reason)
+            })
+        })
+      })
+    })
 
-    return np;
+    return np
   }
 }
 
-module.exports = InstallBot;
+module.exports = InstallBot

@@ -1,10 +1,10 @@
-"use strict";
+'use strict'
 
-let GetConfigValues = require("sb/etc/GetConfigValues.js");
-let MongoHelper = require("sb/extdb/MongoHelper.js");
-let Logger = require("sb/etc/Logger.js")("PhraseDatabase");
-let Helper = require("sb/etc/Helper.js");
-let debug = require("debug")("PhraseDatabase");
+let GetConfigValues = require('sb/etc/GetConfigValues.js')
+let MongoHelper = require('sb/extdb/MongoHelper.js')
+let Logger = require('sb/etc/Logger.js')('PhraseDatabase')
+let Helper = require('sb/etc/Helper.js')
+let debug = require('debug')('PhraseDatabase')
 
 /**
  * PhraseDatabase provides a way to access and generate a phrase database in mongo
@@ -15,11 +15,11 @@ let debug = require("debug")("PhraseDatabase");
  */
 class PhraseDatabase {
   constructor() {
-    this.mongod = new MongoHelper();
-    this.gf = new GetConfigValues();
-    this.phraseTable = "phrase";
-    this.count = 0;
-    this.groupIndex = 0;
+    this.mongod = new MongoHelper()
+    this.gf = new GetConfigValues()
+    this.phraseTable = 'phrase'
+    this.count = 0
+    this.groupIndex = 0
   }
 
   close() {}
@@ -31,20 +31,20 @@ class PhraseDatabase {
    */
   initialize(options) {
     if (options.phraseTable) {
-      this.phraseTable = options.phraseTable;
+      this.phraseTable = options.phraseTable
     }
 
     let np = this.mongod
-      .initialize("phrasedb", this.gf.mongodb.url)
+      .initialize('phrasedb', this.gf.mongodb.url)
       .then(db => {
-        this.db = db;
-        return Promise.resolve(true);
+        this.db = db
+        return Promise.resolve(true)
       })
       .catch(() => {
-        return Promise.reject();
-      });
+        return Promise.reject()
+      })
 
-    return np;
+    return np
   }
 
   /**
@@ -52,19 +52,19 @@ class PhraseDatabase {
    * @param tableName is the table to drop.
    */
   dropTable(tableName) {
-    Logger.debug("Stepping into deleteTable");
+    Logger.debug('Stepping into deleteTable')
     let np = new Promise((resolve, reject) => {
       this.db.collection(tableName).remove({}, err => {
         if (err) {
-          Logger.error("deleteTable error", err);
-          reject();
+          Logger.error('deleteTable error', err)
+          reject()
         } else {
-          Logger.info("Removed table", tableName);
-          resolve(true);
+          Logger.info('Removed table', tableName)
+          resolve(true)
         }
-      });
-    });
-    return np;
+      })
+    })
+    return np
   }
 
   /**
@@ -73,7 +73,7 @@ class PhraseDatabase {
    * @param source is the document from the database
    */
   getTypeIdentifier(source) {
-    return Helper.getTypeIdentifier(source);
+    return Helper.getTypeIdentifier(source)
   }
 
   /**
@@ -82,36 +82,36 @@ class PhraseDatabase {
    * @param phraseType is the type of phrase to collect, "tell" for example.
    */
   getPhraseMap(phraseType) {
-    Logger.debug("PhraseDatabase inside getPhraseMap");
+    Logger.debug('PhraseDatabase inside getPhraseMap')
     let np = new Promise((resolve, reject) => {
-      let table = this.db.collection(this.phraseTable);
+      let table = this.db.collection(this.phraseTable)
 
       table.find({ phraseType: phraseType }).toArray((err, documents) => {
         if (err) {
-          Logger.error(err);
-          reject();
+          Logger.error(err)
+          reject()
         } else {
           //Logger.debug('PhraseDatabase getting documents', documents)
-          let tMap = new Map();
+          let tMap = new Map()
 
           for (let i = 0; i < documents.length; i++) {
             //let words = documents[i].implies.join(',');
-            let words = this.getTypeIdentifier(documents[i]);
+            let words = this.getTypeIdentifier(documents[i])
 
             if (tMap.get(words)) {
               //console.log(tMap.get(words))
-              tMap.get(words).push(documents[i]);
+              tMap.get(words).push(documents[i])
             } else {
-              tMap.set(words, [documents[i]]);
+              tMap.set(words, [documents[i]])
             }
           }
 
-          resolve(tMap);
+          resolve(tMap)
         }
-      });
-    });
+      })
+    })
 
-    return np;
+    return np
   }
 
   /**
@@ -119,56 +119,56 @@ class PhraseDatabase {
    * that match the following search.
    */
   getList(phraseType, implies) {
-    Logger.debug("Inside PhraseDatabase getList");
+    Logger.debug('Inside PhraseDatabase getList')
     let np = new Promise((resolve, reject) => {
-      let table = this.db.collection(this.phraseTable);
+      let table = this.db.collection(this.phraseTable)
 
       table
         .find({ phraseType: phraseType, implies: implies.sort() })
         .toArray((err, documents) => {
           if (err) {
-            Logger.error(err);
-            reject();
+            Logger.error(err)
+            reject()
           } else {
-            Logger.debug("PhraseDatabase getting documents", documents);
-            resolve(documents);
+            Logger.debug('PhraseDatabase getting documents', documents)
+            resolve(documents)
           }
-        });
-    });
+        })
+    })
 
-    return np;
+    return np
   }
 
   /**
    * Add a list of phrases and list of responses with an associated group
    */
   addGroup(obj, definitions) {
-    debug("adding obj", obj);
-    Helper.hasProperties(obj, ["meta", "target", "implies", "phraseType"]);
-    Helper.hasProperties(obj.meta, ["group"]);
+    debug('adding obj', obj)
+    Helper.hasProperties(obj, ['meta', 'target', 'implies', 'phraseType'])
+    Helper.hasProperties(obj.meta, ['group'])
 
-    obj.meta.groupIndex = this.groupIndex;
+    obj.meta.groupIndex = this.groupIndex
 
-    let storage = { phrase: null, response: null };
+    let storage = { phrase: null, response: null }
 
     if (obj.storage) {
-      if (typeof obj.storage === "string") {
-        debug(obj.storage);
+      if (typeof obj.storage === 'string') {
+        debug(obj.storage)
         if (definitions) {
           if (!definitions[obj.storage]) {
-            debug("definition", obj.storage, "undefined");
+            debug('definition', obj.storage, 'undefined')
           } else {
-            storage.phrase = definitions[obj.storage].phrase;
-            storage.response = definitions[obj.storage].response;
+            storage.phrase = definitions[obj.storage].phrase
+            storage.response = definitions[obj.storage].response
           }
         }
-      } else if (typeof obj.storage === "object") {
-        storage.phrase = obj.storage.phrase;
-        storage.response = obj.storage.response;
+      } else if (typeof obj.storage === 'object') {
+        storage.phrase = obj.storage.phrase
+        storage.response = obj.storage.response
       }
     }
 
-    let pList = [];
+    let pList = []
     if (obj.phrase) {
       //If it has a phrase block
       for (let i = 0; i < obj.phrase.length; i++) {
@@ -178,78 +178,78 @@ class PhraseDatabase {
           implies: obj.implies,
           target: obj.target,
           meta: obj.meta,
-          storage: storage.phrase
-        });
-        pList.push(np);
+          storage: storage.phrase,
+        })
+        pList.push(np)
       }
     }
 
     //Increment the groupIndex so responses belong to a different group
-    this.groupIndex++;
+    this.groupIndex++
 
     let newObj = {
-      phraseType: "tell",
+      phraseType: 'tell',
       implies: obj.implies,
       target: obj.target,
-      meta: obj.meta
-    };
+      meta: obj.meta,
+    }
 
     if (obj.negative) {
-      newObj.negative = obj.negative;
+      newObj.negative = obj.negative
     }
 
     if (obj.response) {
       for (let i = 0; i < obj.response.length; i++) {
-        newObj.phrase = obj.response[i];
-        newObj.continue = obj.continue ? obj.continue : [obj.response[i]];
-        newObj.storage = storage.response;
-        let np = this.addPhrase(Object.assign({}, newObj));
-        pList.push(np);
+        newObj.phrase = obj.response[i]
+        newObj.continue = obj.continue ? obj.continue : [obj.response[i]]
+        newObj.storage = storage.response
+        let np = this.addPhrase(Object.assign({}, newObj))
+        pList.push(np)
       }
     }
 
     //Again, increment groupIndex for the next group
-    this.groupIndex++;
+    this.groupIndex++
 
-    return Promise.all(pList);
+    return Promise.all(pList)
   }
 
   //Create to sentences, one where terms in parentheses are ignored and
   //the other where they remain.
   reducePhrase(phrase) {
-    let reducedPhrase = phrase.replace(/\([^)]*\)/g, "").match(/(\S+)/g);
+    let reducedPhrase = phrase.replace(/\([^)]*\)/g, '').match(/(\S+)/g)
     if (!reducedPhrase) {
-      Helper.logAndThrow("It seems your database entry is empty : " + phrase);
+      Helper.logAndThrow('It seems your database entry is empty : ' + phrase)
     }
 
-    let newPhrase = "";
+    let newPhrase = ''
     for (let i = 0; i < reducedPhrase.length; i++) {
       if (i == 0) {
-        newPhrase = newPhrase + reducedPhrase[i];
+        newPhrase = newPhrase + reducedPhrase[i]
       } else {
-        newPhrase = newPhrase + " " + reducedPhrase[i];
+        newPhrase = newPhrase + ' ' + reducedPhrase[i]
       }
     }
 
-    return newPhrase;
+    return newPhrase
   }
 
   insertIntoPhraseTable(val) {
     let np = new Promise((resolve, reject) => {
-      let table = this.db.collection(this.phraseTable);
+      let table = this.db.collection(this.phraseTable)
 
       table.insert(val, { w: 1 }, (err, rec) => {
         if (err) {
-          Logger.error("Phrase insertion failed", err);
-          reject();
+          Logger.error('Phrase insertion failed', err)
+          reject()
         } else {
-          this.count++;
+          this.count++
           //console.log('count',this.count)
-          resolve();
+          resolve()
         }
-      });
-    });
-    return np;
+      })
+    })
+    return np
   }
 
   /**
@@ -263,22 +263,22 @@ class PhraseDatabase {
    * @param meta is an object containing any additional information you might use
    */
   addPhrase(obj) {
-    Helper.hasProperties(obj, ["target", "implies", "phraseType"]);
+    Helper.hasProperties(obj, ['target', 'implies', 'phraseType'])
 
     if (!obj.meta) {
-      obj.meta = {};
+      obj.meta = {}
     }
 
     //Create to sentences, one where terms in parentheses are ignored and
     //the other where they remain.
-    let newPhrase = this.reducePhrase(obj.phrase);
+    let newPhrase = this.reducePhrase(obj.phrase)
 
-    let ans = obj.implies.sort();
-    obj.words = newPhrase;
-    obj.implies = ans;
+    let ans = obj.implies.sort()
+    obj.words = newPhrase
+    obj.implies = ans
 
-    return this.insertIntoPhraseTable(obj);
+    return this.insertIntoPhraseTable(obj)
   }
 }
 
-module.exports = PhraseDatabase;
+module.exports = PhraseDatabase

@@ -1,10 +1,10 @@
-"use strict";
+'use strict'
 
-let Helper = require("sb/etc/Helper.js");
-let Logger = require("sb/etc/Logger.js")("CreateDefaultMongoData");
-let MongoFilesystem = require("sb/extdb/MongoFilesystem.js");
-let ModifyStoredDatabase = require("sb/extdb/ModifyStoredDatabase.js");
-let InstallAndIndex = require("sb/extdb/InstallAndIndex.js");
+let Helper = require('sb/etc/Helper.js')
+let Logger = require('sb/etc/Logger.js')('CreateDefaultMongoData')
+let MongoFilesystem = require('sb/extdb/MongoFilesystem.js')
+let ModifyStoredDatabase = require('sb/extdb/ModifyStoredDatabase.js')
+let InstallAndIndex = require('sb/extdb/InstallAndIndex.js')
 
 /**
  * For tests and when a user logs in for the first time we want
@@ -12,7 +12,7 @@ let InstallAndIndex = require("sb/extdb/InstallAndIndex.js");
  */
 class CreateDefaultMongoData {
   constructor() {
-    this.installAndIndex = new InstallAndIndex();
+    this.installAndIndex = new InstallAndIndex()
   }
 
   /**
@@ -22,30 +22,30 @@ class CreateDefaultMongoData {
    * @user is the user
    */
   initialize(diskDirectory, fileDatabase, startFile, user) {
-    Logger.debug("Seeing if we need to create dummy files", startFile);
-    let mongoFile;
+    Logger.debug('Seeing if we need to create dummy files', startFile)
+    let mongoFile
 
-    let dbModify = new ModifyStoredDatabase();
+    let dbModify = new ModifyStoredDatabase()
 
     let np = new Promise((resolve, reject) => {
-      mongoFile = new MongoFilesystem();
+      mongoFile = new MongoFilesystem()
       mongoFile
         .initialize(fileDatabase)
         .then(() => {
-          return mongoFile.doesFileExist(startFile, user, "database");
+          return mongoFile.doesFileExist(startFile, user, 'database')
         })
         .then(exists => {
           //mongoFile.doesFileTypeExist(user, "database").then((exists) => {
-          resolve(exists);
+          resolve(exists)
         })
         .catch(reason => {
-          Logger.error(reason);
-          reject(reason);
-        });
-    });
+          Logger.error(reason)
+          reject(reason)
+        })
+    })
 
-    let configFile = startFile + ".config";
-    let logstashFile = startFile + ".logstash.static";
+    let configFile = startFile + '.config'
+    let logstashFile = startFile + '.logstash.static'
 
     //let configFile = startFile;
     //let logstashFile = startFile;
@@ -55,55 +55,55 @@ class CreateDefaultMongoData {
         if (!exists) {
           return mongoFile
             .storeFileInMongo(
-              diskDirectory + "/" + startFile,
+              diskDirectory + '/' + startFile,
               startFile,
               user,
-              "databaseTemp"
+              'databaseTemp'
             )
             .then(() => {
               return mongoFile.storeFileInMongo(
-                diskDirectory + "/" + configFile,
+                diskDirectory + '/' + configFile,
                 startFile,
                 user,
-                "databaseConfig"
-              );
+                'databaseConfig'
+              )
             })
             .then(() => {
               return mongoFile.storeFileInMongo(
-                diskDirectory + "/" + logstashFile,
+                diskDirectory + '/' + logstashFile,
                 startFile,
                 user,
-                "logstash"
-              );
+                'logstash'
+              )
             })
             .then(() => {
               return dbModify.initialize(
                 startFile,
                 user,
-                "databaseTemp",
+                'databaseTemp',
                 fileDatabase
-              );
+              )
             })
             .then(() => {
-              Logger.info("Created files");
-              mongoFile.close();
-              return Promise.resolve();
+              Logger.info('Created files')
+              mongoFile.close()
+              return Promise.resolve()
             })
             .catch(reason => {
-              Logger.error(reason);
-            });
+              Logger.error(reason)
+            })
         } else {
-          Logger.info("File already exists");
-          return Promise.resolve();
+          Logger.info('File already exists')
+          return Promise.resolve()
         }
       })
       .catch(reason => {
-        Logger.error("Find failed", reason);
-        return Promise.reject(reason);
-      });
+        Logger.error('Find failed', reason)
+        return Promise.reject(reason)
+      })
 
-    return p;
+    return p
   }
 }
 
-module.exports = CreateDefaultMongoData;
+module.exports = CreateDefaultMongoData

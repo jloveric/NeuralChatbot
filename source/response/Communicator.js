@@ -1,7 +1,7 @@
-"use strict";
+'use strict'
 
-let debug = require("debug")("Communicator");
-let Logger = require("sb/etc/Logger.js")("Communicator");
+let debug = require('debug')('Communicator')
+let Logger = require('sb/etc/Logger.js')('Communicator')
 
 /**
  * The communicator determines where the data is sent, right now
@@ -14,63 +14,63 @@ let Logger = require("sb/etc/Logger.js")("Communicator");
  */
 class Communicator {
   constructor() {
-    debug("Constructing Communicator");
+    debug('Constructing Communicator')
   }
 
   initialize(answerQ, answerCallback, name) {
-    debug("Initializing");
-    this.answerQ = answerQ;
-    this.answerCallback = answerCallback;
-    this.name = name;
+    debug('Initializing')
+    this.answerQ = answerQ
+    this.answerCallback = answerCallback
+    this.name = name
   }
 
   setAnswerCallback(callback) {
-    this.answerCallback = callback;
+    this.answerCallback = callback
   }
 
   /**
    * Send the response from the database back to the user.
    */
   Respond(userId, client, answers) {
-    debug("Stepping into Respond -- answers", answers);
+    debug('Stepping into Respond -- answers', answers)
 
     return this.answerCallback(answers)
       .then(() => {
-        let sendObj = answers;
-        sendObj.botName = this.name;
+        let sendObj = answers
+        sendObj.botName = this.name
 
-        debug("answers", answers);
+        debug('answers', answers)
 
         switch (answers.clientType) {
-          case "local": //This is meant to fall through
+          case 'local': //This is meant to fall through
             if (client) {
-              client.send(sendObj);
+              client.send(sendObj)
             } else {
-              Logger.warn("Client", userId, "Does not exist");
+              Logger.warn('Client', userId, 'Does not exist')
             }
-            break;
-          case "browser":
+            break
+          case 'browser':
             {
               if (client) {
-                debug("sendobj", sendObj);
-                client.send(JSON.stringify(sendObj));
+                debug('sendobj', sendObj)
+                client.send(JSON.stringify(sendObj))
               } else {
-                Logger.warn("Client", userId, "Does not exist");
+                Logger.warn('Client', userId, 'Does not exist')
               }
             }
-            break;
+            break
 
           default:
         }
 
-        return Promise.resolve();
+        return Promise.resolve()
       })
       .catch(reason => {
-        debug("error", reason);
-        Logger.error(reason);
-        return Promise.reject(reason);
-      });
+        debug('error', reason)
+        Logger.error(reason)
+        return Promise.reject(reason)
+      })
   }
 }
 
-module.exports = Communicator;
+module.exports = Communicator

@@ -1,11 +1,11 @@
-"use strict";
+'use strict'
 
-let Logger = require("sb/etc/Logger.js")("IndexMongoDatabase");
-let GetConfigValues = require("sb/etc/GetConfigValues.js");
-let MongoHelper = require("sb/extdb/MongoHelper.js");
-let es = require("elasticsearch");
-let async = require("async");
-let debug = require("debug")("IndexMongoDatabase");
+let Logger = require('sb/etc/Logger.js')('IndexMongoDatabase')
+let GetConfigValues = require('sb/etc/GetConfigValues.js')
+let MongoHelper = require('sb/extdb/MongoHelper.js')
+let es = require('elasticsearch')
+let async = require('async')
+let debug = require('debug')('IndexMongoDatabase')
 
 /**
  * Index a mongo db database collection with elasticsearch
@@ -27,43 +27,43 @@ class IndexMongoDatabase {
    * elasticsearch.
    */
   constructor(mongoDbName, mongoTableName, fieldName, indexName) {
-    this.mongod = new MongoHelper();
-    this.phrasedb = mongoDbName;
-    this.indexName = indexName;
-    this.phraseTable = mongoTableName;
-    this.table = { data: [] };
-    this.gf = new GetConfigValues();
-    this.field = fieldName;
-    this.esQ = null;
+    this.mongod = new MongoHelper()
+    this.phrasedb = mongoDbName
+    this.indexName = indexName
+    this.phraseTable = mongoTableName
+    this.table = { data: [] }
+    this.gf = new GetConfigValues()
+    this.field = fieldName
+    this.esQ = null
     //this.elasticsearch = es;
     this.client = new es.Client({
       host: this.gf.elasticsearch.host,
-      requestTimeout: 60000
-    });
+      requestTimeout: 60000,
+    })
   }
 
   close() {
-    this.client.close();
+    this.client.close()
   }
 
   initialize() {
     let np = this.mongod
       .initialize(this.phrasedb, this.gf.mongodb.url)
       .then(db => {
-        this.db = db;
-        Object.seal(this);
-        return Promise.resolve(true);
-      });
+        this.db = db
+        Object.seal(this)
+        return Promise.resolve(true)
+      })
 
-    return np;
+    return np
   }
 
   //just to match mongo case
   dropTable(tableName) {
     let np = new Promise((resolve, reject) => {
-      resolve();
-    });
-    return np;
+      resolve()
+    })
+    return np
   }
 
   /**
@@ -74,21 +74,21 @@ class IndexMongoDatabase {
     let prom = new Promise((resolve, reject) => {
       this.client.indices.delete(
         {
-          index: tIndex
+          index: tIndex,
         },
         (err, response) => {
           if (err) {
             Logger.warn(
-              "Delete",
+              'Delete',
               tIndex,
-              "elasticsearch error - most likely index does not exist"
-            );
+              'elasticsearch error - most likely index does not exist'
+            )
           }
-          resolve();
+          resolve()
         }
-      );
-    });
-    return prom;
+      )
+    })
+    return prom
   }
 
   getDocumentCount(tIndex) {
@@ -96,71 +96,71 @@ class IndexMongoDatabase {
       this.client
         .count({ index: tIndex })
         .then(resp => {
-          debug("document count", resp.count);
-          resolve(resp.count);
+          debug('document count', resp.count)
+          resolve(resp.count)
         })
         .catch(reason => {
-          debug("document count failed", reason);
-          reject();
-        });
-    });
+          debug('document count failed', reason)
+          reject()
+        })
+    })
 
-    return np;
+    return np
   }
 
   index(tIndex, id, item) {
-    let count = id;
+    let count = id
     let np = new Promise((resolve, reject) => {
       this.client
         .index({
           index: tIndex,
-          type: "pub",
+          type: 'pub',
           id: count,
-          body: item
+          body: item,
         })
         .then(() => {
-          resolve();
+          resolve()
         })
         .catch(error => {
-          Logger.error("Create", tIndex, "elasticsearch index", error);
-          reject();
-        });
-    });
+          Logger.error('Create', tIndex, 'elasticsearch index', error)
+          reject()
+        })
+    })
 
-    return np;
+    return np
   }
 
   indexTable(tIndex, text) {
     if (text) {
-      return this.indexTableFromText(tIndex, text);
+      return this.indexTableFromText(tIndex, text)
     } else {
-      return this.indexTableMongo(tIndex);
+      return this.indexTableMongo(tIndex)
     }
   }
 
   subSet(tIndex, a, index) {
     if (index < a.length) {
       //debug('a[index]',a[index])
-      return this.index(tIndex, index, a[index]);
+      return this.index(tIndex, index, a[index])
     } else {
-      return Promise.reject("finished");
+      return Promise.reject('finished')
     }
   }
 
   tQ(tIndex, a, index) {
     if (index < a.length) {
-      debug("indexing", index, a.length);
+      debug('indexing', index, a.length)
       return this.subSet(tIndex, a, index)
         .then(() => {
-          return this.tQ(tIndex, a, index + 1);
+          return this.tQ(tIndex, a, index + 1)
         })
         .catch(reason => {
-          Logger.error(reason);
-          debug("error", reason);
-          return Promise.resolve();
-        });
+          Logger.error(reason)
+          debug('error', reason)
+          return Promise.resolve()
+        })
     } else {
-      return Promise.resolve();
+      return Promise.resolve()
     }
   }
 
@@ -168,58 +168,58 @@ class IndexMongoDatabase {
    * In this case index the table from a text file instead of from a table in the phrasedb
    */
   indexTableFromText(tIndex, text) {
-    debug("indexing table", tIndex);
-    let count = 0;
+    debug('indexing table', tIndex)
+    let count = 0
 
     if (!text.data) {
-      return Promise.reject("data field does not exist in text file");
+      return Promise.reject('data field does not exist in text file')
     }
 
     let p = new Promise((res, rej) => {
-      let pList = [];
+      let pList = []
 
       for (let i = 0; i < text.data.length; i++) {
-        let item = text.data[i];
+        let item = text.data[i]
 
         if (item.length) {
           //debug('Indexing item', item)
 
-          delete item["_id"];
+          delete item['_id']
 
           //If fieldname is defined only index a subset of the data
           if (this.fieldName) {
-            item = item[this.fieldName];
+            item = item[this.fieldName]
           }
 
           //this.addToQ({index : tIndex, id : count, item : item}, null)
 
-          let tp = this.index(tIndex, pList.length, item);
+          let tp = this.index(tIndex, pList.length, item)
           //let tp = this.tQ(item)
-          pList.push(tp);
-          count++;
+          pList.push(tp)
+          count++
         } else {
-          resolve();
+          resolve()
         }
       }
 
       return Promise.all(pList)
         .then(() => {
-          debug("COUNT", count);
-          res(count);
-          debug("Called res");
+          debug('COUNT', count)
+          res(count)
+          debug('Called res')
         })
         .catch(reason => {
-          Logger.error(reason);
-          rej();
-        });
-    });
+          Logger.error(reason)
+          rej()
+        })
+    })
 
     /*Make sure the data is actually written to the disk before returning.*/
     return p.then(tCount => {
       return this.client.indices.flush().then(() => {
-        return Promise.resolve(tCount);
-      });
-    });
+        return Promise.resolve(tCount)
+      })
+    })
   }
 
   /**
@@ -229,69 +229,69 @@ class IndexMongoDatabase {
    * @param tIndex is the name of the index to store the mongo data in
    */
   indexTableMongo(tIndex) {
-    debug("indexing table", tIndex, this.phraseTable);
-    let count = 0;
+    debug('indexing table', tIndex, this.phraseTable)
+    let count = 0
 
     let p = new Promise((res, rej) => {
-      let pList = [];
-      let tp = Promise.resolve();
+      let pList = []
+      let tp = Promise.resolve()
       let np = new Promise((resolve, reject) => {
         this.db
           .collection(this.phraseTable)
           .find()
           .toArray((err, item) => {
             if (err) {
-              Logger.error(err);
-              rej0(err);
+              Logger.error(err)
+              rej0(err)
             }
 
             if (item) {
-              debug("Indexing item", item);
+              debug('Indexing item', item)
 
               for (let i = 0; i < item.length; i++) {
-                delete item[i]["_id"];
+                delete item[i]['_id']
               }
 
               //If fieldname is defined only index a subset of the data
               if (this.fieldName) {
-                item = item[this.fieldName];
+                item = item[this.fieldName]
               }
 
               //this.addToQ({index : tIndex, id : count, item : item}, null)
               tp = this.tQ(tIndex, item, 0).then(() => {
-                resolve();
-              });
+                resolve()
+              })
               //tp = this.index(tIndex, pList.length, item)
               //pList.push(tp);
 
-              count++;
+              count++
             } else {
-              resolve();
+              resolve()
             }
-          });
-      });
+          })
+      })
 
       return np
         .then(() => {
-          debug("COUNT", count);
-          res(count);
-          debug("Called res");
+          debug('COUNT', count)
+          res(count)
+          debug('Called res')
         })
         .catch(reason => {
-          debug("error", reason);
-          Logger.error(reason);
-          rej();
-        });
-    });
+          debug('error', reason)
+          Logger.error(reason)
+          rej()
+        })
+    })
 
     /*Make sure the data is actually written to the disk before returning.*/
     return p.then(tCount => {
-      debug("finished indexing finally", tCount);
+      debug('finished indexing finally', tCount)
       return this.client.indices.flush({ waitIfOngoing: true }).then(() => {
-        debug("flushing client", tCount);
-        return Promise.resolve(tCount);
-      });
-    });
+        debug('flushing client', tCount)
+        return Promise.resolve(tCount)
+      })
+    })
   }
 
   /**
@@ -300,12 +300,12 @@ class IndexMongoDatabase {
    * it is not include then it searches phrasedb for the correct phrase.
    */
   createElasticsearchDatabase(jsonObject) {
-    debug("creating elastic search database");
-    Logger.info("Indexing", this.phrasedb, "with name", this.indexName);
+    debug('creating elastic search database')
+    Logger.info('Indexing', this.phrasedb, 'with name', this.indexName)
 
     let np = new Promise((resolve, reject) => {
       //Delete the mofo
-      let prom = this.deleteElasticsearchIndex(this.indexName);
+      let prom = this.deleteElasticsearchIndex(this.indexName)
 
       //this.client.indices.create.spec.method = 'PUT';
       //recreate the index
@@ -319,43 +319,43 @@ class IndexMongoDatabase {
                   number_of_shards: 1,
                   similarity: {
                     mysim: {
-                      type: "BM25",
+                      type: 'BM25',
                       b: 0.75,
-                      k1: 1.2
-                    }
-                  }
-                }
-              }
+                      k1: 1.2,
+                    },
+                  },
+                },
+              },
             },
             (error, response) => {
               if (error) {
-                Logger.error(error);
-                return reject(error);
+                Logger.error(error)
+                return reject(error)
               }
 
               this.indexTable(this.indexName, jsonObject)
                 .then(count => {
-                  resolve(count);
+                  resolve(count)
                 })
                 .catch(reason => {
-                  reject(reason);
-                });
+                  reject(reason)
+                })
             }
-          );
+          )
         })
         .catch(reason => {
-          debug(reason);
-          Logger.error(reason);
-          reject();
-        });
-    });
+          debug(reason)
+          Logger.error(reason)
+          reject()
+        })
+    })
 
-    return np;
+    return np
   }
 
   printTable() {
-    console.log(this.table.data);
+    console.log(this.table.data)
   }
 }
 
-module.exports = IndexMongoDatabase;
+module.exports = IndexMongoDatabase

@@ -1,6 +1,6 @@
-"use strict";
+'use strict'
 
-let Helper = require("sb/etc/Helper.js");
+let Helper = require('sb/etc/Helper.js')
 
 /**
  * Base class for reducing the number of hits based on filters
@@ -13,34 +13,34 @@ class PhraseHitsFilter {
 
 class NoPhraseFilter extends PhraseHitsFilter {
   constructor() {
-    super();
+    super()
   }
 
   filter(hits) {
-    return hits;
+    return hits
   }
 }
 
 class NoTellFilter extends PhraseHitsFilter {
   constructor() {
-    super();
+    super()
   }
 
   filter(hits) {
-    let filteredHits = [];
+    let filteredHits = []
     for (let i = 0; i < hits.length; i++) {
-      let a = false;
+      let a = false
       //console.log('HITS', i,hits[i])
 
       if (hits[i]._source.phraseType) {
         //console.log('HITS', hits[i].meta)
-        a = Helper.matchesRegex(hits[i]._source.phraseType, "tell");
+        a = Helper.matchesRegex(hits[i]._source.phraseType, 'tell')
       }
       if (!a) {
-        filteredHits.push(hits[i]);
+        filteredHits.push(hits[i])
       }
     }
-    return filteredHits;
+    return filteredHits
   }
 }
 
@@ -49,38 +49,38 @@ class NoTellFilter extends PhraseHitsFilter {
  */
 class FindStoreFilter extends PhraseHitsFilter {
   constructor() {
-    super();
+    super()
   }
 
   filter(hits) {
-    let filteredHits = [];
+    let filteredHits = []
     for (let i = 0; i < hits.length; i++) {
-      let a = false;
+      let a = false
       //console.log('HITS', i,hits[i])
 
       if (hits[i]._source.meta) {
         //console.log('HITS', hits[i].meta)
-        a = Helper.matchesRegex(hits[i]._source.meta.group, "kind");
+        a = Helper.matchesRegex(hits[i]._source.meta.group, 'kind')
       }
       if (!a) {
-        filteredHits.push(hits[i]);
+        filteredHits.push(hits[i])
       }
     }
-    return filteredHits;
+    return filteredHits
   }
 }
 
 let PhraseHitsFilterFactory = function(name) {
   switch (name) {
-    case "FindStoreFilter":
-      return new FindStoreFilter();
-    case "NoPhraseFilter":
-      return new NoPhraseFilter();
-    case "NoTellFilter":
-      return new NoTellFilter();
+    case 'FindStoreFilter':
+      return new FindStoreFilter()
+    case 'NoPhraseFilter':
+      return new NoPhraseFilter()
+    case 'NoTellFilter':
+      return new NoTellFilter()
     default:
-      Logger.error("Hits filter name", name, "not recognized");
+      Logger.error('Hits filter name', name, 'not recognized')
   }
-};
+}
 
-module.exports = PhraseHitsFilterFactory;
+module.exports = PhraseHitsFilterFactory

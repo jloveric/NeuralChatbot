@@ -1,19 +1,19 @@
-"use strict";
+'use strict'
 
-let Helper = require("sb/etc/Helper.js");
-let fs = require("fs");
-let Logger = require("sb/etc/Logger.js")("CreateLogstashConfig");
-let MongoFilesystem = require("sb/extdb/MongoFilesystem.js");
-let GetConfigValues = require("sb/etc/GetConfigValues.js");
+let Helper = require('sb/etc/Helper.js')
+let fs = require('fs')
+let Logger = require('sb/etc/Logger.js')('CreateLogstashConfig')
+let MongoFilesystem = require('sb/extdb/MongoFilesystem.js')
+let GetConfigValues = require('sb/etc/GetConfigValues.js')
 
 class CreateLogstashConfig {
   constructor() {
-    this.gf = new GetConfigValues();
-    this.MongoFilesystem = new MongoFilesystem();
+    this.gf = new GetConfigValues()
+    this.MongoFilesystem = new MongoFilesystem()
   }
 
   close() {
-    this.MongoFilesystem.close();
+    this.MongoFilesystem.close()
   }
 
   /**
@@ -31,51 +31,51 @@ class CreateLogstashConfig {
   initialize(lsConfig) {
     if (
       !Helper.hasProperties(lsConfig, [
-        "csvFilename",
-        "fields",
-        "separator",
-        "useStdIn",
-        "fileDatabase",
-        "user"
+        'csvFilename',
+        'fields',
+        'separator',
+        'useStdIn',
+        'fileDatabase',
+        'user',
       ])
     ) {
-      Helper.logAndThrow("Logstash config is missing properties");
+      Helper.logAndThrow('Logstash config is missing properties')
     }
 
-    let csvFilename = lsConfig.csvFilename;
-    let fields = lsConfig.fields;
+    let csvFilename = lsConfig.csvFilename
+    let fields = lsConfig.fields
 
     //Forgetting to add appendId is a huge problem so perhaps let
     //the machine do it.  I could see a problem if somebody names
     //it wrong though
-    if (!Helper.hasValue(fields, "appendID")) {
-      fields.push("appendID");
+    if (!Helper.hasValue(fields, 'appendID')) {
+      fields.push('appendID')
     }
 
-    let separator = lsConfig.separator;
-    let useStdIn = lsConfig.useStdIn;
-    let filesystem = lsConfig.fileDatabase;
-    let user = lsConfig.user;
+    let separator = lsConfig.separator
+    let useStdIn = lsConfig.useStdIn
+    let filesystem = lsConfig.fileDatabase
+    let user = lsConfig.user
 
-    let np = this.MongoFilesystem.initialize(filesystem);
+    let np = this.MongoFilesystem.initialize(filesystem)
 
-    let filename = Helper.uniqueIndexName(csvFilename, user);
-    fields = this.cleanFields(fields);
+    let filename = Helper.uniqueIndexName(csvFilename, user)
+    fields = this.cleanFields(fields)
 
     if (useStdIn) {
-      this.input = "input {\n\t stdin {}\n}\n";
+      this.input = 'input {\n\t stdin {}\n}\n'
     } else {
       this.input =
         'input {\n\tfile {\n\t\t path => "' +
         csvFilename +
-        '"\n\t\t start_position => "beginning" \n\t\t sincedb_path => "/dev/null" \n\t}\n}\n\n';
+        '"\n\t\t start_position => "beginning" \n\t\t sincedb_path => "/dev/null" \n\t}\n}\n\n'
     }
     this.filter =
-      "filter {\n\t csv { \n\t\tcolumns => [" +
+      'filter {\n\t csv { \n\t\tcolumns => [' +
       fields +
       ']\n\t\tseparator=> "' +
       separator +
-      '"\n\t}\n}\n\n';
+      '"\n\t}\n}\n\n'
     this.output =
       'output {\n\t elasticsearch {\n\t\t hosts => ["' +
       this.gf.elasticsearch.host +
@@ -83,17 +83,17 @@ class CreateLogstashConfig {
       Helper.extraId +
       '}" \n\t\t index => "' +
       filename +
-      '"\n\t}\n}\n\n';
+      '"\n\t}\n}\n\n'
 
-    return np;
+    return np
   }
 
   indexName(csvFilename, user) {
-    let expandName = Helper.uniqueIndexName(csvFilename, user);
+    let expandName = Helper.uniqueIndexName(csvFilename, user)
 
     //TODO, this is a relic of when I wrote to disk, so will be able to remove
     //the replace at some point
-    return expandName;
+    return expandName
   }
 
   cleanFields(fields) {
@@ -103,48 +103,48 @@ class CreateLogstashConfig {
         //Do nothing
       } else {
         //Add quotes
-        fields[i] = fields[i];
+        fields[i] = fields[i]
       }
     }
 
-    return fields;
+    return fields
   }
 
   getConfig() {
-    return this.input + this.filter + this.output;
+    return this.input + this.filter + this.output
   }
 
   /**
    * Combine components and write to a file
    */
   writeToFile(filename) {
-    Logger.info("Creating Logstash configuration shown", this.getConfig());
+    Logger.info('Creating Logstash configuration shown', this.getConfig())
 
     let np = new Promise((resolve, reject) => {
-      fs.writeFile(filename, this.getConfig(), "utf8", function(err) {
+      fs.writeFile(filename, this.getConfig(), 'utf8', function(err) {
         if (err) {
-          Logger.error("Logstash config write error:", err);
-          reject(err);
+          Logger.error('Logstash config write error:', err)
+          reject(err)
         }
-        resolve(true);
-      });
-    });
+        resolve(true)
+      })
+    })
 
-    return np;
+    return np
   }
 
   writeToMongo(filename, user) {
-    console.log("WRITING MONGO TO FILE");
-    Logger.info("Writing to mongo file", filename, user);
+    console.log('WRITING MONGO TO FILE')
+    Logger.info('Writing to mongo file', filename, user)
     let np = this.MongoFilesystem.replaceTextInMongo(
       this.getConfig(),
       filename,
       user,
-      "logstash"
-    );
+      'logstash'
+    )
 
-    return np;
+    return np
   }
 }
 
-module.exports = CreateLogstashConfig;
+module.exports = CreateLogstashConfig

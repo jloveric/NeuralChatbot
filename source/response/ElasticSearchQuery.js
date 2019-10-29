@@ -1,14 +1,14 @@
-"use strict";
-let es = require("elasticsearch");
-let SingleResponseIfc = require("./SingleResponseIfc.js").SingleResponseIfc;
-let GetConfigValues = require("sb/etc/GetConfigValues.js");
-let Logger = require("sb/etc/Logger.js")("ElasticSearchQuery");
-let Helper = require("sb/etc/Helper.js");
-let debug = require("debug")("ElasticSearchQuery");
-let deepcopy = require("clone");
-let similarity = require("sb/phrasex/SentenceSimilarity.js");
-let commonScore = require("sb/phrasex/SimilarityScore.js").commonScore;
-let GetDataConfig = require("sb/etc/GetDataConfig.js");
+'use strict'
+let es = require('elasticsearch')
+let SingleResponseIfc = require('./SingleResponseIfc.js').SingleResponseIfc
+let GetConfigValues = require('sb/etc/GetConfigValues.js')
+let Logger = require('sb/etc/Logger.js')('ElasticSearchQuery')
+let Helper = require('sb/etc/Helper.js')
+let debug = require('debug')('ElasticSearchQuery')
+let deepcopy = require('clone')
+let similarity = require('sb/phrasex/SentenceSimilarity.js')
+let commonScore = require('sb/phrasex/SimilarityScore.js').commonScore
+let GetDataConfig = require('sb/etc/GetDataConfig.js')
 
 /**
  * This class takes some searchText and passes it through elastic
@@ -18,9 +18,9 @@ let GetDataConfig = require("sb/etc/GetDataConfig.js");
  */
 class EsearchResultsQuery extends SingleResponseIfc {
   constructor() {
-    super();
-    this.gc = new GetConfigValues();
-    this.config = new GetDataConfig();
+    super()
+    this.gc = new GetConfigValues()
+    this.config = new GetDataConfig()
   }
 
   /**
@@ -30,41 +30,41 @@ class EsearchResultsQuery extends SingleResponseIfc {
    * a result.
    */
   initialize(confShallow, indexName) {
-    this.indexName = indexName;
+    this.indexName = indexName
 
-    let conf = deepcopy(confShallow);
+    let conf = deepcopy(confShallow)
 
     //let p0 = this.config.initialize(conf);
 
-    let p = Promise.resolve();
+    let p = Promise.resolve()
     if (!this.indexName) {
-      p = this.config.initialize(conf);
+      p = this.config.initialize(conf)
     }
 
     //Then this
     let np = new Promise((resolve, reject) => {
       p.then(() => {
         if (!this.indexName) {
-          this.indexName = this.config.indexName;
+          this.indexName = this.config.indexName
         }
 
-        this.elasticsearch = es;
-        this.ESNotRunning = "query database not running";
-        this.searchResult = "";
+        this.elasticsearch = es
+        this.ESNotRunning = 'query database not running'
+        this.searchResult = ''
         this.client = new this.elasticsearch.Client({
-          host: this.gc.elasticsearch.host
-        });
-        resolve();
+          host: this.gc.elasticsearch.host,
+        })
+        resolve()
       }).catch(reason => {
-        Logger.error("Elasticsearch initialization failure", reason);
-      });
-    });
+        Logger.error('Elasticsearch initialization failure', reason)
+      })
+    })
 
-    return np;
+    return np
   }
 
   close() {
-    this.client.close();
+    this.client.close()
   }
 
   returnN(maxNumber) {
@@ -73,10 +73,10 @@ class EsearchResultsQuery extends SingleResponseIfc {
       size: maxNumber,
       body: {
         query: {
-          match_all: {}
-        }
-      }
-    };
+          match_all: {},
+        },
+      },
+    }
 
     //Logger.warn('Using query', query);
 
@@ -86,90 +86,90 @@ class EsearchResultsQuery extends SingleResponseIfc {
       this.client.indices.exists({ index: this.indexName }, (error, exists) => {
         if (error) {
           Logger.error(
-            "Check if index exists error",
+            'Check if index exists error',
             this.indexName,
-            "error",
+            'error',
             error
-          );
-          reject(error);
+          )
+          reject(error)
         }
 
         //If it exists then perform a search
         if (exists) {
-          Logger.debug(query);
-          let res = this.client.search(query);
+          Logger.debug(query)
+          let res = this.client.search(query)
           res
             .then(
               function(body) {
                 //Logger.debug('found these matches', body)
-                resolve(body.hits.hits);
+                resolve(body.hits.hits)
               },
               function(error) {
-                Logger.error("Search error", error);
-                reject(error);
+                Logger.error('Search error', error)
+                reject(error)
               }
             )
             .catch(function(reason) {
-              Logger.error("Search Fails", reason);
-              reject(error);
-            });
+              Logger.error('Search Fails', reason)
+              reject(error)
+            })
         } else {
           Logger.error(
-            "The elasticsearch index",
+            'The elasticsearch index',
             this.indexName,
-            "does not exist"
-          );
-          reject(error);
+            'does not exist'
+          )
+          reject(error)
         }
-      });
-    });
+      })
+    })
 
-    return np;
+    return np
   }
 
   searchAndScore(searchText, fields) {
-    if (searchText == "" || !searchText) {
+    if (searchText == '' || !searchText) {
       //throw "Search text is null so exiting."
       Logger.warn(
-        "Search text is null: probably a problem in your search call."
-      );
-      return Promise.reject("Empty search text");
+        'Search text is null: probably a problem in your search call.'
+      )
+      return Promise.reject('Empty search text')
     }
 
     let np = new Promise((resolve, reject) => {
-      let searchArray = searchText.match(Helper.tokenize);
+      let searchArray = searchText.match(Helper.tokenize)
 
       this.searchFields(searchText, fields)
         .then(res => {
           for (let i = 0; i < res.length; i++) {
-            let hl = Helper.highlightedFields(res[i].highlight);
-            Logger.debug("highlight", res[i].highlight);
-            Logger.debug("hl", hl);
-            Logger.debug("hl[0]", hl[0]);
+            let hl = Helper.highlightedFields(res[i].highlight)
+            Logger.debug('highlight', res[i].highlight)
+            Logger.debug('hl', hl)
+            Logger.debug('hl[0]', hl[0])
             //assume match in the first field
 
-            let match = Helper.getObjElement(res[i]._source, hl[0]);
+            let match = Helper.getObjElement(res[i]._source, hl[0])
 
             //let match = res[i]._source[hl[0]]
-            Logger.debug("match", match);
+            Logger.debug('match', match)
 
             //console.log('match',match)
-            let matchArray = match.match(Helper.tokenize);
-            Logger.debug("matchArray", matchArray);
+            let matchArray = match.match(Helper.tokenize)
+            Logger.debug('matchArray', matchArray)
 
-            let matchScore = similarity(searchArray, matchArray, commonScore);
-            res[i].score = matchScore;
+            let matchScore = similarity(searchArray, matchArray, commonScore)
+            res[i].score = matchScore
           }
 
-          debug("RES", res);
+          debug('RES', res)
           //similarity(a, b, commonScore)
-          resolve(res);
+          resolve(res)
         })
         .catch(reason => {
-          reject(reason);
-        });
-    });
-    return np;
+          reject(reason)
+        })
+    })
+    return np
   }
 
   /*searchAndScore(searchText, fields) {
@@ -227,246 +227,246 @@ class EsearchResultsQuery extends SingleResponseIfc {
 
   searchAndBoost(searchText, fields, optionsIn) {
     let np = new Promise((resolve, reject) => {
-      debug("searchTerm", searchText, "fields", fields, "options", optionsIn);
+      debug('searchTerm', searchText, 'fields', fields, 'options', optionsIn)
       this.searchFields(searchText, fields, optionsIn).then(ans => {
-        debug("searchAndBoost ans", ans);
+        debug('searchAndBoost ans', ans)
 
         if (!ans[0]) {
-          return resolve("no match so no boost");
+          return resolve('no match so no boost')
         }
 
-        let id = ans[0]._id;
-        let type = ans[0]._type;
-        let body = ans[0]._source;
+        let id = ans[0]._id
+        let type = ans[0]._type
+        let body = ans[0]._source
         //body.boostRank = body.boostRank ? (body.boostRank++) : 1
-        body.boostRank = 1;
+        body.boostRank = 1
 
-        debug("body", body);
+        debug('body', body)
 
         this.client
           .index({
             index: this.indexName,
             type: type,
             id: id,
-            body: body
+            body: body,
           })
           .then(() => {
-            resolve();
+            resolve()
           })
           .catch(reason => {
-            Logger.error(reason);
-            reject(reason);
-          });
-      });
-    });
+            Logger.error(reason)
+            reject(reason)
+          })
+      })
+    })
   }
 
   removeBoost(optionsIn) {
-    let options = optionsIn ? optionsIn : {};
+    let options = optionsIn ? optionsIn : {}
 
-    debug("IndexName", this.indexName);
+    debug('IndexName', this.indexName)
 
     let query = {
       index: this.indexName,
       size: options.numResults
         ? options.numResults
         : this.gc.elasticsearch.boostResults,
-      searchType: "dfs_query_then_fetch",
+      searchType: 'dfs_query_then_fetch',
       body: {
         explain: false,
         query: {
           constant_score: {
             filter: {
               term: {
-                boostRank: 1
-              }
-            }
-          }
-        }
-      }
-    };
+                boostRank: 1,
+              },
+            },
+          },
+        },
+      },
+    }
 
     //let self = this;
     let np = new Promise((resolve, reject) => {
       //First check that the index exists
       this.client.indices.exists({ index: this.indexName }, (error, exists) => {
-        debug("does", this.indexName, "exist", exists);
+        debug('does', this.indexName, 'exist', exists)
 
         if (error) {
           Logger.error(
-            "Check if index exists error",
+            'Check if index exists error',
             this.indexName,
-            "error",
+            'error',
             error
-          );
-          reject(error);
-          return;
+          )
+          reject(error)
+          return
         }
 
         //If it exists then perform a search
         if (exists) {
-          Logger.debug(query);
-          let res = this.client.search(query);
+          Logger.debug(query)
+          let res = this.client.search(query)
 
-          let prom = [];
+          let prom = []
           res.then(body => {
-            let hits = body.hits.hits;
+            let hits = body.hits.hits
 
             for (let i = 0; i < hits.length; i++) {
-              let id = hits[i]._id;
-              let tBody = hits[i]._source;
-              let type = hits[i]._type;
-              delete tBody.boostRank;
+              let id = hits[i]._id
+              let tBody = hits[i]._source
+              let type = hits[i]._type
+              delete tBody.boostRank
 
-              debug("NEW tBody", tBody);
+              debug('NEW tBody', tBody)
 
               prom.push(
                 this.client.index({
                   index: this.indexName,
                   type: type,
                   id: id,
-                  body: tBody
+                  body: tBody,
                 })
-              );
+              )
             }
 
             if (prom.length) {
               return Promise.all(prom)
                 .then(() => {
-                  resolve();
+                  resolve()
                 })
                 .catch(reason => {
-                  reject(reason);
-                });
+                  reject(reason)
+                })
             } else {
-              resolve();
+              resolve()
             }
-          });
+          })
         } else {
           Logger.error(
-            "The elasticsearch index",
+            'The elasticsearch index',
             this.indexName,
-            "does not exist"
-          );
-          reject("The elasticsearch index does not exist");
+            'does not exist'
+          )
+          reject('The elasticsearch index does not exist')
         }
-      });
-    });
+      })
+    })
 
-    return np;
+    return np
   }
 
   //All the rest are unique to this class
   searchFields(searchText, fields, optionsIn) {
-    let options = optionsIn ? optionsIn : {};
+    let options = optionsIn ? optionsIn : {}
 
     debug(
-      "Searching for",
+      'Searching for',
       searchText,
-      "in",
+      'in',
       this.indexName,
-      "fields",
+      'fields',
       fields,
-      "num results",
+      'num results',
       this.gc.elasticsearch.numResults
-    );
+    )
 
     //console.log("This searchText",searchText);
-    if (searchText == "" || !searchText) {
+    if (searchText == '' || !searchText) {
       //throw "Search text is null so exiting."
       Logger.warn(
-        "Search text is null: probably a problem in your search call."
-      );
-      return Promise.reject("Empty search text");
+        'Search text is null: probably a problem in your search call.'
+      )
+      return Promise.reject('Empty search text')
     }
 
-    debug("IndexName", this.indexName);
+    debug('IndexName', this.indexName)
 
     let query = {
       index: this.indexName,
       size: options.numResults
         ? options.numResults
         : this.gc.elasticsearch.numResults,
-      searchType: "dfs_query_then_fetch",
+      searchType: 'dfs_query_then_fetch',
       body: {
         explain: false,
         highlight: {
           fields: {
-            "*": {
-              force_source: true
-            }
+            '*': {
+              force_source: true,
+            },
           },
-          require_field_match: true
+          require_field_match: true,
         },
         query: {
           multi_match: {
             fields: fields,
             query: searchText,
-            fuzziness: "AUTO"
-          }
-        }
-      }
-    };
+            fuzziness: 'AUTO',
+          },
+        },
+      },
+    }
 
     //let self = this;
     let np = new Promise((resolve, reject) => {
       //First check that the index exists
       this.client.indices.exists({ index: this.indexName }, (error, exists) => {
-        debug("does", this.indexName, "exist", exists);
+        debug('does', this.indexName, 'exist', exists)
 
         if (error) {
           Logger.error(
-            "Check if index exists error",
+            'Check if index exists error',
             this.indexName,
-            "error",
+            'error',
             error
-          );
-          reject(error);
-          return;
+          )
+          reject(error)
+          return
         }
 
         //If it exists then perform a search
         if (exists) {
-          Logger.debug(query);
-          let res = this.client.search(query);
+          Logger.debug(query)
+          let res = this.client.search(query)
           res
             .then(
               body => {
-                debug("result", body);
+                debug('result', body)
                 //Reduce the number of hits 	by only taking
                 //scores that match the best score.
 
-                let hits = body.hits.hits;
+                let hits = body.hits.hits
                 if (options.topScoresOnly) {
-                  hits = Helper.topScores(body.hits.hits);
+                  hits = Helper.topScores(body.hits.hits)
                 }
 
-                debug("hits", hits);
-                Logger.debug("found these top matches", body);
-                resolve(hits);
+                debug('hits', hits)
+                Logger.debug('found these top matches', body)
+                resolve(hits)
               },
               function(error) {
-                Logger.error("Search error", error);
-                reject(error);
+                Logger.error('Search error', error)
+                reject(error)
               }
             )
             .catch(function(reason) {
-              Logger.error("Search Fails", reason);
-              reject(reason);
-            });
+              Logger.error('Search Fails', reason)
+              reject(reason)
+            })
         } else {
           Logger.error(
-            "The elasticsearch index",
+            'The elasticsearch index',
             this.indexName,
-            "does not exist"
-          );
-          reject("The elasticsearch index does not exist");
+            'does not exist'
+          )
+          reject('The elasticsearch index does not exist')
         }
-      });
-    });
+      })
+    })
 
-    return np;
+    return np
   }
 }
 
-module.exports = EsearchResultsQuery;
+module.exports = EsearchResultsQuery

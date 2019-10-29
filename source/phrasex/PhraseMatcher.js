@@ -1,27 +1,27 @@
-"use strict";
+'use strict'
 
-let Logger = require("sb/etc/Logger.js")("PhraseMatcher");
-let es = require("elasticsearch");
-let levenshtein = require("fast-levenshtein");
-let Helper = require("sb/etc/Helper.js");
-let reRank = require("sb/phrasex/ReRank.js").reRank;
-let GetConfigValues = require("sb/etc/GetConfigValues.js");
+let Logger = require('sb/etc/Logger.js')('PhraseMatcher')
+let es = require('elasticsearch')
+let levenshtein = require('fast-levenshtein')
+let Helper = require('sb/etc/Helper.js')
+let reRank = require('sb/phrasex/ReRank.js').reRank
+let GetConfigValues = require('sb/etc/GetConfigValues.js')
 
 //TODO: Not sure this does anything important anymore.
 class PhraseMatcher {
   constructor() {
-    this.elasticsearch = es;
-    this.gf = new GetConfigValues();
+    this.elasticsearch = es
+    this.gf = new GetConfigValues()
 
     //TODO: it seems like I should be using my
     //elasticsearch wrapper here.
     this.client = new this.elasticsearch.Client({
-      host: this.gf.elasticsearch.host
-    });
+      host: this.gf.elasticsearch.host,
+    })
   }
 
   close() {
-    this.client.close();
+    this.client.close()
   }
 
   /**
@@ -34,4 +34,4 @@ class PhraseMatcher {
   getWildcardsAndMatch(phrase, keywords) {}
 }
 
-module.exports = PhraseMatcher;
+module.exports = PhraseMatcher

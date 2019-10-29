@@ -1,7 +1,7 @@
-"use strict";
+'use strict'
 
-let events = require("events");
-let debug = require("debug")("LocalClient");
+let events = require('events')
+let debug = require('debug')('LocalClient')
 
 /**
  * This a 'client' for recieving responses from the bot
@@ -10,23 +10,23 @@ let debug = require("debug")("LocalClient");
  */
 class LocalClient {
   constructor() {
-    this.messageList = [];
-    this.eventEmitter = new events.EventEmitter();
+    this.messageList = []
+    this.eventEmitter = new events.EventEmitter()
   }
 
   send(msg) {
-    this.messageList.push(msg);
-    this.eventEmitter.emit("send");
-    debug(msg);
+    this.messageList.push(msg)
+    this.eventEmitter.emit('send')
+    debug(msg)
   }
 
   getMessages() {
-    return this.messageList;
+    return this.messageList
   }
 
   setSendEvent(callback) {
-    this.eventEmitter.on("send", callback);
+    this.eventEmitter.on('send', callback)
   }
 }
 
-module.exports = LocalClient;
+module.exports = LocalClient

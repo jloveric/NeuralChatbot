@@ -1,11 +1,11 @@
-"use strict";
+'use strict'
 
-let csv = require("csv");
-let readline = require("linebyline");
-let Logger = require("sb/etc/Logger.js")("ModifyStoredDatabase");
-let MongoFilesystem = require("sb/extdb/MongoFilesystem.js");
-let Helper = require("sb/etc/Helper.js");
-let debug = require("debug")("ModifyStoredDatabase");
+let csv = require('csv')
+let readline = require('linebyline')
+let Logger = require('sb/etc/Logger.js')('ModifyStoredDatabase')
+let MongoFilesystem = require('sb/extdb/MongoFilesystem.js')
+let Helper = require('sb/etc/Helper.js')
+let debug = require('debug')('ModifyStoredDatabase')
 
 /**
  * Open the csv database and modify it.  Basically this adds a new
@@ -25,68 +25,64 @@ class ModifyStoredDatabase {
    * should be searched for the file.
    */
   initialize(file, user, extension, databaseName) {
-    debug("In initialize with", file, user, extension, databaseName);
+    debug('In initialize with', file, user, extension, databaseName)
 
-    let MongoFile = new MongoFilesystem();
+    let MongoFile = new MongoFilesystem()
 
-    Logger.debug("Inside ModifyStoredDatabase");
+    Logger.debug('Inside ModifyStoredDatabase')
     let np = new Promise((resolve, reject) => {
       MongoFile.initialize(databaseName).then(() => {
         /*let readStream = MongoFile.getReadFileStream(
                     file, user, extension);*/
 
-        let p = MongoFile.getReadFileStream(file, user, extension);
+        let p = MongoFile.getReadFileStream(file, user, extension)
 
         p.then(readStream => {
-          let writeStream = MongoFile.getWriteFileStream(
-            file,
-            user,
-            "database"
-          );
+          let writeStream = MongoFile.getWriteFileStream(file, user, 'database')
 
-          let rl = readline(readStream);
+          let rl = readline(readStream)
 
           /*let rl = readline.createInterface({
                         input: readStream,
                         terminal: false
                     });*/
 
-          readStream.on("end", () => {
-            Logger.warn("fileStreamTemp closed");
+          readStream.on('end', () => {
+            Logger.warn('fileStreamTemp closed')
             //resolve();
             //rl.emit('end');
-          });
+          })
 
-          rl.on("close", () => {
-            debug("closed");
-          });
+          rl.on('close', () => {
+            debug('closed')
+          })
 
-          writeStream.on("finish", () => {
-            debug("closing stream");
-            MongoFile.close();
-            resolve();
-          });
+          writeStream.on('finish', () => {
+            debug('closing stream')
+            MongoFile.close()
+            resolve()
+          })
 
-          let id = 0;
+          let id = 0
 
-          let rlCount = 0;
-          let parseCount = 0;
-          rl.on("line", line => {
-            this.line = line;
-            rlCount++;
+          let rlCount = 0
+          let parseCount = 0
+          rl.on('line', line => {
+            this.line = line
+            rlCount++
 
             //Skip over the first id since those are expected to be the column names
             if (rlCount > 1) {
               csv.parse(line, (err, sList) => {
-                debug("line", line);
+                debug('line', line)
                 if (err) {
-                  Logger.error(err);
-                  debug("error", err);
-                  reject(err);
-                  return;
+                  Logger.error(err)
+                  debug('error', err)
+                  reject(err)
+                  return
                 }
 
-                let list = sList[0];
+                let list = sList[0]
                 //console.log('line',list)
 
                 /*if (id == 0) {
@@ -95,20 +91,20 @@ class ModifyStoredDatabase {
                                     list.push(id)
                                 }*/
 
-                list.push(id);
+                list.push(id)
 
                 //We want each term surrounded in quotes so the
                 //system doesn't get confused.
                 for (let j = 0; j < list.length; j++) {
-                  list[j] = '"' + list[j] + '"';
+                  list[j] = '"' + list[j] + '"'
                 }
 
-                let newLine = list.join(",") + "\r\n";
+                let newLine = list.join(',') + '\r\n'
                 //debug('Writing line', newLine)
-                writeStream.write(newLine, "utf8", error => {
-                  parseCount++;
+                writeStream.write(newLine, 'utf8', error => {
+                  parseCount++
                   if (error) {
-                    Logger.error(error);
+                    Logger.error(error)
                   }
 
                   //console.log(rlCount, parseCount)
@@ -117,26 +113,26 @@ class ModifyStoredDatabase {
                   //the write is slow enough that another readline
                   //occurs before the first write finishes.
                   if (rlCount - 1 == parseCount) {
-                    writeStream.end();
+                    writeStream.end()
                   }
 
                   //Logger.warn('Writing row', newLine)
-                });
+                })
 
-                id++;
-              });
+                id++
+              })
             }
-          });
+          })
         }).catch(reason => {
-          Logger.error(reason);
-          debug("error", reason);
-          reject(reason);
-        });
-      });
-    });
+          Logger.error(reason)
+          debug('error', reason)
+          reject(reason)
+        })
+      })
+    })
 
-    return np;
+    return np
   }
 }
 
-module.exports = ModifyStoredDatabase;
+module.exports = ModifyStoredDatabase

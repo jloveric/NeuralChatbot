@@ -1,9 +1,9 @@
-"use strict";
+'use strict'
 
-let Action = require("sb/boteng/Action.js");
-let Formatting = require("sb/boteng/Formatting.js");
-let Logger = require("sb/etc/Logger.js")("NoSearchAction");
-let Helper = require("sb/etc/Helper.js");
+let Action = require('sb/boteng/Action.js')
+let Formatting = require('sb/boteng/Formatting.js')
+let Logger = require('sb/etc/Logger.js')('NoSearchAction')
+let Helper = require('sb/etc/Helper.js')
 
 /**
  * This action returns true for every phrase so should
@@ -13,9 +13,9 @@ let Helper = require("sb/etc/Helper.js");
  */
 class TellFilterAction extends Action {
   constructor() {
-    super();
-    this.name = "TellFilterAction";
-    this.options = ["got it", "ok", "cool", "I see", "uh huh"];
+    super()
+    this.name = 'TellFilterAction'
+    this.options = ['got it', 'ok', 'cool', 'I see', 'uh huh']
   }
 
   /**
@@ -23,31 +23,31 @@ class TellFilterAction extends Action {
    * or false as to whether the filter passes.
    */
   filterInput(input) {
-    return input.source.phraseType == "tell";
+    return input.source.phraseType == 'tell'
   }
 
   /**
    * Compute the input given this filter
    */
   computeResult(input, userData) {
-    let replies = input.replies;
-    let wildcards = input.wildcards;
+    let replies = input.replies
+    let wildcards = input.wildcards
 
-    let replyTemplate = Helper.selectRandom(replies);
+    let replyTemplate = Helper.selectRandom(replies)
 
     return Promise.resolve(
       {
         response: Helper.selectRandom(this.options),
         wildcards: [wildcards],
-        phrase: "",
+        phrase: '',
         success: true,
         confidence: input.confidence,
         dontRespond: false,
-        slotScore: 0
+        slotScore: 0,
       },
       userData
-    );
+    )
   }
 }
 
-module.exports = TellFilterAction;
+module.exports = TellFilterAction

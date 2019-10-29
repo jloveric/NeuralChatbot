@@ -1,4 +1,4 @@
-"use strict";
+'use strict'
 
 /**
  * I needed this as some things require the Logger, and unfortunately,
@@ -10,15 +10,15 @@ module.exports = {
    * for both nwjs and node and the browser.
    */
   isUsingNode: function() {
-    let usingNode = false;
-    if (typeof process === "object") {
-      if (typeof process.versions === "object") {
-        if (typeof process.versions.node !== "undefined") {
-          usingNode = true;
+    let usingNode = false
+    if (typeof process === 'object') {
+      if (typeof process.versions === 'object') {
+        if (typeof process.versions.node !== 'undefined') {
+          usingNode = true
         }
       }
     }
 
-    return usingNode;
-  }
-};
+    return usingNode
+  },
+}

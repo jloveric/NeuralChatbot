@@ -1,21 +1,21 @@
-"use strict";
+'use strict'
 
-let Base = require("./Base.js");
-let logger;
+let Base = require('./Base.js')
+let logger
 
 module.exports = function(moduleName) {
   //Currently Winston does not work on the browser so we need this.
   if (Base.isUsingNode()) {
     //require('events').EventEmitter.prototype._maxListeners = 100;
-    process.setMaxListeners(0);
-    let GetConfigValues = require("sb/etc/GetConfigValues.js");
+    process.setMaxListeners(0)
+    let GetConfigValues = require('sb/etc/GetConfigValues.js')
 
-    let gc = new GetConfigValues();
+    let gc = new GetConfigValues()
 
     //if(false) {
-    let winston = require("winston");
+    let winston = require('winston')
 
-    let thisFilename = process.cwd() + "/" + gc.logging.file;
+    let thisFilename = process.cwd() + '/' + gc.logging.file
 
     logger = new winston.Logger({
       transports: [
@@ -27,10 +27,10 @@ module.exports = function(moduleName) {
           prettyPrint: true,
           timestamp: false,
           handleExceptions: true,
-          label: moduleName
-        })
-      ]
-    });
+          label: moduleName,
+        }),
+      ],
+    })
 
     //Turn on logging to the file
     /*winston.add(winston.transports.File,
@@ -49,10 +49,10 @@ module.exports = function(moduleName) {
         //logger.handleExceptions(new logger.transports.File({ filename: thisFilename }));
         winston.handleExceptions(new winston.transports.Console());*/
   } else {
-    logger = require("./BrowserLogger.js");
+    logger = require('./BrowserLogger.js')
   }
 
-  return logger;
-};
+  return logger
+}
 
 //module.exports = logger;

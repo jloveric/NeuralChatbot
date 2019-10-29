@@ -1,22 +1,22 @@
-"use strict";
-let Logger = require("sb/etc/Logger.js")("PhrasexBot");
-let Helper = require("sb/etc/Helper.js");
+'use strict'
+let Logger = require('sb/etc/Logger.js')('PhrasexBot')
+let Helper = require('sb/etc/Helper.js')
 
-let Es = require("./ElasticSearchQuery.js");
-let SingleResponseIfc = require("./SingleResponseIfc").SingleResponseIfc;
-let selectRandom = require("sb/etc/Helper.js").selectRandom;
-let Phrasex = require("sb/phrasex/Phrasex.js");
-let slotFiller = require("sb/phrasex/SlotFiller.js");
-let PhraseDatabase = require("sb/phrasex/PhraseDatabase.js");
-let formatHelp = require("sb/etc/FormatHelp.js");
+let Es = require('./ElasticSearchQuery.js')
+let SingleResponseIfc = require('./SingleResponseIfc').SingleResponseIfc
+let selectRandom = require('sb/etc/Helper.js').selectRandom
+let Phrasex = require('sb/phrasex/Phrasex.js')
+let slotFiller = require('sb/phrasex/SlotFiller.js')
+let PhraseDatabase = require('sb/phrasex/PhraseDatabase.js')
+let formatHelp = require('sb/etc/FormatHelp.js')
 
-let PhraseHitsFilterFactory = require("sb/phrasex/PhraseHitsFilter.js");
-let debug = require("debug")("BasicBot");
-let findBest = require("sb/phrasex/ReRank.js").findBest;
+let PhraseHitsFilterFactory = require('sb/phrasex/PhraseHitsFilter.js')
+let debug = require('debug')('BasicBot')
+let findBest = require('sb/phrasex/ReRank.js').findBest
 
-let GenerateObject = require("sb/phrasex/GenerateObject.js");
+let GenerateObject = require('sb/phrasex/GenerateObject.js')
 
-let deepcopy = require("clone");
+let deepcopy = require('clone')
 
 /**
  * This bot uses Phrasex along with the phrase database
@@ -27,25 +27,25 @@ let deepcopy = require("clone");
  */
 class BasicBot extends SingleResponseIfc {
   constructor(botEngine) {
-    super();
+    super()
     //this.search = new Es(); <--- defined in derived class
-    this.pdb = new PhraseDatabase();
-    this.tellMap = new Map();
+    this.pdb = new PhraseDatabase()
+    this.tellMap = new Map()
 
-    this.botEngine = botEngine;
+    this.botEngine = botEngine
 
     //Set this flag to false if you want to turn of statistics as would
     //be the case in some tests.
-    this.statisticsFlag = true;
+    this.statisticsFlag = true
 
     //Storage is used for storing additional information the bot knows.
-    this.storage = new GenerateObject();
-    this.countEntry = 0;
+    this.storage = new GenerateObject()
+    this.countEntry = 0
   }
 
   close() {
-    Helper.closeIfExists(this.pdb, "pdb");
-    Helper.closeIfExists(this.phrasex, "phrasex");
+    Helper.closeIfExists(this.pdb, 'pdb')
+    Helper.closeIfExists(this.phrasex, 'phrasex')
   }
 
   /**
@@ -55,33 +55,33 @@ class BasicBot extends SingleResponseIfc {
    * {phraseTable : 'tablename'}
    */
   initialize(confShallow) {
-    let conf = deepcopy(confShallow);
+    let conf = deepcopy(confShallow)
 
     //Information about the bot
-    this.doc = conf.doc;
+    this.doc = conf.doc
 
-    let p1 = super.initialize(conf);
+    let p1 = super.initialize(conf)
 
     let p2 = this.pdb
       .initialize(conf)
       .then(() => {
-        return this.pdb.getPhraseMap("tell");
+        return this.pdb.getPhraseMap('tell')
       })
       .then(res => {
-        this.tellMap = res;
-        Logger.debug("tellMap", this.tellMap.keys());
-        return Promise.resolve();
-      });
+        this.tellMap = res
+        Logger.debug('tellMap', this.tellMap.keys())
+        return Promise.resolve()
+      })
 
-    this.phrasex = new Phrasex();
+    this.phrasex = new Phrasex()
 
-    this.phrasex.initialize({ database: conf.phraseTable });
+    this.phrasex.initialize({ database: conf.phraseTable })
 
     if (conf.hitFilter) {
-      this.phrasex.setHitsFilter(PhraseHitsFilterFactory(conf.hitFilter));
+      this.phrasex.setHitsFilter(PhraseHitsFilterFactory(conf.hitFilter))
     }
 
-    return Promise.all([p1, p2]);
+    return Promise.all([p1, p2])
   }
 
   /**
@@ -90,23 +90,23 @@ class BasicBot extends SingleResponseIfc {
    * so that it can be retrieved later.
    */
   storeData(storage, wildcards, userData, intent, source, botStorage) {
-    if (!storage.set) return;
+    if (!storage.set) return
 
     for (let i in storage.set) {
-      let ia = i.replace(":", ".").split(".");
-      if (ia[0] == "other") {
+      let ia = i.replace(':', '.').split('.')
+      if (ia[0] == 'other') {
         //store something about the bot, might
         //might want to disable this.
         //userData.storage.insertElement(wildcards, i, storage[i])
-        botStorage.insertElement(wildcards, i, storage.set[i], intent, source);
-      } else if (ia[0] == "self") {
+        botStorage.insertElement(wildcards, i, storage.set[i], intent, source)
+      } else if (ia[0] == 'self') {
         userData.storage.insertElement(
           wildcards,
           i,
           storage.set[i],
           intent,
           source
-        );
+        )
       } else {
         userData.storage.insertElement(
           wildcards,
@@ -114,11 +114,11 @@ class BasicBot extends SingleResponseIfc {
           storage.set[i],
           intent,
           source
-        );
-        botStorage.insertElement(wildcards, i, storage.set[i], intent, source);
+        )
+        botStorage.insertElement(wildcards, i, storage.set[i], intent, source)
       }
     }
-    debug("We have storage", userData.storage.getObj());
+    debug('We have storage', userData.storage.getObj())
   }
 
   /**
@@ -127,82 +127,82 @@ class BasicBot extends SingleResponseIfc {
    * and then for the bot to respond correctly when you say "Where is john"
    */
   retrieveData(storage, wildcards, userData, intent, botStorage) {
-    debug("wildcards before retrievData", wildcards, "intent", intent);
+    debug('wildcards before retrievData', wildcards, 'intent', intent)
 
-    if (!storage.get) return;
+    if (!storage.get) return
 
-    let info = null;
+    let info = null
 
     //You can also fill in the values
     for (let i in storage.get) {
-      let elem = storage.get[i];
-      let p = elem.match(Helper.betweenParentheses);
-      if (p) elem = p[1];
+      let elem = storage.get[i]
+      let p = elem.match(Helper.betweenParentheses)
+      if (p) elem = p[1]
 
-      let pathObj = userData.storage.expandElement(wildcards, i);
-      let path = pathObj.val;
+      let pathObj = userData.storage.expandElement(wildcards, i)
+      let path = pathObj.val
 
-      let completeArray = userData.storage.completeArray(path, intent);
-      if (!completeArray) continue;
+      let completeArray = userData.storage.completeArray(path, intent)
+      if (!completeArray) continue
 
-      debug("storage", storage, "path", path, "i", i);
+      debug('storage', storage, 'path', path, 'i', i)
 
       //let ia = i.replace(':', '.').split('.')
-      if (path[0] == "other") {
+      if (path[0] == 'other') {
         //store something about the bot, might
         //might want to disable this.
         //let val = userData.storage.getElement(path)
         //debug('----------------------path',path)
-        debug("before flatten");
+        debug('before flatten')
         let val = botStorage.flattenedObject(
           i,
           elem,
           completeArray.val,
           wildcards
-        );
-        info = botStorage.getAll(path, intent);
+        )
+        info = botStorage.getAll(path, intent)
 
-        debug("flattenedObject", val, wildcards);
+        debug('flattenedObject', val, wildcards)
         //let val = this.storage.getElement(path, intent)
         if (val) {
-          wildcards.usedStorage = true;
+          wildcards.usedStorage = true
         }
-      } else if (path[0] == "self") {
+      } else if (path[0] == 'self') {
         let val = userData.storage.flattenedObject(
           i,
           elem,
           completeArray.val,
           wildcards
-        );
-        info = userData.storage.getAll(path, intent);
+        )
+        info = userData.storage.getAll(path, intent)
 
         //let val = userData.storage.getElement(path, intent)
-        debug("val", val);
+        debug('val', val)
         if (val) {
-          wildcards.usedStorage = true;
+          wildcards.usedStorage = true
         }
       } else {
-        debug("path", path, "intent", intent);
-        debug("userData.storage", userData.storage.getObj());
-        debug("i", i, "elem", elem, "path", completeArray);
+        debug('path', path, 'intent', intent)
+        debug('userData.storage', userData.storage.getObj())
+        debug('i', i, 'elem', elem, 'path', completeArray)
         //let val = userData.storage.getElement(path, intent)
         let val = userData.storage.flattenedObject(
           i,
           elem,
           completeArray.val,
           wildcards
-        );
-        info = userData.storage.getAll(path, intent);
+        )
+        info = userData.storage.getAll(path, intent)
 
-        debug("val", val, "info", info);
+        debug('val', val, 'info', info)
         if (val) {
-          wildcards.usedStorage = true;
+          wildcards.usedStorage = true
         }
       }
     }
 
-    debug("wildcards after retrieveData", wildcards);
-    return info;
+    debug('wildcards after retrieveData', wildcards)
+    return info
   }
 
   /**
@@ -217,43 +217,43 @@ class BasicBot extends SingleResponseIfc {
     ignoreWildcardHistory,
     scoreBasedOnSearch
   ) {
-    this.countEntry++;
-    console.log("countEntry", this.countEntry);
+    this.countEntry++
+    console.log('countEntry', this.countEntry)
 
-    let pList = [];
-    let uList = [];
-    let bList = [];
-    let wList = [];
-    let infoList = [];
+    let pList = []
+    let uList = []
+    let bList = []
+    let wList = []
+    let infoList = []
     for (let i = 0; i < resArray.length; i++) {
       //Ok, this copies the entire user data, a costly operation.
       //One should just copy the history and database when the time comes.
-      let userData = deepcopy(originalUserData);
-      let lStorage = deepcopy(botStorage);
+      let userData = deepcopy(originalUserData)
+      let lStorage = deepcopy(botStorage)
 
       //let userData = userDataList[i];
 
-      let res = resArray[i];
+      let res = resArray[i]
       //debug('RES', res)
 
-      let source = res.source;
-      let wildcards = res.wildcards;
-      let confidence = res.confidence;
-      let storage = res.source.storage;
+      let source = res.source
+      let wildcards = res.wildcards
+      let confidence = res.confidence
+      let storage = res.source.storage
 
-      let typeIdentifier = this.pdb.getTypeIdentifier(source);
-      let replies = this.tellMap.get(typeIdentifier);
+      let typeIdentifier = this.pdb.getTypeIdentifier(source)
+      let replies = this.tellMap.get(typeIdentifier)
 
       //Store data and fill in from local storage
       //These can override information in the database
       //This could also put in bogus data, but can also put in multiple
       //copies of correct data!  Could cause some strange results so watch out!
       debug(
-        "------------------------storage-------------------",
+        '------------------------storage-------------------',
         storage,
         source.implies[0]
-      );
-      let info = null;
+      )
+      let info = null
       if (storage) {
         this.storeData(
           storage,
@@ -262,7 +262,7 @@ class BasicBot extends SingleResponseIfc {
           source.implies[0],
           source,
           lStorage
-        );
+        )
 
         //You can also fill in the values
         info = this.retrieveData(
@@ -272,12 +272,12 @@ class BasicBot extends SingleResponseIfc {
           source.implies[0],
           source,
           lStorage
-        );
+        )
       }
 
-      infoList.push(info);
+      infoList.push(info)
 
-      debug("do we still have storage", userData.storage);
+      debug('do we still have storage', userData.storage)
       /*Helper.logAndThrowUndefined(
                 'PhrasexBot replies must be defined',
                 replies)*/
@@ -285,32 +285,32 @@ class BasicBot extends SingleResponseIfc {
       //Lets fill in wildcards ahead of time with guesses
       //debug('wildcards',wildcards)
       debug(
-        "wildcards",
+        'wildcards',
         wildcards,
-        "history",
+        'history',
         userData.history,
-        "lastHistor",
+        'lastHistor',
         userData.getLastHistory()
-      );
+      )
       if (!ignoreWildcardHistory) {
         //You ignore the history if your have expanded a word, in general
         for (let i in wildcards) {
-          debug("i", i);
-          if (!wildcards[i] && i != "matched") {
-            debug("replacing", i, wildcards[i]);
-            let res = slotFiller.getWildcardFromHistory(i, userData.history, 5);
+          debug('i', i)
+          if (!wildcards[i] && i != 'matched') {
+            debug('replacing', i, wildcards[i])
+            let res = slotFiller.getWildcardFromHistory(i, userData.history, 5)
             //debug('res', res, userData.history)
             if (res.length) {
-              wildcards[i] = res[0];
-              debug("with", res[0]);
+              wildcards[i] = res[0]
+              debug('with', res[0])
             }
           }
         }
       }
-      debug("wildcards after insertion", wildcards);
+      debug('wildcards after insertion', wildcards)
 
-      res.wildcards = wildcards;
-      userData.unshiftHistory(res);
+      res.wildcards = wildcards
+      userData.unshiftHistory(res)
 
       //debug('res to see',res);
       //process.exit(0)
@@ -325,64 +325,64 @@ class BasicBot extends SingleResponseIfc {
           source: source,
           doc: this.doc,
           confidence: confidence,
-          score: res.score
+          score: res.score,
         },
         userData,
         scoreBasedOnSearch
-      );
+      )
 
       //All promises must resolve, which I believe they do (rejections caught and turned to resolve)
-      pList.push(firstGuess);
-      uList.push(userData);
-      bList.push(lStorage);
-      wList.push(res.wcScore);
+      pList.push(firstGuess)
+      uList.push(userData)
+      bList.push(lStorage)
+      wList.push(res.wcScore)
     }
 
     return Promise.all(pList)
       .then(ans => {
-        debug("ans.length", ans.length);
-        let newVal = [];
+        debug('ans.length', ans.length)
+        let newVal = []
         for (let i = 0; i < ans.length; i++) {
-          ans[i].wcScore = wList[i];
-          newVal.push({ val: ans[i], userData: uList[i], storage: bList[i] });
+          ans[i].wcScore = wList[i]
+          newVal.push({ val: ans[i], userData: uList[i], storage: bList[i] })
         }
 
-        debug("--------------------------NEWVAL-------------------", uList);
+        debug('--------------------------NEWVAL-------------------', uList)
 
-        let final = this.trimResults(newVal, infoList);
+        let final = this.trimResults(newVal, infoList)
 
-        debug("ans.length final", ans.length);
+        debug('ans.length final', ans.length)
 
-        debug("final", final);
+        debug('final', final)
 
         //copy the two critical components
-        originalUserData.shallowCopy(final.userData);
+        originalUserData.shallowCopy(final.userData)
         //originalUserData.history = final.userData.history;
         //originalUserData.storage = final.userData.storage;
 
         //I believe this is copying correctly.  Simple
         //assignment definitely deletes the storage.
         debug(
-          "FINAL STORAGE-------------------------",
+          'FINAL STORAGE-------------------------',
           originalUserData.storage,
           final.storage
-        );
-        debug("botStorage", botStorage);
+        )
+        debug('botStorage', botStorage)
         for (let i in final.storage) {
-          botStorage[i] = final.storage[i];
+          botStorage[i] = final.storage[i]
         }
         //debug('just before final promise.',final)
-        debug("finalHistory", final.userData.history);
-        return Promise.resolve(final.val);
+        debug('finalHistory', final.userData.history)
+        return Promise.resolve(final.val)
       })
       .catch(reason => {
-        debug("failing in processResult", reason);
+        debug('failing in processResult', reason)
         Helper.logAndThrow(
-          "All promises must resolve for this to work!",
+          'All promises must resolve for this to work!',
           reason
-        );
-        return Promise.reject(reason);
-      });
+        )
+        return Promise.reject(reason)
+      })
   }
 
   /**
@@ -391,19 +391,19 @@ class BasicBot extends SingleResponseIfc {
    * looking at the score of the original question, the wildcard score...
    */
   trimResults(ansObj, infoList) {
-    let ans = [];
-    let uList = [];
-    let bList = [];
+    let ans = []
+    let uList = []
+    let bList = []
     for (let i = 0; i < ansObj.length; i++) {
-      ans.push(ansObj[i].val);
-      uList.push(ansObj[i].userData);
-      bList.push(ansObj[i].storage);
+      ans.push(ansObj[i].val)
+      uList.push(ansObj[i].userData)
+      bList.push(ansObj[i].storage)
     }
 
     //debug("ULIST",uList)
 
     if (ans.length == 1) {
-      return { val: ans[0], userData: uList[0], storage: bList[0] };
+      return { val: ans[0], userData: uList[0], storage: bList[0] }
     }
 
     //First check the result and see if any have the
@@ -411,7 +411,7 @@ class BasicBot extends SingleResponseIfc {
     //Now lets get the best score of these results.
 
     for (let i = 0; i < ans.length; i++) {
-      debug("--------------------ans---------------------", ans[i]);
+      debug('--------------------ans---------------------', ans[i])
 
       //If a response matches the original statement, use that since if the grammar
       //is wrong it's because the user has bad grammar.
@@ -419,45 +419,45 @@ class BasicBot extends SingleResponseIfc {
         //debug('infoList[i]', infoList[i])
         //debug('ans[i]', ans[i])
 
-        let g1 = Helper.getTypeIdentifier(infoList[i].info);
-        let g2 = Helper.getTypeIdentifier(ans[i].phrase);
+        let g1 = Helper.getTypeIdentifier(infoList[i].info)
+        let g2 = Helper.getTypeIdentifier(ans[i].phrase)
 
-        debug("g1", g1, "g2", g2);
+        debug('g1', g1, 'g2', g2)
         if (g1 == g2) {
           debug(
-            "------------------- LEAVING because g1=g2 -----------------------------"
-          );
-          return { val: ans[i], userData: uList[i], storage: bList[i] };
+            '------------------- LEAVING because g1=g2 -----------------------------'
+          )
+          return { val: ans[i], userData: uList[i], storage: bList[i] }
         }
       }
     }
 
     //If we haven't returned, find the top score of the remaining objects.  In many
     //cases the confidence may have been set to zero so not all scores are the same.
-    let highScore = 0.0;
-    let found = false;
+    let highScore = 0.0
+    let found = false
     for (let i = 0; i < ans.length; i++) {
       if (ans[i].confidence > highScore && ans[i].success) {
-        highScore = ans[i].confidence;
-        found = true;
+        highScore = ans[i].confidence
+        found = true
       }
     }
 
     if (!found) {
-      return { val: ans[0], userData: uList[0], storage: bList[0] };
+      return { val: ans[0], userData: uList[0], storage: bList[0] }
     }
 
-    debug("highScore", highScore);
+    debug('highScore', highScore)
 
-    let newList = [];
-    let newUserData = [];
-    let newStorage = [];
+    let newList = []
+    let newUserData = []
+    let newStorage = []
     //Now filter out all
     for (let j = 0; j < ans.length; j++) {
       if (ans[j].confidence == highScore && ans[j].success) {
-        newList.push(ans[j]);
-        newUserData.push(uList[j]);
-        newStorage.push(bList[j]);
+        newList.push(ans[j])
+        newUserData.push(uList[j])
+        newStorage.push(bList[j])
       }
     }
 
@@ -465,29 +465,29 @@ class BasicBot extends SingleResponseIfc {
       return {
         val: newList[0],
         userData: newUserData[0],
-        storage: newStorage[0]
-      };
+        storage: newStorage[0],
+      }
     }
     //debug('ans',ans)
-    debug("newList", newList);
+    debug('newList', newList)
 
     //Now compute the best slotScore
-    let highestSlotScore = 0;
+    let highestSlotScore = 0
     for (let i = 0; i < newList.length; i++) {
-      newList[i].slotScore = newList[i].slotScore ? newList[i].slotScore : 0;
+      newList[i].slotScore = newList[i].slotScore ? newList[i].slotScore : 0
       if (newList[i].slotScore > highestSlotScore) {
-        highestSlotScore = newList[i].slotScore;
+        highestSlotScore = newList[i].slotScore
       }
     }
 
-    let bestSlotList = [];
-    let bestSlotUserData = [];
-    let bestSlotStorage = [];
+    let bestSlotList = []
+    let bestSlotUserData = []
+    let bestSlotStorage = []
     for (let i = 0; i < newList.length; i++) {
       if (newList[i].slotScore == highestSlotScore) {
-        bestSlotList.push(newList[i]);
-        bestSlotUserData.push(newUserData[i]);
-        bestSlotStorage.push(newStorage[i]);
+        bestSlotList.push(newList[i])
+        bestSlotUserData.push(newUserData[i])
+        bestSlotStorage.push(newStorage[i])
       }
     }
 
@@ -495,8 +495,8 @@ class BasicBot extends SingleResponseIfc {
       return {
         val: bestSlotList[0],
         userData: bestSlotUserData[0],
-        storage: bestSlotStorage[0]
-      };
+        storage: bestSlotStorage[0],
+      }
     }
 
     //Ok, if we still have multiple results, then reduce further by the question slot score!
@@ -504,29 +504,29 @@ class BasicBot extends SingleResponseIfc {
     //such as when somebody is saying "teddy is in the store" which has 2 slots and the response
     //is just "uh huh" which does not use any of that slot data.
 
-    let highestWcScore = 0;
+    let highestWcScore = 0
     for (let i = 0; i < bestSlotList.length; i++) {
-      let wcScore = 0;
+      let wcScore = 0
       if (bestSlotList[i].wcScore) {
         wcScore = bestSlotList[i].wcScore.score
           ? bestSlotList[i].wcScore.score
-          : 0;
+          : 0
       }
-      bestSlotList[i].tScore = wcScore;
+      bestSlotList[i].tScore = wcScore
 
       if (wcScore > highestWcScore) {
-        highestWcScore = wcScore;
+        highestWcScore = wcScore
       }
     }
 
-    let final = [];
-    let finalUserData = [];
-    let finalStorage = [];
+    let final = []
+    let finalUserData = []
+    let finalStorage = []
     for (let i = 0; i < bestSlotList.length; i++) {
       if (bestSlotList[i].tScore == highestWcScore) {
-        final.push(bestSlotList[i]);
-        finalUserData.push(bestSlotUserData[i]);
-        finalStorage.push(bestSlotStorage[i]);
+        final.push(bestSlotList[i])
+        finalUserData.push(bestSlotUserData[i])
+        finalStorage.push(bestSlotStorage[i])
       }
     }
 
@@ -534,8 +534,8 @@ class BasicBot extends SingleResponseIfc {
     return {
       val: final[0],
       userData: finalUserData[0],
-      storage: finalStorage[0]
-    };
+      storage: finalStorage[0],
+    }
   }
 
   /**
@@ -551,12 +551,12 @@ class BasicBot extends SingleResponseIfc {
    * is required.
    */
   standardResult(phrase, userData, explicit) {
-    debug("Stepped in tryResult with phrase", phrase);
+    debug('Stepped in tryResult with phrase', phrase)
 
     //Empty or whitespace check
     if (!phrase.match(Helper.tokenize)) {
       //They just hit enter by accident.
-      return Promise.resolve({ response: "", success: true, confidence: 1.0 });
+      return Promise.resolve({ response: '', success: true, confidence: 1.0 })
     }
 
     //debug('Before new promise -- primary', this.config.primary)
@@ -564,13 +564,13 @@ class BasicBot extends SingleResponseIfc {
     return this.phrasex
       .getWildcardsAndMatch(phrase, this.keywords, userData)
       .then(newRes => {
-        return this.processResult(newRes, userData, this.storage, false);
+        return this.processResult(newRes, userData, this.storage, false)
       })
       .catch(reason => {
-        debug("Tryresult catch error", reason);
-        Logger.error(reason);
-        return Promise.resolve(Helper.failResponse);
-      });
+        debug('Tryresult catch error', reason)
+        Logger.error(reason)
+        return Promise.resolve(Helper.failResponse)
+      })
   }
 
   /**
@@ -579,7 +579,7 @@ class BasicBot extends SingleResponseIfc {
    * to.
    */
   respondToPhrase(phrase, userData, botStorage) {
-    return this.processResult(phrase, userData, botStorage);
+    return this.processResult(phrase, userData, botStorage)
   }
 
   /**
@@ -600,11 +600,11 @@ class BasicBot extends SingleResponseIfc {
    * explicit answers.
    */
   getResult(phrase, userData, forget, explicit) {
-    debug("Stepped into getResult with phrase", phrase);
+    debug('Stepped into getResult with phrase', phrase)
 
     let np = this.standardResult(phrase, userData, explicit)
       .then(res => {
-        debug("returning from standard result");
+        debug('returning from standard result')
         //debug("Before PhraseFrequencyData")
         //Not totally sure why res.phrase would ever be undefined, but it is apparently.
 
@@ -619,10 +619,10 @@ class BasicBot extends SingleResponseIfc {
         //This generally means somebody is telling you some information
         if (res.dontRespond) {
           //Don't modify things further'
-          return Promise.resolve(res);
+          return Promise.resolve(res)
         }
 
-        debug("Add phrase", res);
+        debug('Add phrase', res)
 
         //If the confidence is low, just give it a failing grade
         //res.confidence = res.confidence ? res.confidence : 0.0;
@@ -632,25 +632,25 @@ class BasicBot extends SingleResponseIfc {
             }*/
 
         if (Helper.isFailResponse(res)) {
-          res.response = Helper.selectRandom(Helper.defaultResponse);
-        } else if (res.response == "") {
+          res.response = Helper.selectRandom(Helper.defaultResponse)
+        } else if (res.response == '') {
           //Reaches this point if '' was entered as the phrase (pressed enter)
-          res.response = Helper.selectRandom(Helper.defaultResponse);
+          res.response = Helper.selectRandom(Helper.defaultResponse)
         }
-        debug("Returning a good result", res);
-        return Promise.resolve(res);
+        debug('Returning a good result', res)
+        return Promise.resolve(res)
       })
       .catch(reason => {
-        debug("Returning a bad result", reason);
-        Logger.error(reason);
-        let res = Helper.failResponse;
-        res.confidence = 0.0;
-        res.response = Helper.selectRandom(Helper.defaultResponse);
-        return Promise.resolve(res);
-      });
+        debug('Returning a bad result', reason)
+        Logger.error(reason)
+        let res = Helper.failResponse
+        res.confidence = 0.0
+        res.response = Helper.selectRandom(Helper.defaultResponse)
+        return Promise.resolve(res)
+      })
 
-    return np;
+    return np
   }
 }
 
-module.exports = BasicBot;
+module.exports = BasicBot

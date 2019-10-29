@@ -1,7 +1,7 @@
-"use strict";
+'use strict'
 
-let Logger = require("./Logger.js")("CreateMappingConfig");
-let Helper = require("./Helper.js");
+let Logger = require('./Logger.js')('CreateMappingConfig')
+let Helper = require('./Helper.js')
 
 /**
  * This a class for creating a mapping of database column names
@@ -10,7 +10,7 @@ let Helper = require("./Helper.js");
  */
 class CreateMappingConfig {
   constructor() {
-    this.mapping = {};
+    this.mapping = {}
   }
 
   /**
@@ -19,22 +19,22 @@ class CreateMappingConfig {
    */
   validate() {
     for (let i in this.mapping) {
-      let found = false;
+      let found = false
       for (let j of Helper.validMappingElements) {
         if (j == this.mapping[i]) {
-          found = true;
-          break;
+          found = true
+          break
         }
       }
 
       if (!found) {
-        Logger.error("Mapping validation failed, element :", i, "not found");
-        return false;
+        Logger.error('Mapping validation failed, element :', i, 'not found')
+        return false
       }
     }
 
-    Logger.info("Mapping validation succeeded");
-    return true;
+    Logger.info('Mapping validation succeeded')
+    return true
   }
 
   /**
@@ -43,12 +43,12 @@ class CreateMappingConfig {
    * @param columnName is the name of the database column
    */
   addMapping(element, columnName) {
-    this.mapping[element] = columnName;
+    this.mapping[element] = columnName
   }
 
   getMapping() {
-    return this.mapping;
+    return this.mapping
   }
 }
 
-module.exports = CreateMappingConfig;
+module.exports = CreateMappingConfig

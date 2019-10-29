@@ -1,6 +1,6 @@
-"use strict";
+'use strict'
 
-let Logger = require("sb/etc/Logger.js")("ExitHandler");
+let Logger = require('sb/etc/Logger.js')('ExitHandler')
 
 //function noOp() { };
 
@@ -13,35 +13,35 @@ let Logger = require("sb/etc/Logger.js")("ExitHandler");
  */
 class Cleanup {
   constructor(callback) {
-    Logger.info("Initializing process exit");
+    Logger.info('Initializing process exit')
 
     //Prevent program from closing instantly
-    process.stdin.resume();
+    process.stdin.resume()
 
     // attach user callback to the process event emitter
     // if no callback, it will still exit gracefully on Ctrl-C
     //callback = callback || noOp;
-    process.on("cleanup", callback);
+    process.on('cleanup', callback)
 
     // do app specific cleaning before exiting
-    process.on("exit", function() {
-      Logger.info("Cleanup. Exiting.");
-      process.emit("cleanup");
-    });
+    process.on('exit', function() {
+      Logger.info('Cleanup. Exiting.')
+      process.emit('cleanup')
+    })
 
     // catch ctrl+c event and exit normally
-    process.on("SIGINT", function() {
-      Logger.info("Ctrl-C...");
-      process.exit(2);
-    });
+    process.on('SIGINT', function() {
+      Logger.info('Ctrl-C...')
+      process.exit(2)
+    })
 
     //catch uncaught exceptions, trace, then exit normally
-    process.on("uncaughtException", function(e) {
-      Logger.error("Uncaught Exception...");
-      Logger.error(e.stack);
-      process.exit(99);
-    });
+    process.on('uncaughtException', function(e) {
+      Logger.error('Uncaught Exception...')
+      Logger.error(e.stack)
+      process.exit(99)
+    })
   }
 }
 
-module.exports = Cleanup;
+module.exports = Cleanup

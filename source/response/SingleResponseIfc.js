@@ -1,18 +1,18 @@
-"use strict";
+'use strict'
 
-let Helper = require("sb/etc/Helper.js");
-let deepcopy = require("clone");
+let Helper = require('sb/etc/Helper.js')
+let deepcopy = require('clone')
 
 class SingleResponseIfc {
   constructor() {}
 
   getResult(searchText, userData, remember) {
-    Helper.logAndThrow("Must override 'getResult(text)'");
+    Helper.logAndThrow("Must override 'getResult(text)'")
   }
 
   initialize(confShallow) {
-    return Promise.resolve();
+    return Promise.resolve()
   }
 }
 
-module.exports.SingleResponseIfc = SingleResponseIfc;
+module.exports.SingleResponseIfc = SingleResponseIfc

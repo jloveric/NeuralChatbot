@@ -1,10 +1,10 @@
-"use strict";
+'use strict'
 
-let Logger = require("sb/etc/Logger.js")("GetDataConfig");
-let Helper = require("sb/etc/Helper.js");
+let Logger = require('sb/etc/Logger.js')('GetDataConfig')
+let Helper = require('sb/etc/Helper.js')
 //let fs = require('fs');
-let MongoFilesystem = require("sb/extdb/MongoFilesystem.js");
-let debug = require("debug")("GetDataConfig");
+let MongoFilesystem = require('sb/extdb/MongoFilesystem.js')
+let debug = require('debug')('GetDataConfig')
 
 /**
  * Gets the data for computing answers on the database.  Maps
@@ -19,99 +19,99 @@ class GetDataConfig {
    * @param user is the name of the user associated with the file
    */
   initialize(conf) {
-    if (!Helper.hasProperties(conf, ["fileDatabase", "filename", "user"])) {
-      Helper.logAndThrow("Configuration has undefined properties");
+    if (!Helper.hasProperties(conf, ['fileDatabase', 'filename', 'user'])) {
+      Helper.logAndThrow('Configuration has undefined properties')
     }
 
-    let database = conf.fileDatabase;
-    let filename = conf.filename;
-    let user = conf.user;
+    let database = conf.fileDatabase
+    let filename = conf.filename
+    let user = conf.user
 
     //Logger.info('Configuring with', database, filename, user)
 
-    this.MongoFile = new MongoFilesystem();
+    this.MongoFile = new MongoFilesystem()
     let p = new Promise((resolve, reject) => {
       this.MongoFile.initialize(database).then(() => {
-        this.MongoFile.getFileAsText(filename, user, "databaseConfig")
+        this.MongoFile.getFileAsText(filename, user, 'databaseConfig')
           .then(res => {
-            debug("databaseDownload", res);
+            debug('databaseDownload', res)
             //Logger.info('Loading configuration', res);
             //console.log('further',res)
-            let obj = JSON.parse(res);
+            let obj = JSON.parse(res)
 
             Helper.logAndThrowUndefined(
-              "Must specify primary rows in the configuration file",
+              'Must specify primary rows in the configuration file',
               obj.primary,
               true
-            );
+            )
 
             //Copy the object into this please!
             for (let i in obj) {
-              this[i] = obj[i];
+              this[i] = obj[i]
             }
 
             //This needs to be explicitly converted back to a map
-            this.synonyms = new Map(obj.synonyms);
+            this.synonyms = new Map(obj.synonyms)
 
             if (this.checkHasDatabaseNameMapping()) {
               //Logger.debug('DataConfig has databaseNameMapping', this.databaseNameMapping);
             } else {
-              Logger.error("DataConfig is missing databaseNameMapping");
+              Logger.error('DataConfig is missing databaseNameMapping')
             }
 
             if (this.checkHasSynonyms()) {
               //Logger.debug('DataConfig has synonyms', this.synonyms);
             } else {
-              Logger.error("DataConfig is missing synonyms");
+              Logger.error('DataConfig is missing synonyms')
             }
 
-            Object.seal(this);
+            Object.seal(this)
 
             //this.logConfiguration()
 
-            resolve();
+            resolve()
           })
           .catch(reason => {
             Logger.error(
-              "GetDataConfig : Failed to find file",
+              'GetDataConfig : Failed to find file',
               filename,
-              "user",
+              'user',
               user,
-              "reason",
+              'reason',
               reason
-            );
-            reject();
-          });
-      });
-    });
+            )
+            reject()
+          })
+      })
+    })
 
-    return p;
+    return p
   }
 
   logConfiguration() {
-    Logger.info("Configuration");
+    Logger.info('Configuration')
     for (let i in this) {
       if (this[i] != undefined) {
-        Logger.info(i, "=", this[i]);
+        Logger.info(i, '=', this[i])
       } else {
-        Logger.error(i, "=", this[i]);
+        Logger.error(i, '=', this[i])
       }
     }
   }
 
   checkHasSynonyms() {
     if (this.synonyms) {
-      return true;
+      return true
     }
-    return false;
+    return false
   }
 
   checkHasDatabaseNameMapping() {
     if (this.databaseNameMapping) {
-      return true;
+      return true
     }
-    return false;
+    return false
   }
 }
 
-module.exports = GetDataConfig;
+module.exports = GetDataConfig
