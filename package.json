@@ -33,7 +33,7 @@
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
     "mongodb": "2.1.18",
-    "mongoose": "4.3.5",
+    "mongoose": "5.7.7",
     "natural": "https://github.com/NaturalNode/natural.git#1231da1",
     "nodemon": "^1.8.1",
     "papaparse": "^4.1.2",
