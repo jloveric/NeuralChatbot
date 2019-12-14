@@ -18,8 +18,6 @@
     "damerau-levenshtein": "^1.0.0",
     "debug": "^2.2.0",
     "decompress-zip": "^0.3.0",
-    "elasticsearch": "^12.1.3",
-    "fast-levenshtein": "^1.1.0",
     "filepath": "^1.1.0",
     "form-data": "^1.0.0-rc4",
     "geolib": "^2.0.21",
@@ -32,9 +30,7 @@
     "mdb": "^0.1.0",
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
-    "mongodb": "2.1.18",
-    "mongoose": "4.3.5",
-    "natural": "https://github.com/NaturalNode/natural.git#1231da1",
+    "neural-phrasex": "^1.0.2",
     "nodemon": "^1.8.1",
     "papaparse": "^4.1.2",
     "passport": "0.3.2",
@@ -55,8 +51,7 @@
     "wordnet-db": "^3.1.2"
   },
   "scripts": {
-    "test": "node jasmine-runner.js",
-    "coverage": "node_modules/.bin/istanbul cover jasmine-runner.js",
+    "test": "jest",
     "install": "scripts/createSymLink.sh",
     "pretty": "prettier --write --tab-width 2 \"**/*.js\""
   },
@@ -68,12 +63,10 @@
   "devDependencies": {
     "husky": "^3.0.1",
     "istanbul": "^0.4.4",
-    "jasmine": "^2.6.0",
-    "jasmine-spec-reporter": "^4.1.0",
+    "jest": "^24.9.0",
     "karma": "^0.13.15",
     "loadtest": "^1.3.0",
     "mock-browser": "^0.92.12",
-    "node-inspector": "^0.12.5",
     "prettier": "^1.18.2",
     "request": "^2.65.0",
     "sinon": "^1.17.2"
