@@ -243,10 +243,10 @@ class BasicBot extends SingleResponseIfc {
       //Ok, this copies the entire user data, a costly operation.
       //One should just copy the history and database when the time comes.
       
-      debug('originalUserData', originalUserData)
-      debug('botStorage', botStorage)
+      //debug('originalUserData', originalUserData)
+      //debug('botStorage', botStorage)
       let userData = deepcopy(originalUserData)
-      debug('userData aagin', userData)
+      //debug('userData aagin', userData)
       
       let lStorage = deepcopy(botStorage)
 
@@ -262,6 +262,10 @@ class BasicBot extends SingleResponseIfc {
 
       let typeIdentifier = this.pdb.getTypeIdentifier(source)
       let replies = this.tellMap.get(typeIdentifier)
+      debug('tellMap', this.tellMap)
+      debug('replies', replies)
+      debug('typeIdentifier', typeIdentifier)
+
 
       //Store data and fill in from local storage
       //These can override information in the database
@@ -297,9 +301,9 @@ class BasicBot extends SingleResponseIfc {
       infoList.push(info)
 
       debug('do we still have storage', userData.storage)
-      /*Helper.logAndThrowUndefined(
+      Helper.logAndThrowUndefined(
                 'PhrasexBot replies must be defined',
-                replies)*/
+                replies)
 
       //Lets fill in wildcards ahead of time with guesses
       //debug('wildcards',wildcards)
