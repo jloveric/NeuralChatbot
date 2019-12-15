@@ -4,8 +4,6 @@ let Action = require('../boteng/Action.js')
 let Formatting = require('../boteng/Formatting.js')
 let Logger = require('helper-clockmaker').Logger('BasicAction')
 let { Helper } = require('helper-clockmaker')
-let SentenceSimilarity = require('../phrasex/SentenceSimilarity.js')
-let reSort = require('../phrasex/ReRank.js').reSort
 let debug = require('debug')('TopScoreAction')
 let deepcopy = require('clone')
 

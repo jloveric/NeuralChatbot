@@ -3,11 +3,12 @@
 //let path = __dirname+"/../uploads/groceries.csv.config"
 let path = 'botDB.config'
 let BasicBot = require('../../source/response/PhrasexBotLib.js').BasicBot
-let GetConfigValues = require('../../source/etc/GetConfigValues.js')
+//let GetConfigValues = require('../../source/etc/GetConfigValues.js')
 let {UserData} = require('neural-phrasex')
-let gc = new GetConfigValues()
+let gc = {} //new GetConfigValues()
+let dudeDatabase = require('../../phrasedatabases/DudeDatabase.js')
 
-let rootName = gc.bot.rootName
+let rootName = null; //gc.bot.rootName
 
 describe('Test the BasicBot - which is not attached to a database!', function() {
   it('Test store and retrieve data functions', function(done) {
@@ -35,6 +36,7 @@ describe('Test the BasicBot - which is not attached to a database!', function() 
 
   it('Should Return Good values', function(done) {
     let conf = {
+      database : dudeDatabase,
       fileDatabase: 'filesystem',
       user: 'root',
       filename: path,
@@ -51,7 +53,7 @@ describe('Test the BasicBot - which is not attached to a database!', function() 
       console.log('Here I am')
       //Testing phrase forms variations
       pList.push(
-        simpleTest(bot, 'What do you do for a living', '(pornstar|gigalo)')
+        simpleTest(bot, 'What do you do for a living', '(batman|fisherman)')
       )
       pList.push(simpleTest(bot, 'Best movie?', 'aliens'))
       pList.push(simpleTest(bot, 'who is this?', '(' + rootName + '|talking)'))

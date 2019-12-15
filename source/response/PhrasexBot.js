@@ -4,7 +4,7 @@ let {Helper} = require('helper-clockmaker')
 
 /*let Es = require('./ElasticSearchQuery.js')*/
 let BasicBot = require('./BasicBot')
-let selectRandom = require('../etc/Helper.js').selectRandom
+//let selectRandom = require('helper-clockmaker').selectRandom
 let {Phrasex, PhraseDatabase, PhraseHitsFilter, PartsOfSpeech, ReRank} = require('neural-phrasex')
 let slotFiller = require('slot-filler')
 //let PhraseDatabase = require('../phrasex/PhraseDatabase.js')
@@ -14,7 +14,7 @@ let formatHelp = require('../etc/FormatHelp.js')
 let debug = require('debug')('PhrasexBot')
 let findBest = ReRank.findBest
 //let PartsOfSpeech = require('../phrasex/PartsOfSpeech.js')
-let GetDataConfig = require('../etc/GetDataConfig.js')
+//let GetDataConfig = require('../etc/GetDataConfig.js')
 
 let deepcopy = require('clone')
 
@@ -44,7 +44,7 @@ class PhrasexBot extends BasicBot {
    */
   initialize(confShallow) {
     let conf = deepcopy(confShallow)
-    this.config = new GetDataConfig()
+    this.config = "fix this!" //new GetDataConfig()
     let p0 = this.config.initialize(conf)
 
     let p1 = super.initialize(confShallow)

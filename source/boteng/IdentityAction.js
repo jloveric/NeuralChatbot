@@ -5,7 +5,7 @@ let Formatting = require('../boteng/Formatting.js')
 let Logger = require('helper-clockmaker').Logger('IdentityAction')
 let {Helper} = require('helper-clockmaker')
 let formatHelp = require('../etc/FormatHelp.js')
-let slotFiller = require('../phrasex/SlotFiller.js')
+let slotFiller = require('slot-filler')
 
 class IdentityAction extends Action {
   constructor() {

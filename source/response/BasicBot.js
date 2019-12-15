@@ -1,21 +1,21 @@
 'use strict'
 let Logger = require('helper-clockmaker').Logger('PhrasexBot')
-let {Helper} = require('helper-clockmaker')
+let { Helper } = require('helper-clockmaker')
 
 //let Es = require('./ElasticSearchQuery.js')
 let Es = null
 let SingleResponseIfc = require('./SingleResponseIfc').SingleResponseIfc
-let selectRandom = require('helper-clockmaker').selectRandom
-let {Phrasex, PhraseDatabase} = require('neural-phrasex')
+//let selectRandom = require('helper-clockmaker').selectRandom
+let { Phrasex, PhraseDatabase, BasicPhrasexDatabase } = require('neural-phrasex')
 let slotFiller = require('slot-filler')
 //let PhraseDatabase = require('../phrasex/PhraseDatabase.js')
-let formatHelp = require('../etc/FormatHelp.js')
+//let formatHelp = require('../etc/FormatHelp.js')
 
 let PhraseHitsFilterFactory = require('neural-phrasex').PhraseHitsFilter
 let debug = require('debug')('BasicBot')
-let findBest = require('neural-phrasex').ReRank.findBest
+//let findBest = require('neural-phrasex').ReRank.findBest
 
-let {GenerateObject} = require('neural-phrasex')
+let { GenerateObject } = require('neural-phrasex')
 
 let deepcopy = require('clone')
 
@@ -30,7 +30,7 @@ class BasicBot extends SingleResponseIfc {
   constructor(botEngine) {
     super()
     //this.search = new Es(); <--- defined in derived class
-    this.pdb = new PhraseDatabase()
+    this.pdb = null; //new PhraseDatabase()
     this.tellMap = new Map()
 
     this.botEngine = botEngine
@@ -44,6 +44,7 @@ class BasicBot extends SingleResponseIfc {
     this.countEntry = 0
   }
 
+  //TODO: Think this is not needed anymore since no external database
   close() {
     Helper.closeIfExists(this.pdb, 'pdb')
     Helper.closeIfExists(this.phrasex, 'phrasex')
@@ -55,10 +56,21 @@ class BasicBot extends SingleResponseIfc {
    * this, but it can be used to specify the phrase table used by the bot, so for example
    * {phraseTable : 'tablename'}
    */
-  initialize(confShallow) {
+  async initialize(confShallow) {
     let conf = deepcopy(confShallow)
 
-    //Information about the bot
+    this.pdb = BasicPhrasexDatabase.generatePhraseDatabase(conf.database)
+    this.phrasex = new Phrasex(this.pdb)
+    let res = await this.phrasex.initialize()
+
+    this.tellMap = await this.pdb.getPhraseMap('tell')
+
+    if (conf.hitFilter) {
+      this.phrasex.setHitsFilter(PhraseHitsFilterFactory(conf.hitFilter))
+    }
+
+
+    /*//Information about the bot
     this.doc = conf.doc
 
     let p1 = super.initialize(conf)
@@ -82,7 +94,7 @@ class BasicBot extends SingleResponseIfc {
       this.phrasex.setHitsFilter(PhraseHitsFilterFactory(conf.hitFilter))
     }
 
-    return Promise.all([p1, p2])
+    return Promise.all([p1, p2])*/
   }
 
   /**

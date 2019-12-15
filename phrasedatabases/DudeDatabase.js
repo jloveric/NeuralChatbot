@@ -1,9 +1,9 @@
-{
+module.exports = {
 	"data": [
         {
 			"phrase": ["What do you do for a living",
 								"What is your job", "How do you make money"],
-            "response" : ["I'm a pornstar", "sometimes I work as a gigalo"],
+            "response" : ["I'm batman", "sometimes I work as a fisherman"],
 			"phraseType": "job",
 			"implies": [
 				"movie"

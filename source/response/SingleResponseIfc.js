@@ -3,6 +3,7 @@
 let {Helper} = require('helper-clockmaker')
 let deepcopy = require('clone')
 
+//TODO: This looks like it is not needed. Investigate.
 class SingleResponseIfc {
   constructor() {}
 

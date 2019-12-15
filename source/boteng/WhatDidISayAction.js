@@ -4,7 +4,7 @@ let Action = require('../boteng/Action.js')
 let Formatting = require('../boteng/Formatting.js')
 let Logger = require('helper-clockmaker').Logger('WhatDidISayAction')
 let { Helper } = require('helper-clockmaker')
-let slotFiller = require('../phrasex/SlotFiller.js')
+let slotFiller = require('slot-filler')
 let debug = require('debug')('WhatDidISayAction')
 
 class WhatDidISayAction extends Action {
