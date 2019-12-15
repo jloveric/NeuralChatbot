@@ -17,7 +17,7 @@ let debug = require('debug')('BasicBot')
 
 let { GenerateObject } = require('neural-phrasex')
 
-let deepcopy = require('clone')
+let deepcopy = require('lodash.clonedeep')///*require("deepcopy")*/ require('clone')
 
 /**
  * This bot uses Phrasex along with the phrase database
@@ -64,6 +64,7 @@ class BasicBot extends SingleResponseIfc {
     let res = await this.phrasex.initialize()
 
     this.tellMap = await this.pdb.getPhraseMap('tell')
+    debug('this.tellMap', this.tellMap)
 
     if (conf.hitFilter) {
       this.phrasex.setHitsFilter(PhraseHitsFilterFactory(conf.hitFilter))
@@ -241,7 +242,12 @@ class BasicBot extends SingleResponseIfc {
     for (let i = 0; i < resArray.length; i++) {
       //Ok, this copies the entire user data, a costly operation.
       //One should just copy the history and database when the time comes.
+      
+      debug('originalUserData', originalUserData)
+      debug('botStorage', botStorage)
       let userData = deepcopy(originalUserData)
+      debug('userData aagin', userData)
+      
       let lStorage = deepcopy(botStorage)
 
       //let userData = userDataList[i];
@@ -297,12 +303,13 @@ class BasicBot extends SingleResponseIfc {
 
       //Lets fill in wildcards ahead of time with guesses
       //debug('wildcards',wildcards)
+      debug('userData', userData)
       debug(
         'wildcards',
         wildcards,
         'history',
         userData.history,
-        'lastHistor',
+        'lastHistory',
         userData.getLastHistory()
       )
       if (!ignoreWildcardHistory) {

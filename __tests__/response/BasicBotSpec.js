@@ -11,7 +11,7 @@ let dudeDatabase = require('../../phrasedatabases/DudeDatabase.js')
 let rootName = null; //gc.bot.rootName
 
 describe('Test the BasicBot - which is not attached to a database!', function() {
-  it('Test store and retrieve data functions', function(done) {
+  /*it('Test store and retrieve data functions', function(done) {
     let bot = new BasicBot()
     let userData = new UserData()
 
@@ -32,7 +32,7 @@ describe('Test the BasicBot - which is not attached to a database!', function() 
     expect(wc2.column).toBe('name')
 
     done()
-  }, 10000)
+  }, 10000)*/
 
   it('Should Return Good values', function(done) {
     let conf = {

@@ -24,6 +24,7 @@ class NoSearchAction extends Action {
    * Compute the input given this filter
    */
   computeResult(input, userData) {
+
     let replies = input.replies
     let wildcards = input.wildcards
 

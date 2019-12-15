@@ -42,6 +42,7 @@ class BotEngine {
     debug('basicAns', basicAns)
     for (let i = 0; i < this.actionList.length; i++) {
       if (this.actionList[i].filterInput(input)) {
+        debug('input', input)
         let actualAns = this.actionList[i].computeResult(
           input,
           userData,
