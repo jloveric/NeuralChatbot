@@ -1,18 +1,18 @@
 'use strict'
 
-//let Mongodb = require('sb/dbio/MongoRecord.js');
-//let MongoFilesystem = require('sb/extdb/MongoFilesystem.js')
-//let CreateDefaultMongoData = require('sb/extdb/CreateDefaultMongoData.js')
-//let Startup = require('sb/extdb/StartupDBSearch.js')
+//let Mongodb = require('../dbio/MongoRecord.js');
+//let MongoFilesystem = require('../extdb/MongoFilesystem.js')
+//let CreateDefaultMongoData = require('../extdb/CreateDefaultMongoData.js')
+//let Startup = require('../extdb/StartupDBSearch.js')
 
-let pdb = require('sb/phrasex/BasicPhrasexDatabase.js')
-let IndexPhraseDatabase = require('sb/phrasex/IndexPhraseDatabase.js')
-let IndexBotDatabase = require('sb/phrasex/IndexPhraseDatabase.js')
-let IndexMongoDatabase = require('sb/extdb/IndexMongoDatabase.js')
-let BotInformation = require('sb/extdb/BotInformation.js')
-let GetConfigValues = require('sb/etc/GetConfigValues.js')
-let Helper = require('sb/etc/Helper.js')
-//let InstallBot = require('sb/extdb/InstallBot.js')
+let pdb = require('../phrasex/BasicPhrasexDatabase.js')
+let IndexPhraseDatabase = require('../phrasex/IndexPhraseDatabase.js')
+let IndexBotDatabase = require('../phrasex/IndexPhraseDatabase.js')
+let IndexMongoDatabase = require('../extdb/IndexMongoDatabase.js')
+let BotInformation = require('../extdb/BotInformation.js')
+let GetConfigValues = require('../etc/GetConfigValues.js')
+let { Helper } = require('helper-clockmaker')
+//let InstallBot = require('../extdb/InstallBot.js')
 let gc = new GetConfigValues()
 let rootName = gc.bot.rootName
 

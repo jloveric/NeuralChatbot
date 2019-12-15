@@ -1,8 +1,8 @@
 'use strict'
 
-let MongoFilesystem = require('sb/extdb/MongoFilesystem.js')
-let MongoHelper = require('sb/extdb/MongoHelper.js')
-let Logger = require('sb/etc/Logger.js')('FileConsistency')
+let MongoFilesystem = require('../extdb/MongoFilesystem.js')
+let MongoHelper = require('../extdb/MongoHelper.js')
+let Logger = require('helper-clockmaker').Logger('FileConsistency')
 
 /**
  * Check to make sure all the files that are needed

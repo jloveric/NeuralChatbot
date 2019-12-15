@@ -1,8 +1,8 @@
 'use strict'
 
-let pdb = require('sb/phrasex/BasicPhrasexDatabase.js')
-let IndexMongoDatabase = require('sb/extdb/IndexMongoDatabase.js')
-let Helper = require('sb/etc/Helper.js')
+let pdb = require('../phrasex/BasicPhrasexDatabase.js')
+let IndexMongoDatabase = require('../extdb/IndexMongoDatabase.js')
+let { Helper } = require('helper-clockmaker')
 
 let args = require('minimist')(process.argv.slice(2))
 

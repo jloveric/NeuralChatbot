@@ -3,7 +3,7 @@
 describe('BrowserLogger', function() {
   describe('Logging', function() {
     it('Should Write to the Console', function() {
-      let BL = require('sb/etc/BrowserLogger.js')
+      let BL = require('../etc/BrowserLogger.js')
 
       BL.info('testing info')
       BL.debug('testing debug')

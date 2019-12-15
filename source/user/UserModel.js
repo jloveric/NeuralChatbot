@@ -1,6 +1,6 @@
 'use strict'
 
-let Logger = require('sb/etc/Logger.js')('UserModel')
+let Logger = require('helper-clockmaker').Logger('UserModel')
 let mongoose = require('mongoose')
 let passportLocalMongoose = require('passport-local-mongoose')
 let Schema = mongoose.Schema

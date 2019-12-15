@@ -2,8 +2,8 @@
 
 //let path = __dirname+"/../uploads/groceries.csv.config"
 let path = 'ca-500.csv'
-let PhrasexBot = require('sb/response/PhrasexBotLib.js').StandardPhrasexBot
-let UserData = require('sb/user/UserData.js')
+let PhrasexBot = require('../response/PhrasexBotLib.js').StandardPhrasexBot
+let UserData = require('../user/UserData.js')
 
 describe('The PhrasexBotSpec With ca-500.csv', function() {
   it('Should Return Good values', function(done) {

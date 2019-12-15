@@ -1,10 +1,10 @@
 'use strict'
 
-let Action = require('sb/boteng/Action.js')
-let Formatting = require('sb/boteng/Formatting.js')
-let Logger = require('sb/etc/Logger.js')('HelpAction')
-let Helper = require('sb/etc/Helper.js')
-let formatHelp = require('sb/etc/FormatHelp.js')
+let Action = require('../boteng/Action.js')
+let Formatting = require('../boteng/Formatting.js')
+let Logger = require('helper-clockmaker').Logger('HelpAction')
+let {Helper} = require('helper-clockmaker')
+let formatHelp = require('../etc/FormatHelp.js')
 
 class PrivacyAction extends Action {
   constructor() {

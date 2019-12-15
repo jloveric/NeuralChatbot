@@ -8,7 +8,7 @@ module.exports = function(moduleName) {
   if (Base.isUsingNode()) {
     //require('events').EventEmitter.prototype._maxListeners = 100;
     process.setMaxListeners(0)
-    let GetConfigValues = require('sb/etc/GetConfigValues.js')
+    let GetConfigValues = require('../etc/GetConfigValues.js')
 
     let gc = new GetConfigValues()
 

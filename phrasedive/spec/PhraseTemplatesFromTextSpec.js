@@ -1,6 +1,6 @@
 'use strict'
 
-let PhraseTemplatesFromText = require('sb/phrasedive/PhraseTemplatesFromText.js')
+let PhraseTemplatesFromText = require('../phrasedive/PhraseTemplatesFromText.js')
 
 describe('Test PhraseTemplatesFromText functions', function() {
   it('Should Return Good values', function(done) {

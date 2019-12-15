@@ -3,8 +3,8 @@
 'use strict'
 
 let debug = require('debug')('RegisterUser')
-let Helper = require('sb/etc/Helper.js')
-let InstallBot = require('sb/extdb/InstallBot.js')
+let { Helper } = require('helper-clockmaker')
+let InstallBot = require('../extdb/InstallBot.js')
 
 let args = require('minimist')(process.argv.slice(2))
 

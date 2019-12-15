@@ -1,10 +1,10 @@
 'use strict'
 
-let helper = require('sb/etc/Helper.js')
-let StopWords = require('sb/etc/Stopwords')
-let abbreviations = require('sb/etc/SingleLetterAbbreviations.js')
+let { Helper } = require('helper-clockmaker')
+let StopWords = require('../etc/Stopwords')
+let abbreviations = require('../etc/SingleLetterAbbreviations.js')
 
-let GetConfigValues = require('sb/etc/GetConfigValues.js')
+let GetConfigValues = require('../etc/GetConfigValues.js')
 let gc = new GetConfigValues()
 
 describe('helper', function() {

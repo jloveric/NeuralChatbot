@@ -1,6 +1,6 @@
 'use strict'
-let CreateDatabaseConfig = require('sb/extdb/CreateDatabaseConfig.js')
-let MongoHelper = require('sb/extdb/MongoHelper.js')
+let CreateDatabaseConfig = require('../extdb/CreateDatabaseConfig.js')
+let MongoHelper = require('../extdb/MongoHelper.js')
 let GridStore = require('mongodb').GridStore
 let fs = require('fs')
 

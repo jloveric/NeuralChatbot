@@ -1,11 +1,11 @@
 'use strict'
 
-let Logger = require('sb/etc/Logger.js')('CreateDatabaseConfig')
-let CreateMappingConfig = require('sb/etc/CreateMappingConfig.js')
+let Logger = require('helper-clockmaker').Logger('CreateDatabaseConfig')
+let CreateMappingConfig = require('../etc/CreateMappingConfig.js')
 let fs = require('fs')
-let MongoFilesystem = require('sb/extdb/MongoFilesystem.js')
+let MongoFilesystem = require('../extdb/MongoFilesystem.js')
 let NLP = require('natural')
-let Helper = require('sb/etc/Helper.js')
+let { Helper } = require('helper-clockmaker')
 let deepcopy = require('clone')
 let debug = require('debug')('CreateDatabaseConfig')
 

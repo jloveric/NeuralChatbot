@@ -1,7 +1,7 @@
 'use strict'
 
-let GetConfigValues = require('sb/etc/GetConfigValues.js')
-let Logger = require('sb/etc/Logger.js')('ElasticSearchOperate')
+let GetConfigValues = require('../etc/GetConfigValues.js')
+let Logger = require('helper-clockmaker').Logger('ElasticSearchOperate')
 let es = require('elasticsearch')
 let debug = require('debug')('ElasticSearchOperate')
 

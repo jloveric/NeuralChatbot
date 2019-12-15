@@ -1,9 +1,9 @@
 'use strict'
 
-let Logger = require('sb/etc/Logger.js')('DeleteUserAccount')
+let Logger = require('helper-clockmaker').Logger('DeleteUserAccount')
 let MongoFilesystem = require('./MongoFilesystem.js')
-let MongoHelper = require('sb/extdb/MongoHelper.js')
-let Helper = require('sb/etc/Helper.js')
+let MongoHelper = require('../extdb/MongoHelper.js')
+let { Helper } = require('helper-clockmaker')
 
 /**
  * Delete user account information.  If an error occurs the return values is

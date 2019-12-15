@@ -1,6 +1,6 @@
 'use strict'
-let Logger = require('sb/etc/Logger.js')('PhrasexBot')
-let Helper = require('sb/etc/Helper.js')
+let Logger = require('helper-clockmaker').Logger('PhrasexBot')
+let {Helper} = require('helper-clockmaker')
 
 //let Es = require('./ElasticSearchQuery.js')
 let Es = null
@@ -8,14 +8,14 @@ let SingleResponseIfc = require('./SingleResponseIfc').SingleResponseIfc
 let selectRandom = require('helper-clockmaker').selectRandom
 let {Phrasex, PhraseDatabase} = require('neural-phrasex')
 let slotFiller = require('slot-filler')
-//let PhraseDatabase = require('sb/phrasex/PhraseDatabase.js')
-let formatHelp = require('sb/etc/FormatHelp.js')
+//let PhraseDatabase = require('../phrasex/PhraseDatabase.js')
+let formatHelp = require('../etc/FormatHelp.js')
 
 let PhraseHitsFilterFactory = require('neural-phrasex').PhraseHitsFilter
 let debug = require('debug')('BasicBot')
-let findBest = require('sb/phrasex/ReRank.js').findBest
+let findBest = require('neural-phrasex').ReRank.findBest
 
-let GenerateObject = require('sb/phrasex/GenerateObject.js')
+let {GenerateObject} = require('neural-phrasex')
 
 let deepcopy = require('clone')
 

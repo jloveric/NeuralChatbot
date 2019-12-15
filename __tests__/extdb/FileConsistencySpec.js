@@ -1,10 +1,10 @@
 'use strict'
 
-let FileConsistency = require('sb/extdb/FileConsistency.js')
-let ServerConfig = require('sb/etc/GetConfigValues.js')
-let CreateDefaultMongoData = require('sb/extdb/CreateDefaultMongoData.js')
-let DeleteAccount = require('sb/extdb/DeleteUserAccount.js')
-let UpdateBotInformation = require('sb/extdb/BotInformation.js')
+let FileConsistency = require('../extdb/FileConsistency.js')
+let ServerConfig = require('../etc/GetConfigValues.js')
+let CreateDefaultMongoData = require('../extdb/CreateDefaultMongoData.js')
+let DeleteAccount = require('../extdb/DeleteUserAccount.js')
+let UpdateBotInformation = require('../extdb/BotInformation.js')
 
 let fc = new FileConsistency()
 let sc = new ServerConfig()

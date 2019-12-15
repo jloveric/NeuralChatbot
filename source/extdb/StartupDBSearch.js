@@ -1,18 +1,18 @@
 'use strict'
 
-let Logger = require('sb/etc/Logger.js')('StartupDBSearch')
+let Logger = require('helper-clockmaker').Logger('StartupDBSearch')
 let spawn = require('child_process').spawn
 let exec = require('child_process').exec
-//let ElasticSearchOperate = require('sb/extdb/ElasticSearchOperate.js')
+//let ElasticSearchOperate = require('../extdb/ElasticSearchOperate.js')
 let fs = require('fs')
 let debug = require('debug')('StartupDBSearch')
-let ElasticSearchOperate = require('sb/extdb/ElasticSearchOperate.js')
-let Helper = require('sb/etc/Helper.js')
+let ElasticSearchOperate = require('../extdb/ElasticSearchOperate.js')
+let { Helper } = require('helper-clockmaker')
 
 //I want to use this, but it overrides other exit
 //handlers so it seems like I need to leave it to the
 //main program for now.
-//let ExitHandler = require('sb/etc/ExitHandler.js');
+//let ExitHandler = require('../etc/ExitHandler.js');
 
 class StartupDBSearch {
   constructor() {
@@ -153,7 +153,7 @@ class StartupDBSearch {
     )
 
     let configString = ''
-    let MongoFilesystem = require('sb/extdb/MongoFilesystem.js')
+    let MongoFilesystem = require('../extdb/MongoFilesystem.js')
 
     let mg = new MongoFilesystem()
 

@@ -1,7 +1,7 @@
 'use strict'
 
 let debug = require('debug')('Communicator')
-let Logger = require('sb/etc/Logger.js')('Communicator')
+let Logger = require('helper-clockmaker').Logger('Communicator')
 
 /**
  * The communicator determines where the data is sent, right now

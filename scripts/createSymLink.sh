@@ -3,7 +3,7 @@
 echo "creating symbolic links in node_modules"
 echo "this is needed so we don't have to use"
 echo "relative paths require('../../source/io/io.js')"
-echo "instead becomes require('sb/io/io.js')"
+echo "instead becomes require('../io/io.js')"
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR

@@ -2,8 +2,8 @@
 
 let csv = require('csv')
 let readline = require('linebyline')
-let Logger = require('sb/etc/Logger.js')('ProcessDatabase')
-let MongoFilesystem = require('sb/extdb/MongoFilesystem.js')
+let Logger = require('helper-clockmaker').Logger('ProcessDatabase')
+let MongoFilesystem = require('../extdb/MongoFilesystem.js')
 let debug = require('debug')('ProcessDatabase')
 
 /**

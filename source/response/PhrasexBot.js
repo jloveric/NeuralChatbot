@@ -1,5 +1,5 @@
 'use strict'
-let Logger = require('helper-clockmaker')('PhrasexBot')
+let Logger = require('helper-clockmaker').Logger('PhrasexBot')
 let {Helper} = require('helper-clockmaker')
 
 /*let Es = require('./ElasticSearchQuery.js')*/
@@ -7,13 +7,13 @@ let BasicBot = require('./BasicBot')
 let selectRandom = require('../etc/Helper.js').selectRandom
 let {Phrasex, PhraseDatabase, PhraseHitsFilter, PartsOfSpeech, ReRank} = require('neural-phrasex')
 let slotFiller = require('slot-filler')
-//let PhraseDatabase = require('sb/phrasex/PhraseDatabase.js')
+//let PhraseDatabase = require('../phrasex/PhraseDatabase.js')
 let formatHelp = require('../etc/FormatHelp.js')
 
-//let PhraseHitsFilterFactory = require('sb/phrasex/PhraseHitsFilter.js')
+//let PhraseHitsFilterFactory = require('../phrasex/PhraseHitsFilter.js')
 let debug = require('debug')('PhrasexBot')
 let findBest = ReRank.findBest
-//let PartsOfSpeech = require('sb/phrasex/PartsOfSpeech.js')
+//let PartsOfSpeech = require('../phrasex/PartsOfSpeech.js')
 let GetDataConfig = require('../etc/GetDataConfig.js')
 
 let deepcopy = require('clone')

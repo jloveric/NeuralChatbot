@@ -1,12 +1,12 @@
 'use strict'
 
 let Deque = require('collections/deque')
-let PhraseFrequency = require('sb/phrasex/PhraseFrequency.js')
-let SearchRecord = require('sb/response/SearchRecord.js')
+let PhraseFrequency = require('../phrasex/PhraseFrequency.js')
+let SearchRecord = require('../response/SearchRecord.js')
 let deepcopy = require('clone')
 let debug = require('debug')('UserData')
 
-let GenerateObject = require('sb/phrasex/GenerateObject.js')
+let GenerateObject = require('../phrasex/GenerateObject.js')
 
 /**
  * This is a class which stores various session user data, it can also

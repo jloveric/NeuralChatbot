@@ -151,8 +151,8 @@ Install the phrase database with the command
 
 This is used to install a database into mongodb and elasticsearch.  Once the phrase database is created, it can be used by a bot.  A very basic bot is created below - a similar example can be found in spec/response/BasicBotSpec.js
 
-    let BasicBot = require('sb/response/PhrasexBotLib.js').BasicBot;
-    let UserData = require('sb/user/UserData.js')
+    let BasicBot = require('../response/PhrasexBotLib.js').BasicBot;
+    let UserData = require('../user/UserData.js')
 
     //fileDatabase should always be 'filesystem'
     //somebotname is your bots name - anything you want, but it can't match an existing bot
@@ -238,10 +238,10 @@ places them in response wildcards (if any exist).
 
     "use strict"
 
-    let Action = require('sb/boteng/Action.js')
-    let Formatting = require('sb/boteng/Formatting.js')
-    let Logger = require('sb/etc/Logger.js')('NoSearchAction')
-    let Helper = require('sb/etc/Helper.js')
+    let Action = require('../boteng/Action.js')
+    let Formatting = require('../boteng/Formatting.js')
+    let Logger = require('helper-clockmaker').Logger('NoSearchAction')
+    let { Helper } = require('helper-clockmaker')
 
     class NoSearchAction extends Action {
     
@@ -297,7 +297,7 @@ search is performed as a result of the Action.
 Actions can be defined outside of the clockmaker framework and integrated in simply
 by creating new actions and referencing them in the bot constructor.
 
-    let BasicBot = require('sb/response/PhrasexBotLib.js').BasicBot;
+    let BasicBot = require('../response/PhrasexBotLib.js').BasicBot;
     obj = {
         files : ["someDirectory/someFile.js","otherDirectory/otherFile.js"]
     }

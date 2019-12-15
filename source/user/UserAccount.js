@@ -1,9 +1,9 @@
 'use strict'
 
-let Logger = require('sb/etc/Logger.js')('UserAccount')
+let Logger = require('helper-clockmaker').Logger('UserAccount')
 let mongoose = require('mongoose')
 let userModel = require('./UserModel.js')
-let GetConfigValues = require('sb/etc/GetConfigValues.js')
+let GetConfigValues = require('../etc/GetConfigValues.js')
 
 class UserAccount {
   constructor() {

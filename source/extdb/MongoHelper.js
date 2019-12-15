@@ -1,8 +1,8 @@
 'use strict'
 
-let Logger = require('sb/etc/Logger.js')('MongoHelper')
+let Logger = require('helper-clockmaker').Logger('MongoHelper')
 let Mongo = require('mongodb')
-let Helper = require('sb/etc/Helper.js')
+let { Helper } = require('helper-clockmaker')
 
 let instance = null
 

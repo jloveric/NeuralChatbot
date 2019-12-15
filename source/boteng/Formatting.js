@@ -1,9 +1,9 @@
 'use strict'
 
-let Helper = require('sb/etc/Helper.js')
-let Logger = require('sb/etc/Logger.js')('Formatting')
+let {Helper} = require('helper-clockmaker')
+let Logger = require('helper-clockmaker').Logger('Formatting')
 let debug = require('debug')('Formatting')
-let slotFiller = require('sb/phrasex/SlotFiller.js')
+let slotFiller = require('slot-filler')
 let deepcopy = require('clone')
 
 /**

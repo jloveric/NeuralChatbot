@@ -1,5 +1,5 @@
-let BasicBot = require('sb/response/PhrasexBotLib.js').BasicBot
-let UserData = require('sb/user/UserData.js')
+let BasicBot = require('../response/PhrasexBotLib.js').BasicBot
+let UserData = require('../user/UserData.js')
 
 //fileDatabase should always be 'filesystem'
 //somebotname is your bots name - anything you want, but it can't match an existing bot

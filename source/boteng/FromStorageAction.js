@@ -1,10 +1,9 @@
 'use strict'
 
-let Action = require('sb/boteng/Action.js')
-let Formatting = require('sb/boteng/Formatting.js')
-let Logger = require('sb/etc/Logger.js')('NoSearchAction')
-let Helper = require('sb/etc/Helper.js')
-
+let Action = require('../boteng/Action.js')
+let Formatting = require('../boteng/Formatting.js')
+let Logger = require('helper-clockmaker').Logger('NoSearchAction')
+let {Helper} = require('helper-clockmaker')
 /**
  * This action returns true for every phrase so should
  * not be included in the botEngine list.  Instead it is

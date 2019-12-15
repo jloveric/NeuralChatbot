@@ -1,6 +1,6 @@
 'use strict'
 
-let MongoFilesystem = require('sb/extdb/MongoFilesystem.js')
+let MongoFilesystem = require('../extdb/MongoFilesystem.js')
 let mongoText = 'It appears writing from text works'
 let mongoText2 = 'No confusion'
 

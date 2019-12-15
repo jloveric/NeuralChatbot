@@ -1,9 +1,9 @@
 'use strict'
 
-let CreateDatabaseConfig = require('sb/extdb/CreateDatabaseConfig.js')
-let CreateLogstashConfig = require('sb/extdb/CreateLogstashConfig.js')
-let StartupDBSearch = require('sb/extdb/StartupDBSearch.js')
-let Helper = require('sb/etc/Helper.js')
+let CreateDatabaseConfig = require('../extdb/CreateDatabaseConfig.js')
+let CreateLogstashConfig = require('../extdb/CreateLogstashConfig.js')
+let StartupDBSearch = require('../extdb/StartupDBSearch.js')
+let { Helper } = require('helper-clockmaker')
 let deepcopy = require('clone')
 let debug = require('debug')('InstallAndIndex')
 

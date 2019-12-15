@@ -1,12 +1,12 @@
 'use strict'
 
-let Logger = require('sb/etc/Logger.js')('MongoFilesystem')
+let Logger = require('helper-clockmaker').Logger('MongoFilesystem')
 let Mongo = require('mongodb')
 let fs = require('fs')
-let MongoHelper = require('sb/extdb/MongoHelper.js')
+let MongoHelper = require('../extdb/MongoHelper.js')
 let Stream = require('stream')
-let Helper = require('sb/etc/Helper.js')
-let GetConfigValues = require('sb/etc/GetConfigValues.js')
+let { Helper } = require('helper-clockmaker')
+let GetConfigValues = require('../etc/GetConfigValues.js')
 let debug = require('debug')('MongoFilesystem')
 
 let gf = new GetConfigValues()

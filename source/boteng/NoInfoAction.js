@@ -1,9 +1,9 @@
 'use strict'
 
-let Action = require('sb/boteng/Action.js')
-let Formatting = require('sb/boteng/Formatting.js')
-let Logger = require('sb/etc/Logger.js')('NoInfoAction')
-let Helper = require('sb/etc/Helper.js')
+let Action = require('../boteng/Action.js')
+let Formatting = require('../boteng/Formatting.js')
+let Logger = require('helper-clockmaker').Logger('NoInfoAction')
+let { Helper } = require('helper-clockmaker')
 
 /**
  * This action is applied to broad questions such

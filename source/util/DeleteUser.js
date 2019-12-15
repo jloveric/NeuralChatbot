@@ -3,12 +3,12 @@
 'use strict'
 
 let debug = require('debug')('RegisterUser')
-let Helper = require('sb/etc/Helper.js')
-let DeleteUserAccount = require('sb/extdb/DeleteUserAccount.js')
+let { Helper } = require('helper-clockmaker')
+let DeleteUserAccount = require('../extdb/DeleteUserAccount.js')
 
 let args = require('minimist')(process.argv.slice(2))
 
-let GetConfigValues = require('sb/etc/GetConfigValues.js')
+let GetConfigValues = require('../etc/GetConfigValues.js')
 let gc = new GetConfigValues()
 
 if (!args.username) {

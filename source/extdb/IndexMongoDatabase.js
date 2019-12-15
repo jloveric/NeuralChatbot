@@ -1,8 +1,8 @@
 'use strict'
 
-let Logger = require('sb/etc/Logger.js')('IndexMongoDatabase')
-let GetConfigValues = require('sb/etc/GetConfigValues.js')
-let MongoHelper = require('sb/extdb/MongoHelper.js')
+let Logger = require('helper-clockmaker').Logger('IndexMongoDatabase')
+let GetConfigValues = require('../etc/GetConfigValues.js')
+let MongoHelper = require('../extdb/MongoHelper.js')
 let es = require('elasticsearch')
 let async = require('async')
 let debug = require('debug')('IndexMongoDatabase')

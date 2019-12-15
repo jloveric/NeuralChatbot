@@ -1,9 +1,9 @@
 'use strict'
 
-let Logger = require('sb/etc/Logger.js')('GetDataConfig')
-let Helper = require('sb/etc/Helper.js')
+let Logger = require('helper-clockmaker').Logger('GetDataConfig')
+let { Helper } = require('helper-clockmaker')
 //let fs = require('fs');
-let MongoFilesystem = require('sb/extdb/MongoFilesystem.js')
+let MongoFilesystem = require('../extdb/MongoFilesystem.js')
 let debug = require('debug')('GetDataConfig')
 
 /**

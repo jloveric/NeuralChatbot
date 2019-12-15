@@ -1,21 +1,21 @@
 'use strict'
 
-let Logger = require('sb/etc/Logger.js')('InstallBot')
-let GetConfigValues = require('sb/etc/GetConfigValues.js')
-let DeleteAccount = require('sb/extdb/DeleteUserAccount.js')
-let MongoHelper = require('sb/extdb/MongoHelper.js')
-let MongoFilesystem = require('sb/extdb/MongoFilesystem.js')
-let CreateUser = require('sb/user/CreateUser.js')
+let Logger = require('helper-clockmaker').Logger('InstallBot')
+let GetConfigValues = require('../etc/GetConfigValues.js')
+let DeleteAccount = require('../extdb/DeleteUserAccount.js')
+let MongoHelper = require('../extdb/MongoHelper.js')
+let MongoFilesystem = require('../extdb/MongoFilesystem.js')
+let CreateUser = require('../user/CreateUser.js')
 let debug = require('debug')('InstallBot')
 let jsonfile = require('jsonfile')
-let BotInformation = require('sb/extdb/BotInformation.js')
-let InstallAndIndex = require('sb/extdb/InstallAndIndex.js')
-let Helper = require('sb/etc/Helper.js')
+let BotInformation = require('../extdb/BotInformation.js')
+let InstallAndIndex = require('../extdb/InstallAndIndex.js')
+let { Helper } = require('helper-clockmaker')
 let filepath = require('filepath')
-let ModifyStoredDatabase = require('sb/extdb/ModifyStoredDatabase.js')
+let ModifyStoredDatabase = require('../extdb/ModifyStoredDatabase.js')
 
-let IndexMongoDatabase = require('sb/extdb/IndexMongoDatabase.js')
-let BasicPhrasexDatabase = require('sb/phrasex/BasicPhrasexDatabase.js')
+let IndexMongoDatabase = require('../extdb/IndexMongoDatabase.js')
+let BasicPhrasexDatabase = require('../phrasex/BasicPhrasexDatabase.js')
 
 /**
  * This class is able to install an entire bot by calling the 'install'

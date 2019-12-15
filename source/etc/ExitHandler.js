@@ -1,6 +1,6 @@
 'use strict'
 
-let Logger = require('sb/etc/Logger.js')('ExitHandler')
+let Logger = require('helper-clockmaker').Logger('ExitHandler')
 
 //function noOp() { };
 

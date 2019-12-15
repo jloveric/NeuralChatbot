@@ -2,9 +2,9 @@
 
 //let path = __dirname+"/../uploads/groceries.csv.config"
 let path = 'groceries.csv'
-let PhrasexBot = require('sb/response/PhrasexBotLib.js').StandardPhrasexBot
-let GetConfigValues = require('sb/etc/GetConfigValues.js')
-let UserData = require('sb/user/UserData.js')
+let PhrasexBot = require('../response/PhrasexBotLib.js').StandardPhrasexBot
+let GetConfigValues = require('../etc/GetConfigValues.js')
+let UserData = require('../user/UserData.js')
 let gc = new GetConfigValues()
 
 let rootName = gc.bot.rootName

@@ -1,7 +1,7 @@
 'use strict'
 
 let path = 'groceries.csv'
-let EsModule = require('sb/response/ElasticSearchQuery.js')
+let EsModule = require('../response/ElasticSearchQuery.js')
 let es = new EsModule()
 
 describe('EsSearchSpec', function() {

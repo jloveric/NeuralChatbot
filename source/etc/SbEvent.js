@@ -1,6 +1,6 @@
 'use strict'
 
-let Logger = require('sb/etc/Logger.js')('SbEvent')
+let Logger = require('helper-clockmaker').Logger('SbEvent')
 
 const EventEmitter = require('events')
 

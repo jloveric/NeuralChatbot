@@ -2,9 +2,9 @@
 
 let csv = require('csv')
 let readline = require('linebyline')
-let Logger = require('sb/etc/Logger.js')('ModifyStoredDatabase')
-let MongoFilesystem = require('sb/extdb/MongoFilesystem.js')
-let Helper = require('sb/etc/Helper.js')
+let Logger = require('helper-clockmaker').Logger('ModifyStoredDatabase')
+let MongoFilesystem = require('../extdb/MongoFilesystem.js')
+let { Helper } = require('helper-clockmaker')
 let debug = require('debug')('ModifyStoredDatabase')
 
 /**

@@ -1,7 +1,7 @@
 'use strict'
 
 //TODO: I don't like that this is in here'
-let FromStorageAction = require('sb/boteng/FromStorageAction.js')
+let FromStorageAction = require('../boteng/FromStorageAction.js')
 
 let debug = require('debug')('BotEngine')
 

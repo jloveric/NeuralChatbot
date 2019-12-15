@@ -1,7 +1,7 @@
 'use strict'
 
-let EsSearch = require('sb/response/ElasticSearchQuery.js')
-let MongoFilesystem = require('sb/extdb/MongoFilesystem.js')
+let EsSearch = require('../response/ElasticSearchQuery.js')
+let MongoFilesystem = require('../extdb/MongoFilesystem.js')
 let debug = require('debug')('BoostDocuments')
 
 class BoostDocuments {

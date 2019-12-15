@@ -1,5 +1,5 @@
 'use strict'
-let CreateLogstashConfig = require('sb/extdb/CreateLogstashConfig')
+let CreateLogstashConfig = require('../extdb/CreateLogstashConfig')
 
 describe('CreateLogstashConfig', function() {
   it('Should make a config file', function() {

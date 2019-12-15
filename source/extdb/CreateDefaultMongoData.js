@@ -1,10 +1,10 @@
 'use strict'
 
-let Helper = require('sb/etc/Helper.js')
-let Logger = require('sb/etc/Logger.js')('CreateDefaultMongoData')
-let MongoFilesystem = require('sb/extdb/MongoFilesystem.js')
-let ModifyStoredDatabase = require('sb/extdb/ModifyStoredDatabase.js')
-let InstallAndIndex = require('sb/extdb/InstallAndIndex.js')
+let { Helper } = require('helper-clockmaker')
+let Logger = require('helper-clockmaker').Logger('CreateDefaultMongoData')
+let MongoFilesystem = require('../extdb/MongoFilesystem.js')
+let ModifyStoredDatabase = require('../extdb/ModifyStoredDatabase.js')
+let InstallAndIndex = require('../extdb/InstallAndIndex.js')
 
 /**
  * For tests and when a user logs in for the first time we want

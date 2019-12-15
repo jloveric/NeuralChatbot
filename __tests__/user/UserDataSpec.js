@@ -1,6 +1,6 @@
 'use strict'
 
-let UserData = require('sb/user/UserData.js')
+let UserData = require('../user/UserData.js')
 let clone = require('clone')
 
 describe('helper', function() {

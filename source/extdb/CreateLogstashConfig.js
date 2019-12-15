@@ -1,10 +1,10 @@
 'use strict'
 
-let Helper = require('sb/etc/Helper.js')
+let { Helper } = require('helper-clockmaker')
 let fs = require('fs')
-let Logger = require('sb/etc/Logger.js')('CreateLogstashConfig')
-let MongoFilesystem = require('sb/extdb/MongoFilesystem.js')
-let GetConfigValues = require('sb/etc/GetConfigValues.js')
+let Logger = require('helper-clockmaker').Logger('CreateLogstashConfig')
+let MongoFilesystem = require('../extdb/MongoFilesystem.js')
+let GetConfigValues = require('../etc/GetConfigValues.js')
 
 class CreateLogstashConfig {
   constructor() {

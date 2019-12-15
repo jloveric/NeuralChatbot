@@ -1,7 +1,7 @@
 'use strict'
 
-let MongoFilesystem = require('sb/extdb/MongoFilesystem.js')
-let ModifyStoredDatabase = require('sb/extdb/ModifyStoredDatabase.js')
+let MongoFilesystem = require('../extdb/MongoFilesystem.js')
+let ModifyStoredDatabase = require('../extdb/ModifyStoredDatabase.js')
 
 let fileDB = 'fileSystemTest'
 

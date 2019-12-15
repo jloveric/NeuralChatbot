@@ -1,8 +1,8 @@
 'use strict'
 
-let Logger = require('sb/etc/Logger.js')('BotInformation')
-let MongoHelper = require('sb/extdb/MongoHelper.js')
-let Es = require('sb/response/ElasticSearchQuery.js')
+let Logger = require('helper-clockmaker').Logger('BotInformation')
+let MongoHelper = require('../extdb/MongoHelper.js')
+let Es = require('../response/ElasticSearchQuery.js')
 let debug = require('debug')('BotInformation')
 
 /**

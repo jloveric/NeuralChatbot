@@ -1,8 +1,8 @@
 'use strict'
 
-let BotInformation = require('sb/extdb/BotInformation.js')
+let BotInformation = require('../extdb/BotInformation.js')
 
-let GetConfigValues = require('sb/etc/GetConfigValues.js')
+let GetConfigValues = require('../etc/GetConfigValues.js')
 
 let gc = new GetConfigValues()
 

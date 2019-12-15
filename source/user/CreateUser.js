@@ -1,10 +1,10 @@
 'use strict'
 
-let Logger = require('sb/etc/Logger.js')('CreateUser')
+let Logger = require('helper-clockmaker').Logger('CreateUser')
 let passport = require('passport')
 let GoogleStrategy = require('passport-google').Strategy
 let LocalStrategy = require('passport-local').Strategy
-let UserAccount = require('sb/user/UserAccount.js')
+let UserAccount = require('../user/UserAccount.js')
 
 /**
  * The goal of this is to be able to register a user using

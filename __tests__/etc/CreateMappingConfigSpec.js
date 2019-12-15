@@ -1,6 +1,6 @@
 'use strict'
 
-let CreateMappingConfig = require('sb/etc/CreateMappingConfig.js')
+let CreateMappingConfig = require('../etc/CreateMappingConfig.js')
 
 describe('CreateMappingConfig', function() {
   it('Should create a mapping', function() {

@@ -2,10 +2,10 @@
 
 describe('Logger', function() {
   it('Should Test the Logger', function() {
-    let Logger = require('sb/etc/Logger.js')('LoggerSpec')
+    let Logger = require('helper-clockmaker').Logger('LoggerSpec')
     Logger.error('Testing the Logger')
 
-    //Logger = require('sb/etc/Logger.js')();
+    //Logger = require('../etc/Logger.js')();
     //Logger.error('Testing the Logger')
   })
 })

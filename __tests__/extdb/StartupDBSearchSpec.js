@@ -1,10 +1,10 @@
 'use strict'
-let Startup = require('sb/extdb/StartupDBSearch.js')
-let ElasticSearchOp = require('sb/extdb/ElasticSearchOperate.js')
+let Startup = require('../extdb/StartupDBSearch.js')
+let ElasticSearchOp = require('../extdb/ElasticSearchOperate.js')
 let debug = require('debug')
-let Helper = require('sb/etc/Helper.js')
-let InstallBot = require('sb/extdb/InstallBot.js')
-let GetConfigValues = require('sb/etc/GetConfigValues.js')
+let { Helper } = require('helper-clockmaker')
+let InstallBot = require('../extdb/InstallBot.js')
+let GetConfigValues = require('../etc/GetConfigValues.js')
 
 let fs = 'filesystem'
 

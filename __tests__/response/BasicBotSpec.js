@@ -2,9 +2,9 @@
 
 //let path = __dirname+"/../uploads/groceries.csv.config"
 let path = 'botDB.config'
-let BasicBot = require('sb/response/PhrasexBotLib.js').BasicBot
-let GetConfigValues = require('sb/etc/GetConfigValues.js')
-let UserData = require('sb/user/UserData.js')
+let BasicBot = require('../../source/response/PhrasexBotLib.js').BasicBot
+let GetConfigValues = require('../../source/etc/GetConfigValues.js')
+let {UserData} = require('neural-phrasex')
 let gc = new GetConfigValues()
 
 let rootName = gc.bot.rootName
