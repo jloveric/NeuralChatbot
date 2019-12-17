@@ -1,11 +1,11 @@
 'use strict'
 let Logger = require('helper-clockmaker').Logger('PhrasexBot')
-let {Helper} = require('helper-clockmaker')
+let { Helper } = require('helper-clockmaker')
 
 /*let Es = require('./ElasticSearchQuery.js')*/
 let BasicBot = require('./BasicBot')
 //let selectRandom = require('helper-clockmaker').selectRandom
-let {Phrasex, PhraseDatabase, PhraseHitsFilter, PartsOfSpeech, ReRank} = require('neural-phrasex')
+let { Phrasex, PhraseDatabase, PhraseHitsFilter, PartsOfSpeech, ReRank } = require('neural-phrasex')
 let slotFiller = require('slot-filler')
 //let PhraseDatabase = require('../phrasex/PhraseDatabase.js')
 let formatHelp = require('../etc/FormatHelp.js')
@@ -42,15 +42,15 @@ class PhrasexBot extends BasicBot {
    * this, but it can be used to specify the phrase table used by the bot, so for example
    * {phraseTable : 'tablename'}
    */
-  initialize(confShallow) {
+  async initialize(confShallow) {
     let conf = deepcopy(confShallow)
     this.config = "fix this!" //new GetDataConfig()
-    let p0 = this.config.initialize(conf)
+    /*let p0 =*/ await this.config.initialize(conf)
 
-    let p1 = super.initialize(confShallow)
+    /*let p1 =*/ await super.initialize(confShallow)
     //let conf = deepcopy(confShallow)
 
-    let p2 = this.search.initialize(conf)
+    /*let p2 =*/ await this.search.initialize(conf)
 
     //Array of all keywords that can be used to represent column names
     this.keywords = []
@@ -62,55 +62,55 @@ class PhrasexBot extends BasicBot {
     this.columnType = new Map()
 
     //let np = new Promise((resolve, reject) => {
-    let np = Promise.all([p0, p1, p2]).then(values => {
-      //Ok, the mapping from the columnNames to renamed values which
-      //are more representative
-      this.columnReName = this.config.keywords
+    //let np = Promise.all([p0, p1, p2]).then(values => {
+    //Ok, the mapping from the columnNames to renamed values which
+    //are more representative
+    this.columnReName = this.config.keywords
 
-      debug('columnReName', this.columnReName)
+    debug('columnReName', this.columnReName)
 
-      for (let i in this.config.databaseNameMapping) {
-        this.columnType.set(this.config.databaseNameMapping[i], i)
+    for (let i in this.config.databaseNameMapping) {
+      this.columnType.set(this.config.databaseNameMapping[i], i)
+    }
+    Logger.debug('this.columnType', this.columnType)
+
+    this.columnMap = this.config.synonyms
+
+    if (!this.columnMap) {
+      Logger.error('PhrasexBot columnMap is undefined')
+      Helper.logAndThrow('PhrasexBot columnMap is undefined')
+    }
+
+    for (let data of this.columnMap) {
+      let key = data[0]
+      let value = data[1]
+
+      this.keywords.push(data[0])
+
+      if (this.columnSynVector[value]) {
+        this.columnSynVector[value].push(key)
+      } else {
+        this.columnSynVector[value] = [key]
       }
-      Logger.debug('this.columnType', this.columnType)
+    }
 
-      this.columnMap = this.config.synonyms
-
-      if (!this.columnMap) {
-        Logger.error('PhrasexBot columnMap is undefined')
-        Helper.logAndThrow('PhrasexBot columnMap is undefined')
-      }
-
-      for (let data of this.columnMap) {
-        let key = data[0]
-        let value = data[1]
-
-        this.keywords.push(data[0])
-
-        if (this.columnSynVector[value]) {
-          this.columnSynVector[value].push(key)
-        } else {
-          this.columnSynVector[value] = [key]
-        }
-      }
-
-      console.log('syn', this.config.synonyms, 'cmap', this.columnMap)
-      //process.exit(0);
-      //TODO: should these be deepcopied ?
-      this.botEngine.initialize({
-        columnMap: this.columnMap,
-        columnType: this.columnType,
-        columnSynVector: this.columnSynVector,
-        columnReName: this.columnReName,
-        search: this.search,
-        primary: this.config.primary,
-      })
-
-      return Promise.resolve(true)
+    console.log('syn', this.config.synonyms, 'cmap', this.columnMap)
+    //process.exit(0);
+    //TODO: should these be deepcopied ?
+    this.botEngine.initialize({
+      columnMap: this.columnMap,
+      columnType: this.columnType,
+      columnSynVector: this.columnSynVector,
+      columnReName: this.columnReName,
+      search: this.search,
+      primary: this.config.primary,
     })
+
+    //return Promise.resolve(true)
+    //})
     //});
 
-    return np
+    //return np
   }
 
   /**

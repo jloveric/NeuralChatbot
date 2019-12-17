@@ -224,7 +224,7 @@ class BasicBot extends SingleResponseIfc {
    * TODO: break this piece of code up a bit more.
    * @param resArray is an array of search results with attached scores.
    */
-  processResult(
+  async processResult(
     resArray,
     originalUserData,
     botStorage,
@@ -242,12 +242,12 @@ class BasicBot extends SingleResponseIfc {
     for (let i = 0; i < resArray.length; i++) {
       //Ok, this copies the entire user data, a costly operation.
       //One should just copy the history and database when the time comes.
-      
+
       //debug('originalUserData', originalUserData)
       //debug('botStorage', botStorage)
       let userData = deepcopy(originalUserData)
       //debug('userData aagin', userData)
-      
+
       let lStorage = deepcopy(botStorage)
 
       //let userData = userDataList[i];
@@ -262,7 +262,7 @@ class BasicBot extends SingleResponseIfc {
 
       let typeIdentifier = this.pdb.getTypeIdentifier(source)
       let replies = this.tellMap.get(typeIdentifier)
-      debug('tellMap', this.tellMap)
+      debug('tellMap', JSON.stringify(this.tellMap, null, 2))
       debug('replies', replies)
       debug('typeIdentifier', typeIdentifier)
 
@@ -302,8 +302,8 @@ class BasicBot extends SingleResponseIfc {
 
       debug('do we still have storage', userData.storage)
       Helper.logAndThrowUndefined(
-                'PhrasexBot replies must be defined',
-                replies)
+        'PhrasexBot replies must be defined',
+        replies)
 
       //Lets fill in wildcards ahead of time with guesses
       //debug('wildcards',wildcards)
@@ -341,7 +341,7 @@ class BasicBot extends SingleResponseIfc {
 
       //debug('wildcards after',wildcards)
 
-      let firstGuess = this.botEngine.computeResult(
+      let firstGuess = await this.botEngine.computeResult(
         {
           typeIdentifier: typeIdentifier,
           replies: replies,
@@ -362,51 +362,53 @@ class BasicBot extends SingleResponseIfc {
       wList.push(res.wcScore)
     }
 
-    return Promise.all(pList)
-      .then(ans => {
-        debug('ans.length', ans.length)
-        let newVal = []
-        for (let i = 0; i < ans.length; i++) {
-          ans[i].wcScore = wList[i]
-          newVal.push({ val: ans[i], userData: uList[i], storage: bList[i] })
-        }
+    //return Promise.all(pList)
+    //  .then(ans => {
 
-        debug('--------------------------NEWVAL-------------------', uList)
+    debug('ans.length', pList.length)
+    let newVal = []
+    for (let i = 0; i < pList.length; i++) {
+      pList[i].wcScore = wList[i]
+      newVal.push({ val: pList[i], userData: uList[i], storage: bList[i] })
+    }
 
-        let final = this.trimResults(newVal, infoList)
+    debug('--------------------------NEWVAL-------------------', uList)
 
-        debug('ans.length final', ans.length)
+    let final = this.trimResults(newVal, infoList)
 
-        debug('final', final)
+    debug('ans.length final', pList.length)
 
-        //copy the two critical components
-        originalUserData.shallowCopy(final.userData)
-        //originalUserData.history = final.userData.history;
-        //originalUserData.storage = final.userData.storage;
+    debug('final', final)
 
-        //I believe this is copying correctly.  Simple
-        //assignment definitely deletes the storage.
-        debug(
-          'FINAL STORAGE-------------------------',
-          originalUserData.storage,
-          final.storage
-        )
-        debug('botStorage', botStorage)
-        for (let i in final.storage) {
-          botStorage[i] = final.storage[i]
-        }
-        //debug('just before final promise.',final)
-        debug('finalHistory', final.userData.history)
-        return Promise.resolve(final.val)
-      })
-      .catch(reason => {
-        debug('failing in processResult', reason)
-        Helper.logAndThrow(
-          'All promises must resolve for this to work!',
-          reason
-        )
-        return Promise.reject(reason)
-      })
+    //copy the two critical components
+    originalUserData.shallowCopy(final.userData)
+    //originalUserData.history = final.userData.history;
+    //originalUserData.storage = final.userData.storage;
+
+    //I believe this is copying correctly.  Simple
+    //assignment definitely deletes the storage.
+    debug(
+      'FINAL STORAGE-------------------------',
+      originalUserData.storage,
+      final.storage
+    )
+    debug('botStorage', botStorage)
+    for (let i in final.storage) {
+      botStorage[i] = final.storage[i]
+    }
+    //debug('just before final promise.',final)
+    debug('finalHistory', final.userData.history)
+    return final.val
+
+    /*})
+  .catch(reason => {
+    debug('failing in processResult', reason)
+    Helper.logAndThrow(
+      'All promises must resolve for this to work!',
+      reason
+    )
+    return Promise.reject(reason)
+  //})*/
   }
 
   /**
@@ -574,7 +576,7 @@ class BasicBot extends SingleResponseIfc {
    * such as "where is the bread".  If explicit=true then a phrase match
    * is required.
    */
-  standardResult(phrase, userData, explicit) {
+  async standardResult(phrase, userData, explicit) {
     debug('Stepped in tryResult with phrase', phrase)
 
     //Empty or whitespace check
@@ -583,18 +585,14 @@ class BasicBot extends SingleResponseIfc {
       return Promise.resolve({ response: '', success: true, confidence: 1.0 })
     }
 
-    //debug('Before new promise -- primary', this.config.primary)
+    let newRes = await this.phrasex.getWildcardsAndMatch(phrase, this.keywords, userData)
 
-    return this.phrasex
-      .getWildcardsAndMatch(phrase, this.keywords, userData)
-      .then(newRes => {
-        return this.processResult(newRes, userData, this.storage, false)
-      })
-      .catch(reason => {
-        debug('Tryresult catch error', reason)
-        Logger.error(reason)
-        return Promise.resolve(Helper.failResponse)
-      })
+    try {
+      let ans = await this.processResult(newRes, userData, this.storage, false)
+      return ans
+    } catch (error) {
+      return Helper.failResponse
+    }
   }
 
   /**
@@ -623,57 +621,59 @@ class BasicBot extends SingleResponseIfc {
    * if multiple bots are listening and we only want to respond to
    * explicit answers.
    */
-  getResult(phrase, userData, forget, explicit) {
+  async getResult(phrase, userData, forget, explicit) {
     debug('Stepped into getResult with phrase', phrase)
 
-    let np = this.standardResult(phrase, userData, explicit)
-      .then(res => {
-        debug('returning from standard result')
-        //debug("Before PhraseFrequencyData")
-        //Not totally sure why res.phrase would ever be undefined, but it is apparently.
+    let np;
 
-        //causes untold problems
-        /*if (this.statisticsFlag && res.phrase && !forget) {
-                //debug('Adding PhraseFrequency Data')
-                userData.phraseFrequency.addPhrase(res.phrase, res.confidence)
-    
-                debug('PhraseFrequency', userData.phraseFrequency)
-            }*/
+    try {
+      let res = await this.standardResult(phrase, userData, explicit)
 
-        //This generally means somebody is telling you some information
-        if (res.dontRespond) {
-          //Don't modify things further'
-          return Promise.resolve(res)
-        }
+      debug('returning from standard result')
+      //debug("Before PhraseFrequencyData")
+      //Not totally sure why res.phrase would ever be undefined, but it is apparently.
 
-        debug('Add phrase', res)
+      //causes untold problems
+      /*if (this.statisticsFlag && res.phrase && !forget) {
+              //debug('Adding PhraseFrequency Data')
+              userData.phraseFrequency.addPhrase(res.phrase, res.confidence)
+  
+              debug('PhraseFrequency', userData.phraseFrequency)
+          }*/
 
-        //If the confidence is low, just give it a failing grade
-        //res.confidence = res.confidence ? res.confidence : 0.0;
-        /*if (res.confidence < 0.2) {
-                res.confidence = 0.0;
-                res.success = false;
-            }*/
-
-        if (Helper.isFailResponse(res)) {
-          res.response = Helper.selectRandom(Helper.defaultResponse)
-        } else if (res.response == '') {
-          //Reaches this point if '' was entered as the phrase (pressed enter)
-          res.response = Helper.selectRandom(Helper.defaultResponse)
-        }
-        debug('Returning a good result', res)
+      //This generally means somebody is telling you some information
+      if (res.dontRespond) {
+        //Don't modify things further'
         return Promise.resolve(res)
-      })
-      .catch(reason => {
-        debug('Returning a bad result', reason)
-        Logger.error(reason)
-        let res = Helper.failResponse
-        res.confidence = 0.0
+      }
+
+      debug('Add phrase', res)
+
+      //If the confidence is low, just give it a failing grade
+      //res.confidence = res.confidence ? res.confidence : 0.0;
+      /*if (res.confidence < 0.2) {
+              res.confidence = 0.0;
+              res.success = false;
+          }*/
+
+      if (Helper.isFailResponse(res)) {
         res.response = Helper.selectRandom(Helper.defaultResponse)
-        return Promise.resolve(res)
-      })
+      } else if (res.response == '') {
+        //Reaches this point if '' was entered as the phrase (pressed enter)
+        res.response = Helper.selectRandom(Helper.defaultResponse)
+      }
+      debug('Returning a good result', res)
+      return res
 
-    return np
+    } catch (reason) {
+      debug('Returning a bad result', reason)
+      Logger.error(reason)
+      let res = Helper.failResponse
+      res.confidence = 0.0
+      res.response = Helper.selectRandom(Helper.defaultResponse)
+      return res
+    }
+
   }
 }
 
