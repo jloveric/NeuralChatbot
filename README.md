@@ -10,7 +10,7 @@ This code is in transition.  Moving from elastic search based to client side wit
 # Installation:
 
 ```bash
-npm install the-clockmaker
+npm install neural-chatbot
 ```
 
 # Testing
