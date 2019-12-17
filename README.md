@@ -100,7 +100,7 @@ let db = {
 ```
 Now you can use that phrase database
 ```javascript
-let { BasicBot } = require('the-clockmaker').BasicBot;
+let { BasicBot } = require('neural-chatbot');
 let { UserData } = require('neural-phrasex')
 
 let conf = {
