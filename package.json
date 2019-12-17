@@ -1,6 +1,6 @@
 {
   "name": "neural-chatbot",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "",
   "author": "John Loverich",
   "license": "MIT",
@@ -9,6 +9,16 @@
     "type": "git",
     "url": "git+https://github.com/jloveric/NeuralChatbot.git"
   },
+  "keywords": [
+    "tensorflow",
+    "nlu",
+    "one shot learning",
+    "sentence embeddings",
+    "chatbot",
+    "ai",
+    "conversational agent",
+    "semantic"
+  ],
   "dependencies": {
     "clone": "^2.1.2",
     "collections": "^5.1.9",
