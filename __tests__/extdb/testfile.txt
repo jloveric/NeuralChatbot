@@ -1,2 +1,0 @@
-This is a test file and I'm seeing if it will store
-properly in mongodb.
