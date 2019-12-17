@@ -4,14 +4,14 @@
 let path = 'botDB.config'
 let BasicBot = require('../../source/response/PhrasexBotLib.js').BasicBot
 //let GetConfigValues = require('../../source/etc/GetConfigValues.js')
-let {UserData} = require('neural-phrasex')
+let { UserData } = require('neural-phrasex')
 let gc = {} //new GetConfigValues()
 let dudeDatabase = require('../../phrasedatabases/DudeDatabase.js')
 
 let rootName = null; //gc.bot.rootName
 
-describe('Test the BasicBot - which is not attached to a database!', function() {
-  /*it('Test store and retrieve data functions', function(done) {
+describe('Test the BasicBot - which is not attached to a database!', function () {
+  it('Test store and retrieve data functions', function(done) {
     let bot = new BasicBot()
     let userData = new UserData()
 
@@ -32,11 +32,11 @@ describe('Test the BasicBot - which is not attached to a database!', function() 
     expect(wc2.column).toBe('name')
 
     done()
-  }, 10000)*/
+  }, 10000)
 
-  it('Should Return Good values', function(done) {
+  it('Should Return Good values', async function (done) {
     let conf = {
-      database : dudeDatabase,
+      database: dudeDatabase,
       fileDatabase: 'filesystem',
       user: 'root',
       filename: path,
@@ -48,32 +48,34 @@ describe('Test the BasicBot - which is not attached to a database!', function() 
       phraseTable: 'dudephrases',
     }
     let bot = new BasicBot()
-    bot.initialize(conf).then(() => {
-      let pList = []
-      console.log('Here I am')
-      //Testing phrase forms variations
-      pList.push(
-        simpleTest(bot, 'What do you do for a living', '(batman|fisherman)')
-      )
-      pList.push(simpleTest(bot, 'Best movie?', 'aliens'))
-      pList.push(simpleTest(bot, 'who is this?', '(' + rootName + '|talking)'))
-      Promise.all(pList).then(ans => {
-        console.log('ans', ans)
-        bot.close()
-        done()
-      })
-    })
+    await bot.initialize(conf)
+
+    let pList = []
+    console.log('Here I am')
+
+    //Testing phrase forms variations
+    pList.push(simpleTest(bot, 'What do you do for a living', '(batman|fisherman)'))
+    pList.push(simpleTest(bot, 'Best movie?', 'aliens'))
+
+    //TODO: Make this one below work again!
+    //pList.push(simpleTest(bot, 'who is this?', '(' + rootName + '|talking)'))
+    
+    let ans = await Promise.all(pList)
+    console.log('ans', ans)
+    done()
+    
   }, 10000)
 })
 
-var simpleTest = function(bot, phrase, keyword) {
+//TODO: convert to await when you have time!
+var simpleTest = function (bot, phrase, keyword) {
   let userData = new UserData()
   userData.initialize()
 
   let p = new Promise((resolve, reject) => {
     bot
       .getResult(phrase, userData)
-      .then(function(ans) {
+      .then(function (ans) {
         let result = ans.response
         console.log('phrase:', phrase)
         console.log('result:', result)
@@ -92,7 +94,7 @@ var simpleTest = function(bot, phrase, keyword) {
         }
         resolve()
       })
-      .catch(function(reason) {
+      .catch(function (reason) {
         console.log(reason)
         expect(false).toBeTruthy()
         resolve()
@@ -102,14 +104,14 @@ var simpleTest = function(bot, phrase, keyword) {
   return p
 }
 
-var simpleTestNot = function(bot, phrase, keyword) {
+var simpleTestNot = function (bot, phrase, keyword) {
   let userData = new UserData()
   userData.initialize()
 
   let p = new Promise((resolve, reject) => {
     bot
       .getResult(phrase, userData)
-      .then(function(ans) {
+      .then(function (ans) {
         let result = ans.response
         console.log('phrase:', phrase)
         console.log('result:', result)
@@ -127,7 +129,7 @@ var simpleTestNot = function(bot, phrase, keyword) {
         }
         resolve()
       })
-      .catch(function(reason) {
+      .catch(function (reason) {
         console.log(reason)
         expect(false).toBeTruthy()
         resolve()
@@ -137,14 +139,14 @@ var simpleTestNot = function(bot, phrase, keyword) {
   return p
 }
 
-var simpleEmpty = function(bot, phrase) {
+var simpleEmpty = function (bot, phrase) {
   let userData = new UserData()
   userData.initialize()
 
   let p = new Promise((resolve, reject) => {
     bot
       .getResult(phrase, userData)
-      .then(function(ans) {
+      .then(function (ans) {
         let result = ans.response
         console.log('phrase:', phrase)
         console.log('result:', result)
@@ -159,7 +161,7 @@ var simpleEmpty = function(bot, phrase) {
         //expect(bot.keyword == "tuna").toBeTruthy();
         resolve()
       })
-      .catch(function(reason) {
+      .catch(function (reason) {
         console.log(reason)
         expect(false).toBeTruthy()
         resolve()

@@ -44,12 +44,6 @@ class BasicBot extends SingleResponseIfc {
     this.countEntry = 0
   }
 
-  //TODO: Think this is not needed anymore since no external database
-  close() {
-    Helper.closeIfExists(this.pdb, 'pdb')
-    Helper.closeIfExists(this.phrasex, 'phrasex')
-  }
-
   /**
    * Initialize the phrase table
    * @param confShallow is the configuration.  I'm not sure everything that is included in
