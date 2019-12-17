@@ -70,32 +70,6 @@ class BasicBot extends SingleResponseIfc {
       this.phrasex.setHitsFilter(PhraseHitsFilterFactory(conf.hitFilter))
     }
 
-
-    /*//Information about the bot
-    this.doc = conf.doc
-
-    let p1 = super.initialize(conf)
-
-    let p2 = this.pdb
-      .initialize(conf)
-      .then(() => {
-        return this.pdb.getPhraseMap('tell')
-      })
-      .then(res => {
-        this.tellMap = res
-        Logger.debug('tellMap', this.tellMap.keys())
-        return Promise.resolve()
-      })
-
-    this.phrasex = new Phrasex()
-
-    this.phrasex.initialize({ database: conf.phraseTable })
-
-    if (conf.hitFilter) {
-      this.phrasex.setHitsFilter(PhraseHitsFilterFactory(conf.hitFilter))
-    }
-
-    return Promise.all([p1, p2])*/
   }
 
   /**
@@ -400,15 +374,6 @@ class BasicBot extends SingleResponseIfc {
     debug('finalHistory', final.userData.history)
     return final.val
 
-    /*})
-  .catch(reason => {
-    debug('failing in processResult', reason)
-    Helper.logAndThrow(
-      'All promises must resolve for this to work!',
-      reason
-    )
-    return Promise.reject(reason)
-  //})*/
   }
 
   /**
