@@ -1,3 +1,3 @@
 module.exports = {
-  BasicBot : require('./source/BasicBot.js')
+  BasicBot : require('./source/response/BasicBot.js')
 }
