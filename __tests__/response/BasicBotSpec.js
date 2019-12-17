@@ -8,10 +8,10 @@ let { UserData } = require('neural-phrasex')
 let gc = {} //new GetConfigValues()
 let dudeDatabase = require('../../phrasedatabases/DudeDatabase.js')
 
-let rootName = null; //gc.bot.rootName
+let rootName = "Godzilla"
 
 describe('Test the BasicBot - which is not attached to a database!', function () {
-  it('Test store and retrieve data functions', function(done) {
+  it('Test store and retrieve data functions', function (done) {
     let bot = new BasicBot()
     let userData = new UserData()
 
@@ -54,54 +54,42 @@ describe('Test the BasicBot - which is not attached to a database!', function ()
     console.log('Here I am')
 
     //Testing phrase forms variations
-    pList.push(simpleTest(bot, 'What do you do for a living', '(batman|fisherman)'))
-    pList.push(simpleTest(bot, 'Best movie?', 'aliens'))
+    await simpleTest(bot, 'What do you do for a living', '(batman|fisherman)')
+    await simpleTest(bot, 'Best movie?', 'aliens')
 
     //TODO: Make this one below work again!
-    //pList.push(simpleTest(bot, 'who is this?', '(' + rootName + '|talking)'))
-    
-    let ans = await Promise.all(pList)
-    console.log('ans', ans)
+    //await simpleTest(bot, 'who is this?', '(' + rootName + '|talking)')
+
     done()
-    
+
   }, 10000)
 })
 
 //TODO: convert to await when you have time!
-var simpleTest = function (bot, phrase, keyword) {
+var simpleTest = async function (bot, phrase, keyword) {
   let userData = new UserData()
   userData.initialize()
 
-  let p = new Promise((resolve, reject) => {
-    bot
-      .getResult(phrase, userData)
-      .then(function (ans) {
-        let result = ans.response
-        console.log('phrase:', phrase)
-        console.log('result:', result)
+  //let p = new Promise((resolve, reject) => {
+  let ans = await bot.getResult(phrase, userData)
 
-        let foundUndefined = result.match(/undefined/i)
+  let result = ans.response
+  console.log('phrase:', phrase)
+  console.log('result:', result)
 
-        expect(result != '').toBeTruthy()
-        expect(!foundUndefined).toBeTruthy()
-        console.log('foundUndefined', foundUndefined)
-        console.log('')
+  let foundUndefined = result.match(/undefined/i)
 
-        if (keyword) {
-          let foundKeyword = result.match(new RegExp(keyword, 'i'))
-          console.log('foundKeyword', foundKeyword)
-          expect(foundKeyword).toBeTruthy()
-        }
-        resolve()
-      })
-      .catch(function (reason) {
-        console.log(reason)
-        expect(false).toBeTruthy()
-        resolve()
-      })
-  })
+  expect(result != '').toBeTruthy()
+  expect(!foundUndefined).toBeTruthy()
+  console.log('foundUndefined', foundUndefined)
+  console.log('')
 
-  return p
+  if (keyword) {
+    let foundKeyword = result.match(new RegExp(keyword, 'i'))
+    console.log('foundKeyword', foundKeyword)
+    expect(foundKeyword).toBeTruthy()
+  }
+  
 }
 
 var simpleTestNot = function (bot, phrase, keyword) {
