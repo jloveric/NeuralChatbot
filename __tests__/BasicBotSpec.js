@@ -2,11 +2,11 @@
 
 //let path = __dirname+"/../uploads/groceries.csv.config"
 let path = 'botDB.config'
-let BasicBot = require('../../source/response/PhrasexBotLib.js').BasicBot
+let BasicBot = require('../source/response/PhrasexBotLib.js').BasicBot
 //let GetConfigValues = require('../../source/etc/GetConfigValues.js')
 let { UserData } = require('neural-phrasex')
 let gc = {} //new GetConfigValues()
-let dudeDatabase = require('../../phrasedatabases/DudeDatabase.js')
+let dudeDatabase = require('../phrasedatabases/DudeDatabase.js')
 
 let rootName = "Godzilla"
 

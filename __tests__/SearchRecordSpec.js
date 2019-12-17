@@ -1,6 +1,6 @@
 'use strict'
 
-let SearchRecord = require('../response/SearchRecord.js')
+let SearchRecord = require('../source/response/SearchRecord.js')
 
 describe('SearchRecordSpec', function() {
   it('Does the SearchRecord work?', function(done) {
