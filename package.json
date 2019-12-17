@@ -1,6 +1,6 @@
 {
   "name": "neural-chatbot",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "",
   "author": "John Loverich",
   "license": "MIT",
@@ -10,23 +10,15 @@
     "url": "git+https://github.com/jloveric/NeuralChatbot.git"
   },
   "dependencies": {
-    "@tensorflow/tfjs-converter": "^1.4.0",
-    "@tensorflow/tfjs-core": "^1.4.0",
-    "async": "^2.0.1",
-    "badwords-list": "^1.0.0",
-    "binary-search": "^1.2.0",
     "clone": "^2.1.2",
     "collections": "^5.1.9",
     "commander": "^2.9.0",
     "csv": "^1.1.0",
     "damerau-levenshtein": "^1.0.0",
     "debug": "^4.1.1",
-    "decompress-zip": "^0.3.0",
     "deepcopy": "^2.0.0",
     "filepath": "^1.1.0",
     "form-data": "^1.0.0-rc4",
-    "geolib": "^2.0.21",
-    "jaccard": "^0.4.0",
     "jsdoc": "^3.4.2",
     "jsonfile": "^2.3.1",
     "linebyline": "^1.3.0",
@@ -62,8 +54,6 @@
   "devDependencies": {
     "husky": "^3.0.1",
     "jest": "^24.9.0",
-    "karma": "^0.13.15",
-    "loadtest": "^1.3.0",
     "prettier": "^1.18.2"
   }
 }

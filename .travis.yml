@@ -1,22 +1,3 @@
 language: node_js
 node_js:
-  - "7"
-env:
-  - CXX=g++-4.8
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - g++-4.8
-services: 
-  - mongodb
-before_install :
-  - sudo apt-get install unzip  
-install: ./scripts/installall.sh
-before_script : 
-  - ./scripts/elasticsearch.sh&
-  - sleep 15
-  - ./scripts/installStoreAiTest.sh
-after_script :
-  - pkill -9 java
+  - "12"

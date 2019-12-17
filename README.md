@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/jloveric/Clockmaker.svg?branch=master)](https://travis-ci.org/jloveric/Clockmaker)
+[![Build Status](https://travis-ci.org/jloveric/NeuralChatbot.svg?branch=master)](https://travis-ci.org/jloveric/NeuralChatbot)
 
 
 This is a client side chatbot that uses tensorflow sentence embeddings.  It is based on the npm modules 'neural-phrasex' and 'neural-sentence-search'.  It really only needs one example per intent (one shot learning) since the sentence embeddings contain
