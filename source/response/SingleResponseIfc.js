@@ -1,8 +1,9 @@
 'use strict'
 
-let Helper = require('sb/etc/Helper.js')
+let {Helper} = require('helper-clockmaker')
 let deepcopy = require('clone')
 
+//TODO: This looks like it is not needed. Investigate.
 class SingleResponseIfc {
   constructor() {}
 

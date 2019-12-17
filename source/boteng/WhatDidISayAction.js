@@ -1,10 +1,10 @@
 'use strict'
 
-let Action = require('sb/boteng/Action.js')
-let Formatting = require('sb/boteng/Formatting.js')
-let Logger = require('sb/etc/Logger.js')('WhatDidISayAction')
-let Helper = require('sb/etc/Helper.js')
-let slotFiller = require('sb/phrasex/SlotFiller.js')
+let Action = require('../boteng/Action.js')
+let Formatting = require('../boteng/Formatting.js')
+let Logger = require('helper-clockmaker').Logger('WhatDidISayAction')
+let { Helper } = require('helper-clockmaker')
+let slotFiller = require('slot-filler')
 let debug = require('debug')('WhatDidISayAction')
 
 class WhatDidISayAction extends Action {

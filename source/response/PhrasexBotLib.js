@@ -1,8 +1,8 @@
 'use strict'
 
-let Bot = require('sb/response/BasicBot.js')
-let PhrasexBot = require('sb/response/PhrasexBot.js')
-let StdBot = require('sb/boteng/BotEngineLib.js').StandardBotEngine
+let Bot = require('../response/BasicBot.js')
+let PhrasexBot = require('../response/PhrasexBot.js')
+let StdBot = require('../boteng/BotEngineLib.js').StandardBotEngine
 
 class StandardPhrasexBot extends PhrasexBot {
   constructor(obj) {

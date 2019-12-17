@@ -1,7 +1,7 @@
 'use strict'
 
 //TODO: I don't like that this is in here'
-let FromStorageAction = require('sb/boteng/FromStorageAction.js')
+let FromStorageAction = require('../boteng/FromStorageAction.js')
 
 let debug = require('debug')('BotEngine')
 
@@ -42,6 +42,7 @@ class BotEngine {
     debug('basicAns', basicAns)
     for (let i = 0; i < this.actionList.length; i++) {
       if (this.actionList[i].filterInput(input)) {
+        debug('input', input)
         let actualAns = this.actionList[i].computeResult(
           input,
           userData,

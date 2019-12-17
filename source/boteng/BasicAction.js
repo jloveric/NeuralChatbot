@@ -1,12 +1,12 @@
 'use strict'
 
-let Action = require('sb/boteng/Action.js')
-let Formatting = require('sb/boteng/Formatting.js')
-let Logger = require('sb/etc/Logger.js')('BasicAction')
-let Helper = require('sb/etc/Helper.js')
-let SentenceSimilarity = require('sb/phrasex/SentenceSimilarity.js')
-let reSort = require('sb/phrasex/ReRank.js').reSort
-let boostSort = require('sb/phrasex/ReRank.js').boostSort
+let Action = require('../boteng/Action.js')
+let Formatting = require('../boteng/Formatting.js')
+let Logger = require('helper-clockmaker').Logger('BasicAction')
+let {Helper} = require('helper-clockmaker')
+//let SentenceSimilarity = require('sentence-similarity').sentenceSimilarity
+let {reSort, boostSort} = require('neural-phrasex').ReRank
+//let boostSort = require('../phrasex/ReRank.js').boostSort
 let debug = require('debug')('BasicAction')
 let deepcopy = require('clone')
 

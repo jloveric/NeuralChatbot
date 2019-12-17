@@ -1,9 +1,9 @@
 'use strict'
 
-let Action = require('sb/boteng/Action.js')
-let Formatting = require('sb/boteng/Formatting.js')
-let Logger = require('sb/etc/Logger.js')('NoSearchAction')
-let Helper = require('sb/etc/Helper.js')
+let Action = require('../boteng/Action.js')
+let Formatting = require('../boteng/Formatting.js')
+let Logger = require('helper-clockmaker').Logger('NoSearchAction')
+let {Helper} = require('helper-clockmaker')
 
 class NoSearchAction extends Action {
   constructor() {
@@ -25,6 +25,7 @@ class NoSearchAction extends Action {
    */
   computeResult(input, userData) {
     let replies = input.replies
+    //let replies = input.source.response
     let wildcards = input.wildcards
 
     let replyTemplate = Helper.selectRandom(replies)
