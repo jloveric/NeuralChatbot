@@ -1,10 +1,14 @@
 {
   "name": "neural-chatbot",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "",
   "author": "John Loverich",
   "license": "MIT",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jloveric/NeuralChatbot.git"
+  },
   "dependencies": {
     "@tensorflow/tfjs-converter": "^1.4.0",
     "@tensorflow/tfjs-core": "^1.4.0",
