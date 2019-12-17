@@ -4,7 +4,7 @@ let Action = require('./Action.js')
 let Formatting = require('./Formatting.js')
 let Logger = require('helper-clockmaker').Logger('HelpAction')
 let {Helper} = require('helper-clockmaker')
-let formatHelp = require('../etc/FormatHelp.js')
+let formatHelp = require('helper-clockmaker').FormatHelp
 
 class DynamicAction extends Action {
   constructor() {

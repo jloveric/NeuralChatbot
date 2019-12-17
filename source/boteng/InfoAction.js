@@ -4,8 +4,7 @@ let Action = require('../boteng/Action.js')
 let Formatting = require('../boteng/Formatting.js')
 let Logger = require('helper-clockmaker').Logger('InfoAction')
 let {Helper} = require('helper-clockmaker')
-let formatHelp = require('../etc/FormatHelp.js')
-
+let formatHelp = require('helper-clockmaker').FormatHelp
 class InfoAction extends Action {
   constructor() {
     super()
