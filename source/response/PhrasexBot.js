@@ -8,7 +8,6 @@ let BasicBot = require('./BasicBot')
 let { Phrasex, PhraseDatabase, PhraseHitsFilter, PartsOfSpeech, ReRank } = require('neural-phrasex')
 let slotFiller = require('slot-filler')
 //let PhraseDatabase = require('../phrasex/PhraseDatabase.js')
-let formatHelp = require('../etc/FormatHelp.js')
 
 //let PhraseHitsFilterFactory = require('../phrasex/PhraseHitsFilter.js')
 let debug = require('debug')('PhrasexBot')
