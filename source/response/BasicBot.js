@@ -316,7 +316,7 @@ class BasicBot extends SingleResponseIfc {
         userData,
         scoreBasedOnSearch
       )
-
+      debug('firstGuess', firstGuess)
       //All promises must resolve, which I believe they do (rejections caught and turned to resolve)
       pList.push(firstGuess)
       uList.push(userData)
