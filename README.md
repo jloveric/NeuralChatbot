@@ -105,9 +105,6 @@ let { UserData } = require('neural-phrasex')
 
 let conf = {
     database: db,
-    fileDatabase: 'filesystem',
-    user: 'root',
-    filename: path,
     doc: {
     description: {
         name: "jimmy",

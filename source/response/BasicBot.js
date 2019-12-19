@@ -2,18 +2,12 @@
 let Logger = require('helper-clockmaker').Logger('PhrasexBot')
 let { Helper } = require('helper-clockmaker')
 
-//let Es = require('./ElasticSearchQuery.js')
-let Es = null
 let SingleResponseIfc = require('./SingleResponseIfc').SingleResponseIfc
-//let selectRandom = require('helper-clockmaker').selectRandom
-let { Phrasex, PhraseDatabase, BasicPhrasexDatabase } = require('neural-phrasex')
+let { Phrasex, BasicPhrasexDatabase } = require('neural-phrasex')
 let slotFiller = require('slot-filler')
-//let PhraseDatabase = require('../phrasex/PhraseDatabase.js')
-//let formatHelp = require('../etc/FormatHelp.js')
 
 let PhraseHitsFilterFactory = require('neural-phrasex').PhraseHitsFilter
 let debug = require('debug')('BasicBot')
-//let findBest = require('neural-phrasex').ReRank.findBest
 
 let { GenerateObject } = require('neural-phrasex')
 
@@ -582,8 +576,6 @@ class BasicBot extends SingleResponseIfc {
    */
   async getResult(phrase, userData, forget, explicit) {
     debug('Stepped into getResult with phrase', phrase)
-
-    let np;
 
     try {
       let res = await this.standardResult(phrase, userData, explicit)
