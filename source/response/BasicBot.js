@@ -302,7 +302,7 @@ class BasicBot extends SingleResponseIfc {
       //process.exit(0)
 
       //debug('wildcards after',wildcards)
-
+      debug('after unshifting userData')
       let firstGuess = await this.botEngine.computeResult(
         {
           typeIdentifier: typeIdentifier,
