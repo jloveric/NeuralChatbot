@@ -28,7 +28,7 @@ class BasicBot extends SingleResponseIfc {
     this.tellMap = new Map()
 
     this.botEngine = botEngine
-    Logger.logAndThrowUndefined("You must define the botEngine in the BasicBot constructor",this.botEngine)
+    Helper.logAndThrowUndefined("You must define the botEngine in the BasicBot constructor",this.botEngine)
 
     //Set this flag to false if you want to turn of statistics as would
     //be the case in some tests.
