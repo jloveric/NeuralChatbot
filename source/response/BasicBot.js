@@ -225,7 +225,6 @@ class BasicBot extends SingleResponseIfc {
 
       let typeIdentifier = this.pdb.getTypeIdentifier(source)
       let replies = this.tellMap.get(typeIdentifier)
-      debug('tellMap', JSON.stringify(this.tellMap, null, 2))
       debug('replies', replies)
       debug('typeIdentifier', typeIdentifier)
 
