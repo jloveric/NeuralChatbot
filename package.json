@@ -1,6 +1,6 @@
 {
   "name": "neural-chatbot",
-  "version": "2.0.8",
+  "version": "2.0.9",
   "description": "",
   "author": "John Loverich",
   "license": "MIT",
@@ -48,7 +48,6 @@
     "serializejson": "^1.0.1",
     "shortid": "^2.2.6",
     "stopwords": "0.0.5",
-    "storeai.cli": "0.0.5",
     "uglify-js": "^2.7.5",
     "winston": "^2.2.0",
     "winston-annotate": "^0.1.0",
