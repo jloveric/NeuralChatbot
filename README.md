@@ -1,7 +1,8 @@
 [![Build Status](https://travis-ci.org/jloveric/NeuralChatbot.svg?branch=master)](https://travis-ci.org/jloveric/NeuralChatbot)
 
+# Neural Chatbot
 
-This is a client side chatbot that uses tensorflow sentence embeddings.  It is based on the npm modules 'neural-phrasex' and 'neural-sentence-search'.  It really only needs one example per intent (one shot learning) since the sentence embeddings contain
+This is a chatbot that can run in the browser and that uses tensorflowjs sentence embeddings.  It is based on the npm modules 'neural-phrasex' and 'neural-sentence-search'.  It really only needs one example per intent (one shot learning) since the sentence embeddings contain
 the overall meaning of that example.  Ultimately, this will allow one shot re-enforcement learning in this client side bot.  Since all the sentence embedding calcuations are done using mobile tensorflow, there is no need to set up a server and the chatbot can be embedded into a web frontend without external calls.  I'm working on
 a demo of that capability.
 
