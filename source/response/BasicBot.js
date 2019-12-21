@@ -28,7 +28,7 @@ class BasicBot extends SingleResponseIfc {
     this.tellMap = new Map()
 
     this.botEngine = botEngine
-    Helper.logAndThrowUndefined("You must define the botEngine in the BasicBot constructor",this.botEngine)
+    Helper.logAndThrowUndefined("You must define the botEngine in the BasicBot constructor", this.botEngine)
 
     //Set this flag to false if you want to turn of statistics as would
     //be the case in some tests.
@@ -194,174 +194,178 @@ class BasicBot extends SingleResponseIfc {
     ignoreWildcardHistory,
     scoreBasedOnSearch
   ) {
-    this.countEntry++
-    console.log('countEntry', this.countEntry)
+    try {
+      this.countEntry++
+      console.log('countEntry', this.countEntry)
 
-    let pList = []
-    let uList = []
-    let bList = []
-    let wList = []
-    let infoList = []
-    for (let i = 0; i < resArray.length; i++) {
-      //Ok, this copies the entire user data, a costly operation.
-      //One should just copy the history and database when the time comes.
+      let pList = []
+      let uList = []
+      let bList = []
+      let wList = []
+      let infoList = []
+      for (let i = 0; i < resArray.length; i++) {
+        //Ok, this copies the entire user data, a costly operation.
+        //One should just copy the history and database when the time comes.
 
-      //debug('originalUserData', originalUserData)
-      //debug('botStorage', botStorage)
-      let userData = deepcopy(originalUserData)
-      //debug('userData aagin', userData)
+        //debug('originalUserData', originalUserData)
+        //debug('botStorage', botStorage)
+        let userData = deepcopy(originalUserData)
+        //debug('userData aagin', userData)
 
-      let lStorage = deepcopy(botStorage)
+        let lStorage = deepcopy(botStorage)
 
-      //let userData = userDataList[i];
+        //let userData = userDataList[i];
 
-      let res = resArray[i]
-      //debug('RES', res)
+        let res = resArray[i]
+        //debug('RES', res)
 
-      let source = res.source
-      let wildcards = res.wildcards
-      let confidence = res.confidence
-      let storage = res.source.storage
+        let source = res.source
+        let wildcards = res.wildcards
+        let confidence = res.confidence
+        let storage = res.source.storage
 
-      let typeIdentifier = this.pdb.getTypeIdentifier(source)
-      let replies = this.tellMap.get(typeIdentifier)
-      debug('replies', replies)
-      debug('typeIdentifier', typeIdentifier)
+        let typeIdentifier = this.pdb.getTypeIdentifier(source)
+        let replies = this.tellMap.get(typeIdentifier)
+        debug('replies', replies)
+        debug('typeIdentifier', typeIdentifier)
 
 
-      //Store data and fill in from local storage
-      //These can override information in the database
-      //This could also put in bogus data, but can also put in multiple
-      //copies of correct data!  Could cause some strange results so watch out!
-      debug(
-        '------------------------storage-------------------',
-        storage,
-        source.implies[0]
-      )
-      let info = null
-      if (storage) {
-        this.storeData(
+        //Store data and fill in from local storage
+        //These can override information in the database
+        //This could also put in bogus data, but can also put in multiple
+        //copies of correct data!  Could cause some strange results so watch out!
+        debug(
+          '------------------------storage-------------------',
           storage,
-          wildcards,
-          userData,
-          source.implies[0],
-          source,
-          lStorage
+          source.implies[0]
         )
+        let info = null
+        if (storage) {
+          this.storeData(
+            storage,
+            wildcards,
+            userData,
+            source.implies[0],
+            source,
+            lStorage
+          )
 
-        //You can also fill in the values
-        info = this.retrieveData(
-          storage,
+          //You can also fill in the values
+          info = this.retrieveData(
+            storage,
+            wildcards,
+            userData,
+            source.implies[0],
+            source,
+            lStorage
+          )
+        }
+
+        infoList.push(info)
+
+        debug('do we still have storage', userData.storage)
+        /*Helper.logAndThrowUndefined(
+          'BasicBot replies must be defined',
+          replies)*/
+
+        //Lets fill in wildcards ahead of time with guesses
+        //debug('wildcards',wildcards)
+        debug('userData', userData)
+        debug(
+          'wildcards',
           wildcards,
-          userData,
-          source.implies[0],
-          source,
-          lStorage
+          'history',
+          userData.history,
+          'lastHistory',
+          userData.getLastHistory()
         )
-      }
-
-      infoList.push(info)
-
-      debug('do we still have storage', userData.storage)
-      Helper.logAndThrowUndefined(
-        'PhrasexBot replies must be defined',
-        replies)
-
-      //Lets fill in wildcards ahead of time with guesses
-      //debug('wildcards',wildcards)
-      debug('userData', userData)
-      debug(
-        'wildcards',
-        wildcards,
-        'history',
-        userData.history,
-        'lastHistory',
-        userData.getLastHistory()
-      )
-      if (!ignoreWildcardHistory) {
-        //You ignore the history if your have expanded a word, in general
-        for (let i in wildcards) {
-          debug('i', i)
-          if (!wildcards[i] && i != 'matched') {
-            debug('replacing', i, wildcards[i])
-            let res = slotFiller.getWildcardFromHistory(i, userData.history, 5)
-            //debug('res', res, userData.history)
-            if (res.length) {
-              wildcards[i] = res[0]
-              debug('with', res[0])
+        if (!ignoreWildcardHistory) {
+          //You ignore the history if your have expanded a word, in general
+          for (let i in wildcards) {
+            debug('i', i)
+            if (!wildcards[i] && i != 'matched') {
+              debug('replacing', i, wildcards[i])
+              let res = slotFiller.getWildcardFromHistory(i, userData.history, 5)
+              //debug('res', res, userData.history)
+              if (res.length) {
+                wildcards[i] = res[0]
+                debug('with', res[0])
+              }
             }
           }
         }
+        debug('wildcards after insertion', wildcards)
+
+        res.wildcards = wildcards
+        userData.unshiftHistory(res)
+
+        //debug('res to see',res);
+        //process.exit(0)
+
+        //debug('wildcards after',wildcards)
+        debug('this.botEngine', this.botEngine)
+        let firstGuess = await this.botEngine.computeResult(
+          {
+            typeIdentifier: typeIdentifier,
+            replies: replies,
+            wildcards: wildcards,
+            source: source,
+            doc: this.doc,
+            confidence: confidence,
+            score: res.score,
+          },
+          userData,
+          scoreBasedOnSearch
+        )
+        debug('firstGuess', firstGuess)
+        //All promises must resolve, which I believe they do (rejections caught and turned to resolve)
+        pList.push(firstGuess)
+        uList.push(userData)
+        bList.push(lStorage)
+        wList.push(res.wcScore)
       }
-      debug('wildcards after insertion', wildcards)
 
-      res.wildcards = wildcards
-      userData.unshiftHistory(res)
+      //return Promise.all(pList)
+      //  .then(ans => {
 
-      //debug('res to see',res);
-      //process.exit(0)
+      debug('ans.length', pList.length)
+      let newVal = []
+      for (let i = 0; i < pList.length; i++) {
+        pList[i].wcScore = wList[i]
+        newVal.push({ val: pList[i], userData: uList[i], storage: bList[i] })
+      }
 
-      //debug('wildcards after',wildcards)
-      debug('after unshifting userData')
-      let firstGuess = await this.botEngine.computeResult(
-        {
-          typeIdentifier: typeIdentifier,
-          replies: replies,
-          wildcards: wildcards,
-          source: source,
-          doc: this.doc,
-          confidence: confidence,
-          score: res.score,
-        },
-        userData,
-        scoreBasedOnSearch
+      debug('--------------------------NEWVAL-------------------', uList)
+
+      let final = this.trimResults(newVal, infoList)
+
+      debug('ans.length final', pList.length)
+
+      debug('final', final)
+
+      //copy the two critical components
+      originalUserData.shallowCopy(final.userData)
+      //originalUserData.history = final.userData.history;
+      //originalUserData.storage = final.userData.storage;
+
+      //I believe this is copying correctly.  Simple
+      //assignment definitely deletes the storage.
+      debug(
+        'FINAL STORAGE-------------------------',
+        originalUserData.storage,
+        final.storage
       )
-      debug('firstGuess', firstGuess)
-      //All promises must resolve, which I believe they do (rejections caught and turned to resolve)
-      pList.push(firstGuess)
-      uList.push(userData)
-      bList.push(lStorage)
-      wList.push(res.wcScore)
+      debug('botStorage', botStorage)
+      for (let i in final.storage) {
+        botStorage[i] = final.storage[i]
+      }
+      //debug('just before final promise.',final)
+      debug('finalHistory', final.userData.history)
+      return final.val
+    } catch (error) {
+      debug('Error', JSON.stringify(error, null, 2))
+      
     }
-
-    //return Promise.all(pList)
-    //  .then(ans => {
-
-    debug('ans.length', pList.length)
-    let newVal = []
-    for (let i = 0; i < pList.length; i++) {
-      pList[i].wcScore = wList[i]
-      newVal.push({ val: pList[i], userData: uList[i], storage: bList[i] })
-    }
-
-    debug('--------------------------NEWVAL-------------------', uList)
-
-    let final = this.trimResults(newVal, infoList)
-
-    debug('ans.length final', pList.length)
-
-    debug('final', final)
-
-    //copy the two critical components
-    originalUserData.shallowCopy(final.userData)
-    //originalUserData.history = final.userData.history;
-    //originalUserData.storage = final.userData.storage;
-
-    //I believe this is copying correctly.  Simple
-    //assignment definitely deletes the storage.
-    debug(
-      'FINAL STORAGE-------------------------',
-      originalUserData.storage,
-      final.storage
-    )
-    debug('botStorage', botStorage)
-    for (let i in final.storage) {
-      botStorage[i] = final.storage[i]
-    }
-    //debug('just before final promise.',final)
-    debug('finalHistory', final.userData.history)
-    return final.val
-
   }
 
   /**

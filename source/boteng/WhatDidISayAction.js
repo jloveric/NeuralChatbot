@@ -29,11 +29,12 @@ class WhatDidISayAction extends Action {
   /**
    * Compute the input given this filter
    */
-  computeResult(input, userData) {
+  async computeResult(input, userData) {
     debug('Computing result for WhatDidISayAction')
 
     let hist = userData.history.toArray()
 
+    debug('hist', hist)
     if (hist.length > 1) {
       let previousQuestion = hist[1]
       debug('hist', hist)
@@ -41,14 +42,14 @@ class WhatDidISayAction extends Action {
       let phrase = source.phrase
       let wildcards = previousQuestion.wildcards
       let ans = slotFiller.reconstructPhrase(phrase, wildcards).phrase
-      return Promise.resolve({
+      return {
         response: ans,
         wildcards: [wildcards],
         phrase: source,
         confidence: input.confidence,
         success: true,
         slotScore: 0,
-      })
+      }
     }
   }
 }

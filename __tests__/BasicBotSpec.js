@@ -6,11 +6,46 @@ let BasicBot = require('../source/response/PhrasexBotLib.js').BasicBot
 //let GetConfigValues = require('../../source/etc/GetConfigValues.js')
 let { UserData } = require('neural-phrasex')
 let gc = {} //new GetConfigValues()
-let dudeDatabase = require('../phrasedatabases/DudeDatabase.js')
+let dudeDatabase = require('../phrasedatabases/TestDatabase.js')
 
 let rootName = "Godzilla"
 
 describe('Test the BasicBot - which is not attached to a database!', function () {
+  
+  it('Testing the PhrasexBot history starting with complete phrase', async (done)=> {
+    let conf = {
+      database: dudeDatabase,
+      fileDatabase: 'filesystem',
+      user: 'root',
+      filename: path,
+      doc: {
+        description: {
+          name: rootName,
+        },
+      },
+      phraseTable: 'dudephrases',
+    }
+    
+    let userData = new UserData()
+    userData.initialize(1)
+
+    let bot = new BasicBot()
+    
+    await bot.initialize(conf)
+      
+    await simpleTest(bot, 'What do you do for a living', '(batman|fisherman)', true, userData)
+
+    await simpleTest(
+              bot,
+              'What did I say',
+              'What do you do for a living',
+              true,
+              userData
+            )
+          
+  }, 10000)
+
+  
   /*it('Test store and retrieve data functions', function (done) {
     let bot = new BasicBot()
     let userData = new UserData()
@@ -32,7 +67,7 @@ describe('Test the BasicBot - which is not attached to a database!', function ()
     expect(wc2.column).toBe('name')
 
     done()
-  }, 10000)*/
+  }, 10000)
 
   it('Should Return Good values', async function (done) {
     let conf = {
@@ -62,7 +97,7 @@ describe('Test the BasicBot - which is not attached to a database!', function ()
 
     done()
 
-  }, 10000)
+  }, 10000)*/
 })
 
 //TODO: convert to await when you have time!

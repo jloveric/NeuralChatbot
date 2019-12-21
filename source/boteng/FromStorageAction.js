@@ -27,18 +27,17 @@ class FromStorageAction extends Action {
   /**
    * Compute the input given this filter
    */
-  computeResult(input, userData) {
+  async computeResult(input, userData) {
     let replies = input.replies
     let wildcards = input.wildcards
 
     if (!replies) {
-      return Promise.resolve({ confidence: 0, success: false })
+      return { confidence: 0, success: false }
     }
 
     let replyTemplate = Helper.selectRandom(replies)
 
-    return Promise.resolve(
-      Formatting.fromStorage(
+    return Formatting.fromStorage(
         {
           replyTemplate: replyTemplate,
           wildcards: wildcards,
@@ -46,7 +45,6 @@ class FromStorageAction extends Action {
         },
         userData
       )
-    )
   }
 }
 
