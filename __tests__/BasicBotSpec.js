@@ -15,15 +15,12 @@ describe('Test the BasicBot - which is not attached to a database!', function ()
   it('Testing the PhrasexBot history starting with complete phrase', async (done)=> {
     let conf = {
       database: dudeDatabase,
-      fileDatabase: 'filesystem',
       user: 'root',
-      filename: path,
       doc: {
         description: {
           name: rootName,
         },
-      },
-      phraseTable: 'dudephrases',
+      }
     }
     
     let userData = new UserData()
@@ -33,20 +30,20 @@ describe('Test the BasicBot - which is not attached to a database!', function ()
     
     await bot.initialize(conf)
       
-    await simpleTest(bot, 'What do you do for a living', '(batman|fisherman)', true, userData)
+    await simpleTest(bot, 'What do you do for a living', '(batman|fisherman)', userData)
 
     await simpleTest(
               bot,
               'What did I say',
               'What do you do for a living',
-              true,
               userData
             )
-          
+    done()
+
   }, 10000)
 
   
-  /*it('Test store and retrieve data functions', function (done) {
+  it('Test store and retrieve data functions', function (done) {
     let bot = new BasicBot()
     let userData = new UserData()
 
@@ -70,6 +67,10 @@ describe('Test the BasicBot - which is not attached to a database!', function ()
   }, 10000)
 
   it('Should Return Good values', async function (done) {
+
+    let userData = new UserData()
+    userData.initialize()
+
     let conf = {
       database: dudeDatabase,
       fileDatabase: 'filesystem',
@@ -89,21 +90,20 @@ describe('Test the BasicBot - which is not attached to a database!', function ()
     console.log('Here I am')
 
     //Testing phrase forms variations
-    await simpleTest(bot, 'What do you do for a living', '(batman|fisherman)')
-    await simpleTest(bot, 'Best movie?', 'aliens')
+    await simpleTest(bot, 'What do you do for a living', '(batman|fisherman)', userData)
+    await simpleTest(bot, 'Best movie?', 'aliens', userData)
 
     //TODO: Make this one below work again!
     //await simpleTest(bot, 'who is this?', '(' + rootName + '|talking)')
 
     done()
 
-  }, 10000)*/
+  }, 10000)
 })
 
 //TODO: convert to await when you have time!
-var simpleTest = async function (bot, phrase, keyword) {
-  let userData = new UserData()
-  userData.initialize()
+var simpleTest = async function (bot, phrase, keyword, userData) {
+  
 
   //let p = new Promise((resolve, reject) => {
   let ans = await bot.getResult(phrase, userData)
@@ -119,10 +119,10 @@ var simpleTest = async function (bot, phrase, keyword) {
   console.log('foundUndefined', foundUndefined)
   console.log('')
 
-  if (keyword) {
+  if (keyword!=null) {
     let foundKeyword = result.match(new RegExp(keyword, 'i'))
     console.log('foundKeyword', foundKeyword)
-    expect(foundKeyword).toBeTruthy()
+    expect(foundKeyword!=null).toBeTruthy()
   }
   
 }

@@ -50,6 +50,8 @@ class WhatDidISayAction extends Action {
         success: true,
         slotScore: 0,
       }
+    } else {
+      debug('The history needs to have at least 2 elements for this to work.')
     }
   }
 }

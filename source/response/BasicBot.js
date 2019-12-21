@@ -12,6 +12,7 @@ let debug = require('debug')('BasicBot')
 let { GenerateObject } = require('neural-phrasex')
 
 let deepcopy = require('lodash.clonedeep')///*require("deepcopy")*/ require('clone')
+//let deepcopy = require('deepcopy')
 
 /**
  * This bot uses Phrasex along with the phrase database
@@ -196,7 +197,7 @@ class BasicBot extends SingleResponseIfc {
   ) {
     try {
       this.countEntry++
-      console.log('countEntry', this.countEntry)
+      debug('countEntry', this.countEntry)
 
       let pList = []
       let uList = []
@@ -263,11 +264,6 @@ class BasicBot extends SingleResponseIfc {
 
         infoList.push(info)
 
-        debug('do we still have storage', userData.storage)
-        /*Helper.logAndThrowUndefined(
-          'BasicBot replies must be defined',
-          replies)*/
-
         //Lets fill in wildcards ahead of time with guesses
         //debug('wildcards',wildcards)
         debug('userData', userData)
@@ -299,10 +295,7 @@ class BasicBot extends SingleResponseIfc {
         res.wildcards = wildcards
         userData.unshiftHistory(res)
 
-        //debug('res to see',res);
-        //process.exit(0)
-
-        //debug('wildcards after',wildcards)
+        //Actually compute the result
         debug('this.botEngine', this.botEngine)
         let firstGuess = await this.botEngine.computeResult(
           {
@@ -318,15 +311,13 @@ class BasicBot extends SingleResponseIfc {
           scoreBasedOnSearch
         )
         debug('firstGuess', firstGuess)
+
         //All promises must resolve, which I believe they do (rejections caught and turned to resolve)
         pList.push(firstGuess)
         uList.push(userData)
         bList.push(lStorage)
         wList.push(res.wcScore)
       }
-
-      //return Promise.all(pList)
-      //  .then(ans => {
 
       debug('ans.length', pList.length)
       let newVal = []
@@ -335,21 +326,17 @@ class BasicBot extends SingleResponseIfc {
         newVal.push({ val: pList[i], userData: uList[i], storage: bList[i] })
       }
 
-      debug('--------------------------NEWVAL-------------------', uList)
+      debug('--------------------------NEWVAL-------------------', newVal)
 
+      //There are many results given in the list, pick the best.
       let final = this.trimResults(newVal, infoList)
 
-      debug('ans.length final', pList.length)
-
       debug('final', final)
-
+          
       //copy the two critical components
       originalUserData.shallowCopy(final.userData)
-      //originalUserData.history = final.userData.history;
-      //originalUserData.storage = final.userData.storage;
+      //debug('originalUserData', originalUserData)
 
-      //I believe this is copying correctly.  Simple
-      //assignment definitely deletes the storage.
       debug(
         'FINAL STORAGE-------------------------',
         originalUserData.storage,
@@ -364,7 +351,7 @@ class BasicBot extends SingleResponseIfc {
       return final.val
     } catch (error) {
       debug('Error', JSON.stringify(error, null, 2))
-      
+
     }
   }
 
@@ -582,7 +569,10 @@ class BasicBot extends SingleResponseIfc {
     debug('Stepped into getResult with phrase', phrase)
 
     try {
+
+      //debug('userData before standard result++++++++++++++', userData)
       let res = await this.standardResult(phrase, userData, explicit)
+      //debug('userData after standard result---------------', userData)
 
       debug('returning from standard result')
       //debug("Before PhraseFrequencyData")
