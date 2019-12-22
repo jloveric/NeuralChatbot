@@ -99,6 +99,41 @@ describe('Test the BasicBot - which is not attached to a database!', function ()
     done()
 
   }, 10000)
+
+  it('Document questions should work', async function (done) {
+
+    let userData = new UserData()
+    userData.initialize()
+
+    let conf = {
+      database: dudeDatabase,
+      fileDatabase: 'filesystem',
+      user: 'root',
+      filename: path,
+      doc: {
+        description: {
+          name: rootName,
+          help: "This is a simple help message"
+        },
+      },
+      phraseTable: 'dudephrases',
+    }
+    let bot = new BasicBot()
+    await bot.initialize(conf)
+
+    let pList = []
+    console.log('Here I am')
+
+    //Testing phrase forms variations
+    await simpleTest(bot, 'Help', 'This is a simple help message', userData)
+
+    //TODO: Make this one below work again!
+    await simpleTest(bot, 'who is this?', '(' + rootName + '|talking)', userData)
+
+    done()
+
+  }, 10000)
+
 })
 
 //TODO: convert to await when you have time!

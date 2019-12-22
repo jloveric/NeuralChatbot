@@ -5,6 +5,7 @@ let Formatting = require('../boteng/Formatting.js')
 let Logger = require('helper-clockmaker').Logger('HelpAction')
 let {Helper} = require('helper-clockmaker')
 let formatHelp = require('helper-clockmaker').FormatHelp
+let debug = require('debug')('HelpAction')
 
 class HelpAction extends Action {
   constructor() {
@@ -24,12 +25,13 @@ class HelpAction extends Action {
   /**
    * Compute the input given this filter
    */
-  computeResult(input, userData) {
-    return Promise.resolve({
+  async computeResult(input, userData) {
+    debug('input.doc', input.doc)
+    return {
       response: formatHelp(input.doc.description),
       confidence: input.confidence,
       success: true,
-    })
+    }
   }
 }
 

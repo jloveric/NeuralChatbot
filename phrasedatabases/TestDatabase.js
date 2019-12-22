@@ -1,6 +1,26 @@
 module.exports = {
   "data": [
     {
+      "phrase": [
+          "Help!",
+          "wtf",
+          "What is this"
+      ],
+      "response": [
+          "Here is what I know"
+      ],
+      "phraseType": "help",
+      "implies": [
+          "help"
+      ],
+      "target": [
+          "bot"
+      ],
+      "meta": {
+          "group": "help"
+      }
+    },
+    {
 			"phrase" : ["What did I say", "What do you think I said","What was I talking about?"],
 			"phraseType" : "whatsaid",
 			"implies" : ["whatsaid"],
@@ -73,5 +93,29 @@ module.exports = {
         ],
         "group": "thanks"
       }
-    }]
+    },
+    {
+			"phrase": [
+				"What is your name?",
+				"What are you called?",
+				"Who is this",
+				"Who are you"
+			],
+			"response": [
+				"My name is (value)",
+				"I'm called (value)"
+			],
+			"negative": [
+				"I have no name."
+			],
+			"phraseType": "query",
+			"implies": [
+				"person"
+			],
+			"target": [],
+			"storage": "askYourName",
+			"meta": {
+				"group": "identity"
+			}
+		}]
 }

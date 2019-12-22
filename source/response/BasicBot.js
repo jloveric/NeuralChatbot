@@ -49,6 +49,7 @@ class BasicBot extends SingleResponseIfc {
   async initialize(confShallow) {
     let conf = deepcopy(confShallow)
 
+    this.doc = conf.doc
     this.pdb = BasicPhrasexDatabase.generatePhraseDatabase(conf.database)
     this.phrasex = new Phrasex(this.pdb)
     let res = await this.phrasex.initialize()
