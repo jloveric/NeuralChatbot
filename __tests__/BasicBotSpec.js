@@ -11,7 +11,7 @@ let dudeDatabase = require('../phrasedatabases/TestDatabase.js')
 let rootName = "Godzilla"
 
 describe('Test the BasicBot - which is not attached to a database!', function () {
-  
+
   it('Testing the PhrasexBot history starting with complete phrase', async (done)=> {
     let conf = {
       database: dudeDatabase,
@@ -134,11 +134,43 @@ describe('Test the BasicBot - which is not attached to a database!', function ()
 
   }, 10000)
 
+  it("Testing location statements and questions with storage", async function (done) {
+
+    let userData = new UserData();
+    userData.initialize(1);
+
+    let conf = {
+      database: dudeDatabase,
+      fileDatabase: 'filesystem',
+      user: 'root',
+      filename: path,
+      doc: {
+        description: {
+          name: rootName,
+          help: "This is a simple help message"
+        },
+      },
+      phraseTable: 'dudephrases',
+    }
+
+    let bot = new BasicBot();
+    await bot.initialize(conf)
+
+    let pList = []
+    await noCheck(bot, "dinner is in the oven", userData)
+      
+    await simpleTest(bot, "Where is dinner", "oven", userData)
+   
+    console.log('storage', userData.getStorage().getObj())
+    done();
+    
+  }, 10000);
+
 })
 
 //TODO: convert to await when you have time!
 var simpleTest = async function (bot, phrase, keyword, userData) {
-  
+
 
   //let p = new Promise((resolve, reject) => {
   let ans = await bot.getResult(phrase, userData)
@@ -154,13 +186,38 @@ var simpleTest = async function (bot, phrase, keyword, userData) {
   console.log('foundUndefined', foundUndefined)
   console.log('')
 
-  if (keyword!=null) {
+  if (keyword != null) {
     let foundKeyword = result.match(new RegExp(keyword, 'i'))
     console.log('foundKeyword', foundKeyword)
-    expect(foundKeyword!=null).toBeTruthy()
+    expect(foundKeyword != null).toBeTruthy()
   }
-  
+
 }
+
+
+var noCheck = function (bot, phrase, userData) {
+  if (!userData) {
+    userData = new UserData()
+    userData.initialize()
+  }
+
+  let p = new Promise((resolve, reject) => {
+    bot
+      .getResult(phrase, userData)
+      .then(function (ans) {
+        expect(true).toBe(true)
+        resolve()
+      })
+      .catch(function (reason) {
+        console.log(reason)
+        expect(false).toBeTruthy()
+        resolve()
+      })
+  })
+
+  return p
+}
+
 
 var simpleTestNot = function (bot, phrase, keyword) {
   let userData = new UserData()

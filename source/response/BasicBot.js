@@ -16,10 +16,7 @@ let deepcopy = require('lodash.clonedeep')///*require("deepcopy")*/ require('clo
 
 /**
  * This bot uses Phrasex along with the phrase database
- * to determine question responses.  There is no database installed
- * such as a database of food types, rows and aisles, instead
- * there is only a phrase database so that the bot recognizes
- * phrases and can respond accordingly.
+ * to determine question responses.
  */
 class BasicBot extends SingleResponseIfc {
   constructor(botEngine) {

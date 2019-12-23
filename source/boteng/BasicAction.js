@@ -3,9 +3,9 @@
 let Action = require('../boteng/Action.js')
 let Formatting = require('../boteng/Formatting.js')
 let Logger = require('helper-clockmaker').Logger('BasicAction')
-let {Helper} = require('helper-clockmaker')
+let { Helper } = require('helper-clockmaker')
 //let SentenceSimilarity = require('sentence-similarity').sentenceSimilarity
-let {reSort, boostSort} = require('neural-phrasex').ReRank
+let { reSort, boostSort } = require('neural-phrasex').ReRank
 //let boostSort = require('../phrasex/ReRank.js').boostSort
 let debug = require('debug')('BasicAction')
 let deepcopy = require('clone')
@@ -28,7 +28,7 @@ class BasicAction extends Action {
   /**
    * Compute the input given this filter
    */
-  computeResult(input, userData, scoreBasedOnSearch) {
+  async computeResult(input, userData, scoreBasedOnSearch) {
     Helper.hasProperties(input, ['replies', 'wildcards'])
 
     let field = this.primary
@@ -39,112 +39,47 @@ class BasicAction extends Action {
     debug('INPUT--------------------------', input)
 
     let replyTemplate = Helper.selectRandom(replies)
-    Logger.debug('ReplyTemplate', replyTemplate, wildcards)
+    debug('ReplyTemplate', replyTemplate, wildcards)
     let target = replyTemplate.target[0]
-    Logger.debug('wildcards[target]', wildcards[target])
-    let prom = this.search.searchAndScore(wildcards[target], field)
+    debug('wildcards[target]', wildcards[target])
+    
+    //The old method searched a database for the wildcard
+    //let result = await this.search.searchAndScore(wildcards[target], field)
+    
+    //Now we set it to empty as there is no search
+    let result = []
+    
+    debug('result', result)
 
-    return prom
-      .then(result => {
-        debug('Returning from the promise!', result.length)
 
-        if (!result.length) {
-          let phrase = wildcards[target]
-          phrase.match(Helper.tokenize)
-          let tLength = Math.max(1, phrase.length)
+    try {
+      debug('Returning from the promise!', result.length)
 
-          let badScore = { exact: 0, score: 0, order: 0, size: 1.0 / tLength }
-          let newScore = Helper.combineSimilarity(badScore, input.score)
+      if (!result.length) {
+        let phrase = wildcards[target]
+        phrase.match(Helper.tokenize)
+        let tLength = Math.max(1, phrase.length)
 
-          let resp = Formatting.negative({
-            replyTemplate: replyTemplate,
-            wildcards: wildcards,
-            results: result,
-            confidence: newScore.score * newScore.order * newScore.size,
-            score: badScore,
-          })
+        let badScore = { exact: 0, score: 0, order: 0, size: 1.0 / tLength }
+        let newScore = Helper.combineSimilarity(badScore, input.score)
 
-          debug('Response', resp)
-          return Promise.resolve(resp)
-        }
+        let resp = Formatting.negative({
+          replyTemplate: replyTemplate,
+          wildcards: wildcards,
+          results: result,
+          confidence: newScore.score * newScore.order * newScore.size,
+          score: badScore,
+        })
 
-        //Compute a search score
-        let searchConfidence = 0
+        debug('Response', resp)
+        return resp
+      }
 
-        let bestScore = result[0].score
-        for (let i = 0; i < result.length; i++) {
-          let score = result[i].score
-          let confidence = score.score * score.size * score.order
-          //let confidence = score.score;
+    } catch (reason) {
 
-          if (confidence > searchConfidence) {
-            searchConfidence = confidence
-            bestScore = result[i].score
-          }
-        }
-
-        //We need this available in case the user asks for more data as this saves
-        //the results, the response template and wildcards necessary to produce, "more".
-        //For various reason, this needs to be returned.
-
-        result = reSort(result)
-        result = boostSort(result)
-
-        debug('searchAndScore results', result)
-        debug('searchConfidence', searchConfidence)
-
-        let moreAction = {
-          result: deepcopy(result),
-          replyTemplate: deepcopy(replyTemplate),
-          wildcards: deepcopy(wildcards),
-          startOffset: 10,
-        }
-
-        let sResult = []
-        for (let i = 0; i < Math.min(10, result.length); i++) {
-          sResult.push(result[i])
-        }
-
-        let newScore = bestScore
-        if (!scoreBasedOnSearch) {
-          newScore = Helper.combineSimilarity(bestScore, input.score)
-        }
-
-        debug('newScore', newScore)
-        //Logger.warn('results',result.hits.hits)
-        //let final = this.formatResults(replyTemplate, wildcards, result)
-        let final = Formatting.standard(
-          {
-            replyTemplate: replyTemplate,
-            wildcards: wildcards,
-            results: sResult,
-            columnMap: this.columnMap,
-            columnType: this.columnType,
-            columnSynVector: this.columnSynVector,
-            columnReName: this.columnReName,
-            confidence: newScore.score * newScore.order * newScore.size,
-            score: newScore,
-          },
-          userData
-        )
-
-        if (result.length > 10 && final.success) {
-          final.response = final.response + '\n' + Helper.moreResponse
-          final.searchResult.push({ hasMore: true })
-        }
-
-        final.moreAction = moreAction
-
-        if (final.response.match(/undefined/i) || final.response == '') {
-          //Helper.failResponse;
-          final = Object.assign(final, Helper.failResponse)
-        }
-        return Promise.resolve(final)
-      })
-      .catch(reason => {
-        Logger.warn('Error in search', reason)
-        return Promise.resolve(Helper.failResponse)
-      })
+      Logger.warn('Error in search', reason)
+      return Helper.failResponse
+    }
   }
 }
 

@@ -9,6 +9,8 @@ class Action {
     return this.name
   }
 
+  //TODO: most of these are referencing the database
+  //search capability that is no longer implemented
   initialize(input) {
     Helper.hasProperties(input, [
       'search',

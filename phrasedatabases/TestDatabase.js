@@ -1,34 +1,73 @@
 module.exports = {
   "data": [
     {
+      exampleWildcards: { item: ["Sarah"], value: ["Safeway"] },
       "phrase": [
-          "Help!",
-          "wtf",
-          "What is this"
+        "Where is (item)"
       ],
       "response": [
-          "Here is what I know"
+        "(item) is in (value)"
       ],
-      "phraseType": "help",
+      "negative": [
+        "There is no (item)",
+        "I don't know"
+      ],
+      "phraseType": "query",
       "implies": [
-          "help"
+        "place"
       ],
       "target": [
-          "bot"
+        "item"
       ],
+      "storage": {
+        "phrase": {
+          "get": {
+            "(item):in": "(value)"
+          }
+        },
+        "response": {
+          "set": {
+            "(item):in": "(value)"
+          }
+        }
+      },
       "meta": {
-          "group": "help"
+        "style": [
+          "indefinite",
+          "2wc"
+        ],
+        "group": "in"
       }
     },
     {
-			"phrase" : ["What did I say", "What do you think I said","What was I talking about?"],
-			"phraseType" : "whatsaid",
-			"implies" : ["whatsaid"],
-			"target" : ["whatsaid"],
-			"meta" : {
-				"group" : "whatsaid"	
-			}
-		},
+      "phrase": [
+        "Help!",
+        "wtf",
+        "What is this"
+      ],
+      "response": [
+        "Here is what I know"
+      ],
+      "phraseType": "help",
+      "implies": [
+        "help"
+      ],
+      "target": [
+        "bot"
+      ],
+      "meta": {
+        "group": "help"
+      }
+    },
+    {
+      "phrase": ["What did I say", "What do you think I said", "What was I talking about?"],
+      "phraseType": "whatsaid",
+      "implies": ["whatsaid"],
+      "target": ["whatsaid"],
+      "meta": {
+        "group": "whatsaid"
+      }
+    },
     {
       "phrase": ["What do you do for a living",
         "What is your job", "How do you make money"],
@@ -95,27 +134,27 @@ module.exports = {
       }
     },
     {
-			"phrase": [
-				"What is your name?",
-				"What are you called?",
-				"Who is this",
-				"Who are you"
-			],
-			"response": [
-				"My name is (value)",
-				"I'm called (value)"
-			],
-			"negative": [
-				"I have no name."
-			],
-			"phraseType": "query",
-			"implies": [
-				"person"
-			],
-			"target": [],
-			"storage": "askYourName",
-			"meta": {
-				"group": "identity"
-			}
-		}]
+      "phrase": [
+        "What is your name?",
+        "What are you called?",
+        "Who is this",
+        "Who are you"
+      ],
+      "response": [
+        "My name is (value)",
+        "I'm called (value)"
+      ],
+      "negative": [
+        "I have no name."
+      ],
+      "phraseType": "query",
+      "implies": [
+        "person"
+      ],
+      "target": [],
+      "storage": "askYourName",
+      "meta": {
+        "group": "identity"
+      }
+    }]
 }

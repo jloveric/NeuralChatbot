@@ -4,6 +4,8 @@ let Action = require('../boteng/Action.js')
 let Formatting = require('../boteng/Formatting.js')
 let Logger = require('helper-clockmaker').Logger('NoSearchAction')
 let {Helper} = require('helper-clockmaker')
+let debug = require('debug')('FromStorageAction')
+
 /**
  * This action returns true for every phrase so should
  * not be included in the botEngine list.  Instead it is
@@ -21,6 +23,7 @@ class FromStorageAction extends Action {
    * or false as to whether the filter passes.
    */
   filterInput(input) {
+    debug('Inside the from storage filter')
     return true
   }
 
@@ -31,13 +34,15 @@ class FromStorageAction extends Action {
     let replies = input.replies
     let wildcards = input.wildcards
 
+    debug('resplies', replies, 'wildcards', wildcards)
+
     if (!replies) {
       return { confidence: 0, success: false }
     }
 
     let replyTemplate = Helper.selectRandom(replies)
 
-    return Formatting.fromStorage(
+    let ans = Formatting.fromStorage(
         {
           replyTemplate: replyTemplate,
           wildcards: wildcards,
@@ -45,6 +50,8 @@ class FromStorageAction extends Action {
         },
         userData
       )
+    debug('ans', ans)
+    return ans
   }
 }
 
