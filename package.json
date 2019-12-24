@@ -29,7 +29,7 @@
     "jsonfile": "^2.3.1",
     "lodash.clonedeep": "^4.5.0",
     "minimist": "^1.2.0",
-    "neural-phrasex": "^1.0.16",
+    "neural-phrasex": "^1.0.17",
     "prepositions": "0.0.0",
     "slot-filler": "^1.0.6"
   },
