@@ -1,6 +1,6 @@
 {
   "name": "neural-chatbot",
-  "version": "2.0.17",
+  "version": "2.0.18",
   "description": "",
   "author": "John Loverich",
   "license": "MIT",
@@ -31,7 +31,6 @@
     "minimist": "^1.2.0",
     "neural-phrasex": "^1.0.16",
     "prepositions": "0.0.0",
-    "sentence-similarity": "^1.0.8",
     "slot-filler": "^1.0.6"
   },
   "scripts": {

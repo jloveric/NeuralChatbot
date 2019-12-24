@@ -4,7 +4,6 @@ let Action = require('../boteng/Action.js')
 let Formatting = require('../boteng/Formatting.js')
 let Logger = require('helper-clockmaker').Logger('BasicAction')
 let {Helper} = require('helper-clockmaker')
-let SentenceSimilarity = require('sentence-similarity').sentenceSimilarity
 let reSort = require('neural-phrasex').ReRank.reSort
 let debug = require('debug')('MoreBasicAction')
 
